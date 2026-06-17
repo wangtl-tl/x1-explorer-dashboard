@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-06-17",
+  "daily_message": {
+    "date": "2026-06-17",
+    "title": "🦆 嘎嘎的留言",
+    "content": "烁烁，今天我们一起添加了「聊天券」功能！\n\n每完成1个任务 = 获得1张聊天券\n完成全部任务 = 额外获得2张聊天券\n\n有聊天券才能和我聊天哦！\n快去完成任务吧！💪"
+  },
+  "daily_tasks": [
+    {
+      "id": "task_001",
+      "name": "起床打卡",
+      "desc": "7:00前起床 = 满分！",
+      "reward": "20宝石"
+    },
+    {
+      "id": "task_002", 
+      "name": "数学作业",
+      "desc": "数的组成练习",
+      "reward": "20宝石"
+    }
+  ],
+  "encouragement": "烁烁是最棒的小探险家！加油！🎉",
+  "special_event": {
+    "enabled": false,
+    "title": "",
+    "description": ""
+  }
+}
