@@ -1553,8 +1553,16 @@ async function loadDynamicContent() {
             document.getElementById('gagaMessageSection').style.display = 'block';
         }
         
-        // 可以在这里添加更多动态内容的显示
-        // 比如：每日任务、特别活动等等
+        // 🔄 自动同步聊天券数量（从服务器获取最新）
+        if (data.chat_tickets !== undefined) {
+            const serverCount = parseInt(data.chat_tickets) || 0;
+            if (state.chatTickets !== serverCount) {
+                console.log(`🔄 同步聊天券：${state.chatTickets} → ${serverCount}`);
+                state.chatTickets = serverCount;
+                saveState();
+                renderUser();
+            }
+        }
         
     } catch (error) {
         console.log('ℹ️ 加载动态内容失败（可能是首次使用）', error);
