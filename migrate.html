@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📦 数据迁移工具 · 烁烁学习系统</title>
+<style>
+* { margin:0; padding:0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #E8F4FD 0%, #F0F7FF 100%);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+}
+.box {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+    text-align: center;
+}
+.icon { font-size: 3rem; margin-bottom: 10px; }
+h1 { font-size: 1.3rem; color: #2C3E50; margin-bottom: 5px; }
+p { font-size: 0.85rem; color: #7F8C8D; line-height: 1.6; margin-bottom: 15px; }
+.btn {
+    display: block; width: 100%; padding: 14px; margin: 8px 0;
+    border: none; border-radius: 14px; font-size: 1rem; font-weight: bold;
+    cursor: pointer; transition: all 0.3s;
+}
+.btn-export { background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; }
+.btn-import { background: linear-gradient(135deg, #3498DB, #2980B9); color: white; }
+.btn-goto { background: linear-gradient(135deg, #FF8C00, #FF6B6B); color: white; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.step {
+    background: #F8FAFF; border-radius: 14px; padding: 15px; margin: 12px 0;
+    text-align: left; font-size: 0.8rem; line-height: 1.8; color: #2C3E50;
+    border-left: 4px solid #FF8C00;
+}
+.step b { color: #FF8C00; }
+pre {
+    background: #2C3E50; color: #ECF0F1; padding: 12px; border-radius: 10px;
+    font-size: 0.75rem; overflow-x: auto; text-align: left; margin: 10px 0;
+    word-break: break-all;
+}
+input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+<div class="box">
+    <div class="icon">📦</div>
+    <h1>数据迁移工具</h1>
+    <p>把本地文件的数据，迁移到线上版</p>
+    
+    <div class="step">
+        <b>第一步：导出旧数据</b><br>
+        在平板浏览器中打开<b>之前的本地HTML文件</b><br>
+        （就是桌面上那个 X1_探险学习仪表盘_v4.html）<br>
+        然后点击下面的「导出旧数据」按钮
+    </div>
+    
+    <button class="btn btn-export" onclick="exportOldData()">📤 导出旧数据</button>
+    
+    <div class="step">
+        <b>第二步：导入到线上版</b><br>
+        打开线上版仪表盘<br>
+        <code style="font-size:0.75rem;background:#F0F0F0;padding:2px 6px;border-radius:4px;">https://wangtl-tl.github.io/x1-explorer-dashboard/</code><br>
+        点击「📥 导入数据」按钮，选择刚才下载的JSON文件
+    </div>
+    
+    <button class="btn btn-goto" onclick="window.open('https://wangtl-tl.github.io/x1-explorer-dashboard/', '_blank')">🌐 打开线上版仪表盘</button>
+    
+    <div class="step" style="border-left-color:#2ECC71;">
+        <b>💡 备用方案（如果上面不行）</b><br>
+        1. 打开旧本地文件，按 F12 打开控制台<br>
+        2. 输入这段代码并回车：<br>
+        <pre>copy(localStorage.getItem('x1_explore_data'))</pre>
+        3. 粘贴到线上版的「导入数据」文本框中
+    </div>
+    
+    <input type="file" id="importFile" accept=".json" onchange="importData(this)">
+</div>
+
+<script>
+const STORAGE_KEY = 'x1_explore_data';
+
+function exportOldData() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) {
+        alert('⚠️ 没有找到旧数据！\n\n请确认：\n1. 你是用浏览器打开的旧本地HTML文件\n2. 之前确实在上面打过卡');
+        return;
+    }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `烁烁学习数据_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ 数据已导出！\n\n请：\n1. 记住下载的JSON文件位置\n2. 打开线上版仪表盘\n3. 点击「📥 导入数据」并选择该文件');
+}
+
+function importData(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data.xp && !data.gems && !data.points) {
+                alert('⚠️ 文件格式不正确！');
+                return;
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            alert('✅ 数据导入成功！页面即将刷新...');
+            setTimeout(() => location.reload(), 1000);
+        } catch(err) {
+            alert('⚠️ 文件解析失败：' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+// 自动检测是否有数据
+window.onload = function() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+        try {
+            const parsed = JSON.parse(data);
+            const gems = parsed.gems || 0;
+            const xp = parsed.xp || 0;
+            const info = document.createElement('div');
+            info.className = 'step';
+            info.style.borderLeftColor = '#2ECC71';
+            info.innerHTML = `<b>✅ 检测到旧数据！</b><br>宝石：${gems}💎｜XP：${xp}｜积分：${parsed.points || 0}💰<br><br>点击上方「导出旧数据」按钮，把数据保存下来~`;
+            document.querySelector('.box').insertBefore(info, document.querySelector('.btn-export'));
+        } catch(e) {}
+    } else {
+        const info = document.createElement('div');
+        info.className = 'step';
+        info.style.borderLeftColor = '#E74C3C';
+        info.innerHTML = `<b>⚠️ 未检测到旧数据</b><br>请确认你是用浏览器打开的<b>旧本地HTML文件</b><br>而不是直接双击打开后没打卡过`;
+        document.querySelector('.box').insertBefore(info, document.querySelector('.btn-export'));
+    }
+};
+</script>
+</body>
+</html>
