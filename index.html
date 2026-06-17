@@ -79,6 +79,12 @@
         .chat-ticket-info { font-size: 0.8rem; margin-top: 5px; }
         .chat-ticket-rule { font-size: 0.7rem; opacity: 0.8; margin-top: 8px; }
         
+        /* 嘎嘎每日留言 */
+        .gaga-message-section { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 15px; padding: 15px; margin-bottom: 15px; color: #fff; animation: slide-in 0.5s ease-out; }
+        @keyframes slide-in { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
+        .gaga-message-title { font-size: 1rem; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .gaga-message-content { font-size: 0.85rem; line-height: 1.6; white-space: pre-line; }
+        
         /* 区块 */
         .section { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.15); }
         .section-title { font-size: 1.05rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
@@ -365,6 +371,12 @@
             </div>
         </div>
         
+        <!-- 嘎嘎每日留言 -->
+        <div class="gaga-message-section" id="gagaMessageSection" style="display:none;">
+            <div class="gaga-message-title">🦆 嘎嘎的留言 <span id="messageDate"></span></div>
+            <div class="gaga-message-content" id="messageContent"></div>
+        </div>
+        
         <!-- 今日任务 -->
         <div class="section">
             <div class="section-title">📋 今日探险任务 <span class="count" id="taskCount">0/6</span></div>
@@ -623,6 +635,7 @@ function init() {
     calculateStreak();   // 根据loginDays重新计算连续天数
     renderAll();
     startTimerTick();
+    loadDynamicContent();  // 加载动态内容
 }
 
 function loadState() {
@@ -1443,6 +1456,33 @@ function startChat() {
         const speech = document.getElementById('gagaSpeech');
         speech.innerHTML = `🎉 聊天开始！\n\n剩余聊天券：${state.chatTickets}张\n\n记得和嘎嘎分享今天的有趣事情哦~`;
     });
+}
+
+// ========== 加载动态内容 ==========
+async function loadDynamicContent() {
+    try {
+        const response = await fetch('data.json?t=' + Date.now());  // 防止缓存
+        if (!response.ok) {
+            console.log('ℹ️ 没有动态内容文件');
+            return;
+        }
+        
+        const data = await response.json();
+        console.log('✅ 加载动态内容成功', data);
+        
+        // 显示嘎嘎留言
+        if (data.daily_message && data.daily_message.content) {
+            document.getElementById('messageDate').textContent = data.daily_message.date || '';
+            document.getElementById('messageContent').textContent = data.daily_message.content;
+            document.getElementById('gagaMessageSection').style.display = 'block';
+        }
+        
+        // 可以在这里添加更多动态内容的显示
+        // 比如：每日任务、特别活动等等
+        
+    } catch (error) {
+        console.log('ℹ️ 加载动态内容失败（可能是首次使用）', error);
+    }
 }
 
 // ========== 弹窗 ==========
