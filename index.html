@@ -260,6 +260,8 @@ body::before {
 
 /* 全勤完成提示 */
 .all-done { background: linear-gradient(135deg, var(--success), #27AE60); text-align: center; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; display: none; animation: pop-in 0.5s; margin-top: 10px; color: #fff; }
+.refresh-btn { display: block; width: 100%; margin-top: 10px; padding: 10px; border: 2px dashed #3498DB; border-radius: 12px; background: #F0F8FF; color: #3498DB; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+.refresh-btn:hover { background: #3498DB; color: white; border-style: solid; }
 @keyframes pop-in { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
 
 /* 创造力任务弹窗 */
@@ -398,6 +400,7 @@ body::before {
             <div class="section-title">📋 今日探险任务 <span class="count" id="taskCount">0/6</span></div>
             <div class="task-list" id="taskList"></div>
             <div class="all-done" id="allDone">🎉 太棒了！今日任务全部完成！</div>
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新状态（爸爸确认后点我）</button>
         </div>
         
         <!-- 创造力工坊 -->
@@ -591,6 +594,7 @@ const SHOP_ITEMS = {
 };
 
 const PARTNERS = [
+    { id: 'gaga', icon: '🦆', name: '小黄鸭嘎嘎', nick: '嘎嘎', desc: '专属学习伙伴，每日陪伴探险！', condition: 'always', unlocked: true },
     { id: 'triceratops', icon: '🦕', name: '小三角龙', nick: '尖尖', desc: '每日+3能量', condition: 'dino5' },
     { id: 'cat', icon: '🐱', name: '小猫', nick: '橘橘', desc: '失败不扣', condition: 'habit5' },
     { id: 'hamster', icon: '🐹', name: '小仓鼠', nick: '豆豆', desc: '专注+5分钟', condition: 'pomo10' },
@@ -646,12 +650,16 @@ let gagaPowerIndex = 0;
 // ========== 初始化 ==========
 function init() {
     loadState();
-    createStars();
+    // 确保嘎嘎（小黄鸭）默认解锁
+    if (!state.partners['gaga']) {
+        state.partners['gaga'] = true;
+        saveState();
+    }
     cleanupLoginDays();  // 清理超过7天的旧数据
     calculateStreak();   // 根据loginDays重新计算连续天数
     renderAll();
     startTimerTick();
-    loadDynamicContent();  // 加载动态内容
+    loadDynamicContent();  // 加载嘎嘎每日留言
 }
 
 function loadState() {
@@ -869,7 +877,7 @@ function claimDailyLogin() {
     checkBadges();
 }
 
-// ========== 任务 ==========
+// ========== 任务（只读模式 · 需爸爸确认）==========
 function renderTasks() {
     const list = document.getElementById('taskList');
     list.innerHTML = '';
@@ -881,21 +889,49 @@ function renderTasks() {
         
         const item = document.createElement('div');
         item.className = `task-item ${completed ? 'completed' : ''}`;
-        item.onclick = () => toggleTask(task.id);
+        // ❌ 删除点击完成：item.onclick = () => toggleTask(task.id);
         item.innerHTML = `
-            <div class="task-check">${completed ? '✓' : ''}</div>
+            <div class="task-check">${completed ? '✅' : '⬜'}</div>
             <div class="task-icon">${task.icon}</div>
             <div class="task-info">
                 <div class="task-name">${task.name} [${task.area}]</div>
                 <div class="task-desc">${task.desc}</div>
             </div>
-            <div class="task-reward"><div class="reward-xp">${completed ? '✅' : '+'+task.xp + ' XP'}</div></div>
+            <div class="task-reward"><div class="reward-xp">${completed ? '已完成' : '待完成'}</div></div>
         `;
         list.appendChild(item);
     });
     
     document.getElementById('taskCount').textContent = `${done}/6`;
-    document.getElementById('allDone').style.display = done === 6 ? 'block' : 'none';
+    document.getElementById('allDone').style.display = done === 6 ? 'block' : 'none';\n}
+// ========== 刷新数据 ==========
+function refreshData() {
+    // 从服务器读取最新数据（data.json）
+    // 如果服务器没有更新，则重新加载页面
+    fetch('data.json?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+            if (data.tasks) {
+                // 更新任务状态
+                TASKS.forEach(task => {
+                    if (data.tasks[task.id] !== undefined) {
+                        state.tasks[task.id] = data.tasks[task.id];
+                    }
+                });
+                saveState();
+                renderTasks();
+                renderUser();
+                showNotification('🔄 状态已刷新！\n\n任务状态已更新~');
+            } else {
+                // 没有远程数据，重新加载页面
+                location.reload();
+            }
+        })
+        .catch(() => {
+            showNotification('⚠️ 无法连接服务器\n\n请检查网络连接');
+        });
+}
+
 }
 
 function toggleTask(taskId) {
@@ -1351,7 +1387,7 @@ function renderPartners() {
     let count = 0;
     
     PARTNERS.forEach(p => {
-        const unlocked = state.partners[p.id];
+        const unlocked = p.condition === 'always' || state.partners[p.id];
         if (unlocked) count++;
         
         const card = document.createElement('div');
