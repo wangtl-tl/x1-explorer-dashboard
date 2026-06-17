@@ -338,6 +338,13 @@ body::before {
                 </div>
             </div>
             
+            <!-- 数据管理 -->
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <button onclick="exportData()" style="flex:1; padding:8px; border:1px solid #E8F0FE; border-radius:10px; background:#F8FAFF; color:#2C3E50; font-size:0.75rem; cursor:pointer;">📤 导出数据</button>
+                <button onclick="document.getElementById('importFile').click()" style="flex:1; padding:8px; border:1px solid #E8F0FE; border-radius:10px; background:#F8FAFF; color:#2C3E50; font-size:0.75rem; cursor:pointer;">📥 导入数据</button>
+                <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(this)">
+            </div>
+            
             <!-- 能量条 -->
             <div class="energy-section">
                 <div class="energy-header">
@@ -1449,6 +1456,47 @@ function onGagaClick() {
     setTimeout(() => c.classList.remove('show'), 5000);
 }
 
+// ========== 数据导入/导出 ==========
+function exportData() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) {
+        showNotification('⚠️ 没有数据可以导出！', true);
+        return;
+    }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `烁烁学习数据_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('📤 数据已导出！\n\n把下载的JSON文件保存好，\n然后在线上版导入即可~');
+}
+
+function importData(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            // 验证数据格式
+            if (!data.xp && !data.gems && !data.points) {
+                showNotification('⚠️ 文件格式不正确！', true);
+                return;
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            showNotification('📥 数据导入成功！\n\n页面即将刷新...');
+            setTimeout(() => location.reload(), 1500);
+        } catch(err) {
+            showNotification('⚠️ 文件解析失败！', true);
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+
+// ========== 嘎嘎聊天 ==========
 function startChat() {
     if (state.chatTickets <= 0) {
         showNotification('聊天券不足！\n完成作业获得更多聊天券~', true);
