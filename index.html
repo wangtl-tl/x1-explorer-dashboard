@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🦆 烁烁探险学习系统 · 创造力版 v4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --gold: #FFD700;
+            --gold-dark: #FFA500;
+            --success: #4CAF50;
+            --danger: #ff6b6b;
+            --purple: #9b59b6;
+            --bg-dark: #1a1a2e;
+            --bg-card: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --creative: #FF6B6B;
+            --science: #4ECDC4;
+            --art: #FFE66D;
+        }
+        body {
+            font-family: -apple-system, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle var(--d) infinite; }
+        @keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; position: relative; z-index: 1; }
+        .header { text-align: center; padding: 20px 0 15px; }
+        .header-badge { display: inline-block; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--bg-dark); padding: 4px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
+        .header h1 { font-size: 1.6rem; background: linear-gradient(90deg, var(--gold), var(--danger), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 5px; }
+        .header p { color: var(--text-muted); font-size: 0.85rem; }
+        
+        /* 绑定信息 */
+        .bind-info { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 15px; padding: 12px 15px; margin-bottom: 15px; text-align: center; font-size: 0.85rem; }
+        .bind-info span { font-weight: bold; }
+        
+        /* 用户卡片 */
+        .user-card { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.15); }
+        .user-top { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .avatar { width: 65px; height: 65px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 0 20px rgba(255,215,0,0.4); flex-shrink: 0; }
+        .user-info { flex: 1; min-width: 0; }
+        .user-name { font-size: 1.2rem; font-weight: bold; color: var(--gold); margin-bottom: 4px; }
+        .user-level { display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(90deg, #667eea, #764ba2); padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; margin-bottom: 8px; }
+        
+        /* 能量条 */
+        .energy-section { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 12px 15px; margin-bottom: 10px; }
+        .energy-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; }
+        .energy-icon { font-size: 1.2rem; }
+        .energy-bar { background: rgba(255,255,255,0.15); border-radius: 8px; height: 12px; overflow: hidden; position: relative; }
+        .energy-fill { height: 100%; border-radius: 8px; transition: width 0.5s; }
+        .energy-high { background: linear-gradient(90deg, #4CAF50, #8BC34A); }
+        .energy-mid { background: linear-gradient(90deg, #FF9800, #FFC107); }
+        .energy-low { background: linear-gradient(90deg, #f44336, #ff5722); }
+        
+        /* XP条 */
+        .xp-section { margin-bottom: 10px; }
+        .xp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; font-size: 0.8rem; }
+        .xp-bar { background: rgba(255,255,255,0.15); border-radius: 8px; height: 10px; overflow: hidden; position: relative; }
+        .xp-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--gold), var(--danger)); transition: width 0.8s; }
+        .xp-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmer 2s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        
+        /* 统计 */
+        .stats-row { display: flex; gap: 10px; }
+        .stat-item { flex: 1; text-align: center; background: rgba(255,255,255,0.08); padding: 8px; border-radius: 12px; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+        
+        /* 聊天券 */
+        .chat-ticket-section { background: linear-gradient(135deg, #FF6B6B, #FFE66D); border-radius: 15px; padding: 12px 15px; margin-bottom: 15px; text-align: center; color: var(--bg-dark); }
+        .chat-ticket-count { font-size: 2rem; margin: 8px 0; }
+        .chat-ticket-info { font-size: 0.8rem; margin-top: 5px; }
+        .chat-ticket-rule { font-size: 0.7rem; opacity: 0.8; margin-top: 8px; }
+        
+        /* 区块 */
+        .section { background: var(--bg-card); backdrop-filter: blur(20px); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.15); }
+        .section-title { font-size: 1.05rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .section-title .count { margin-left: auto; font-size: 0.8rem; color: var(--gold); font-weight: normal; }
+        
+        /* 任务列表 */
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        .task-item { background: rgba(255,255,255,0.08); border-radius: 15px; padding: 12px 15px; display: flex; align-items: center; gap: 12px; transition: all 0.3s; cursor: pointer; }
+        .task-item:hover { background: rgba(255,255,255,0.12); }
+        .task-item.completed { background: rgba(76,175,80,0.2); border: 1px solid rgba(76,175,80,0.4); }
+        .task-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; transition: all 0.3s; }
+        .task-item.completed .task-check { background: var(--success); border-color: var(--success); color: #fff; }
+        .task-icon { font-size: 1.6rem; flex-shrink: 0; }
+        .task-info { flex: 1; min-width: 0; }
+        .task-name { font-weight: bold; font-size: 0.9rem; margin-bottom: 2px; }
+        .task-desc { font-size: 0.7rem; color: var(--text-muted); }
+        .task-reward { text-align: right; flex-shrink: 0; }
+        .reward-xp { color: var(--gold); font-weight: bold; font-size: 0.85rem; }
+        
+        /* 创造力工坊 */
+        .creative-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .creative-card { background: rgba(255,255,255,0.08); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .creative-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.12); }
+        .creative-card.story { border-color: var(--creative); }
+        .creative-card.science { border-color: var(--science); }
+        .creative-card.math { border-color: var(--purple); }
+        .creative-card.art { border-color: var(--art); }
+        .creative-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .creative-name { font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; }
+        .creative-desc { font-size: 0.65rem; color: var(--text-muted); line-height: 1.3; }
+        .creative-btn { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 10px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .btn-story { background: var(--creative); color: #fff; }
+        .btn-science { background: var(--science); color: #fff; }
+        .btn-math { background: var(--purple); color: #fff; }
+        .btn-art { background: var(--art); color: var(--bg-dark); }
+        
+        /* 嘎嘎能力卡片 */
+        .gaga-power-section { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: var(--bg-dark); }
+        .power-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+        .power-card { background: rgba(255,255,255,0.25); border-radius: 12px; padding: 10px 8px; text-align: center; font-size: 0.75rem; transition: all 0.3s; cursor: pointer; }
+        .power-card:hover { background: rgba(255,255,255,0.4); transform: scale(1.02); }
+        .power-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .power-name { font-weight: bold; font-size: 0.7rem; margin-bottom: 2px; }
+        .power-desc { font-size: 0.6rem; opacity: 0.8; }
+        
+        /* 连续打卡 */
+        .streak-bar { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
+        .streak-day { width: 36px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; transition: all 0.3s; }
+        .streak-day.claimed { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: var(--bg-dark); font-weight: bold; }
+        .streak-day.today { border: 2px solid var(--gold); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,215,0,0.7); } 50% { box-shadow: 0 0 0 6px rgba(255,215,0,0); } }
+        .streak-num { font-size: 0.75rem; font-weight: bold; }
+        .streak-label { font-size: 0.55rem; opacity: 0.7; }
+        
+        /* 番茄钟 */
+        .pomodoro-section { background: linear-gradient(135deg, var(--danger), #ff8e53); border: none; text-align: center; }
+        .timer-circle { width: 150px; height: 150px; margin: 0 auto 12px; position: relative; }
+        .timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .timer-bg { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 8; }
+        .timer-progress { fill: none; stroke: var(--gold); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+        .timer-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .timer-display { font-size: 2.2rem; font-weight: bold; font-family: 'Courier New', monospace; }
+        .timer-status { font-size: 0.85rem; opacity: 0.9; margin-bottom: 12px; }
+        .timer-buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .timer-btn { padding: 8px 18px; border: none; border-radius: 18px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .btn-start { background: var(--success); color: #fff; }
+        .btn-pause { background: #ff9800; color: #fff; }
+        .btn-reset { background: rgba(255,255,255,0.2); color: #fff; }
+        .pomo-stats { display: flex; justify-content: center; gap: 20px; font-size: 0.8rem; }
+        .pomo-stats strong { color: var(--gold); }
+        
+        /* 知识大陆地图 */
+        .map-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .map-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 8px; text-align: center; transition: all 0.3s; cursor: pointer; position: relative; }
+        .map-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); }
+        .map-card.unlocked { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,107,0.1)); border: 1.5px solid var(--gold); }
+        .map-card.locked { opacity: 0.5; filter: grayscale(0.6); cursor: not-allowed; }
+        .map-card.current { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+        .map-icon { font-size: 2rem; margin-bottom: 5px; }
+        .map-name { font-weight: bold; font-size: 0.75rem; margin-bottom: 2px; }
+        .map-desc { font-size: 0.6rem; color: var(--text-muted); }
+        .map-level { position: absolute; top: 4px; right: 4px; background: var(--purple); padding: 2px 5px; border-radius: 8px; font-size: 0.55rem; }
+        
+        /* 迷雾怪兽 */
+        .monster-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .monster-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 5px; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .monster-card:hover { transform: translateY(-2px); }
+        .monster-card.defeated { background: rgba(76,175,80,0.2); border: 1px solid rgba(76,175,80,0.4); }
+        .monster-icon { font-size: 1.8rem; margin-bottom: 4px; }
+        .monster-name { font-weight: bold; font-size: 0.65rem; margin-bottom: 2px; }
+        .monster-badge { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 0.55rem; }
+        .badge-active { background: var(--danger); }
+        .badge-done { background: var(--success); }
+        
+        /* 成就徽章 */
+        .badge-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .badge-card { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 4px; text-align: center; transition: all 0.3s; }
+        .badge-card.unlocked { background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,107,0.15)); border: 1px solid var(--gold); }
+        .badge-icon { font-size: 1.5rem; margin-bottom: 3px; filter: grayscale(1) opacity(0.4); transition: all 0.3s; }
+        .badge-card.unlocked .badge-icon { filter: none; }
+        .badge-name { font-size: 0.6rem; font-weight: bold; }
+        .badge-desc { font-size: 0.5rem; color: var(--text-muted); margin-top: 1px; }
+        
+        /* 道具商城 */
+        .shop-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; }
+        .shop-tab { padding: 6px 14px; background: rgba(255,255,255,0.1); border-radius: 15px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: all 0.3s; }
+        .shop-tab.active { background: var(--gold); color: var(--bg-dark); font-weight: bold; }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .shop-card { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .shop-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.18); }
+        .shop-card.disabled { opacity: 0.4; cursor: not-allowed; }
+        .shop-card.disabled:hover { transform: none; background: rgba(255,255,255,0.1); }
+        .shop-icon { font-size: 1.8rem; margin-bottom: 4px; }
+        .shop-name { font-weight: bold; font-size: 0.7rem; margin-bottom: 2px; }
+        .shop-price { color: var(--gold); font-size: 0.7rem; }
+        .shop-effect { font-size: 0.6rem; color: var(--text-muted); margin-top: 2px; }
+        
+        /* 伙伴系统 */
+        .partner-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .partner-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 5px; text-align: center; transition: all 0.3s; cursor: pointer; }
+        .partner-card:hover { transform: translateY(-2px); }
+        .partner-card.unlocked { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(155,89,182,0.15)); border: 1px solid var(--gold); }
+        .partner-icon { font-size: 1.8rem; margin-bottom: 3px; }
+        .partner-name { font-size: 0.65rem; font-weight: bold; margin-bottom: 1px; }
+        .partner-desc { font-size: 0.55rem; color: var(--text-muted); }
+        
+        /* 悄悄话 */
+        .secret-section { background: linear-gradient(135deg, #e91e63, #9c27b0); border: none; }
+        .secret-input { width: 100%; background: rgba(255,255,255,0.15); border: none; border-radius: 12px; padding: 12px; color: #fff; font-size: 0.9rem; resize: none; margin-bottom: 10px; }
+        .secret-input::placeholder { color: rgba(255,255,255,0.6); }
+        .secret-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.2); border: none; border-radius: 12px; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .secret-btn:hover { background: rgba(255,255,255,0.3); }
+        .secret-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* 嘎嘎 */
+        .gaga-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; }
+        .gaga-btn { width: 65px; height: 65px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; cursor: pointer; box-shadow: 0 4px 20px rgba(255,215,0,0.5); transition: all 0.3s; animation: gaga-bounce 2s infinite; border: 3px solid rgba(255,255,255,0.3); }
+        .gaga-btn:hover { transform: scale(1.1); }
+        @keyframes gaga-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .gaga-speech { position: absolute; bottom: 75px; right: 0; width: 220px; background: #fff; color: #333; padding: 10px 12px; border-radius: 12px; font-size: 0.8rem; line-height: 1.4; box-shadow: 0 4px 15px rgba(0,0,0,0.2); opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; }
+        .gaga-speech::after { content: ''; position: absolute; bottom: -7px; right: 22px; border: 7px solid transparent; border-top-color: #fff; }
+        .gaga-container.show .gaga-speech { opacity: 1; transform: translateY(0); }
+        .gaga-chat-btn { display: block; margin: 10px auto 0; padding: 8px 15px; background: linear-gradient(135deg, #FF6B6B, #FFE66D); border: none; border-radius: 10px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.3s; color: var(--bg-dark); }
+        .gaga-chat-btn:hover { transform: scale(1.05); }
+        .gaga-chat-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        /* 通知 */
+        .notification { position: fixed; top: -80px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--success), #2E7D32); color: #fff; padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 200; transition: top 0.5s; white-space: pre-line; text-align: center; max-width: 90vw; }
+        .notification.show { top: 15px; }
+        .notification.error { background: linear-gradient(135deg, var(--danger), #c0392b); }
+        
+        /* 弹窗 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #2a2a4a; border-radius: 18px; padding: 22px; max-width: 300px; width: 90%; text-align: center; transform: scale(0.9); transition: transform 0.3s; }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .modal-title { font-size: 1rem; font-weight: bold; margin-bottom: 6px; }
+        .modal-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; }
+        .modal-buttons { display: flex; gap: 8px; }
+        .modal-btn { flex: 1; padding: 9px; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .modal-btn.confirm { background: var(--success); color: #fff; }
+        .modal-btn.cancel { background: rgba(255,255,255,0.15); color: #fff; }
+        
+        /* 全勤完成提示 */
+        .all-done { background: linear-gradient(135deg, var(--success), #2E7D32); text-align: center; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; display: none; animation: pop-in 0.5s; margin-top: 10px; }
+        @keyframes pop-in { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; }
+        
+        /* 创造力任务弹窗 */
+        .creative-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 400; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .creative-modal.show { opacity: 1; pointer-events: auto; }
+        .creative-modal-box { background: #2a2a4a; border-radius: 18px; padding: 20px; max-width: 350px; width: 90%; max-height: 80vh; overflow-y: auto; transform: scale(0.9); transition: transform 0.3s; }
+        .creative-modal.show .creative-modal-box { transform: scale(1); }
+        .creative-modal-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; text-align: center; }
+        .creative-modal-content { font-size: 0.85rem; line-height: 1.6; color: var(--text-muted); }
+        
+        @media (max-width: 400px) {
+            .monster-grid, .badge-grid, .partner-grid { grid-template-columns: repeat(3, 1fr); }
+            .shop-grid { grid-template-columns: repeat(2, 1fr); }
+            .creative-grid { grid-template-columns: 1fr; }
+            .power-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="notification" id="notification"></div>
+    
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-desc" id="modalDesc"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="modalCancel">取消</button>
+                <button class="modal-btn confirm" id="modalConfirm">确认</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 创造力任务弹窗 -->
+    <div class="creative-modal" id="creativeModal">
+        <div class="creative-modal-box">
+            <div class="creative-modal-title" id="creativeModalTitle"></div>
+            <div class="creative-modal-content" id="creativeModalContent"></div>
+            <button class="secret-btn" style="margin-top: 15px;" onclick="closeCreativeModal()">关闭</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="header-badge">🦆 X1 探险向导 · 创造力版 v4</div>
+            <h1>🦆 烁烁探险学习系统</h1>
+            <p>知识大陆 · 创造力工坊 · 嘎嘎能力</p>
+        </div>
+        
+        <!-- 绑定信息 -->
+        <div class="bind-info">
+            🦆 系统绑定成功！主人：<span>烁烁</span> ｜ 守护神：龙爷爷 ｜ 目标：999知识能量
+        </div>
+        
+        <!-- 用户卡片 -->
+        <div class="user-card">
+            <div class="user-top">
+                <div class="avatar">🧒</div>
+                <div class="user-info">
+                    <div class="user-name">✨ 王烁然</div>
+                    <div class="user-level">
+                        <span id="levelIcon">🌱</span> <span id="levelName">探险学徒</span> Lv<span id="levelNum">1</span>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-item"><div class="stat-value" id="statXP">0</div><div class="stat-label">总XP</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statEnergy">65</div><div class="stat-label">⚡能量%</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statStreak">0</div><div class="stat-label">🔥连续</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statPoints">0</div><div class="stat-label">💰积分</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statGems">0</div><div class="stat-label">💎宝石</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statCreative">0</div><div class="stat-label">🎨创造</div></div>
+                        <div class="stat-item"><div class="stat-value" id="statChatTickets">0</div><div class="stat-label">🎫聊天券</div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 能量条 -->
+            <div class="energy-section">
+                <div class="energy-header">
+                    <span><span class="energy-icon">⚡</span> 知识能量</span>
+                    <span id="energyPercent">65%</span>
+                </div>
+                <div class="energy-bar">
+                    <div class="energy-fill energy-high" id="energyFill" style="width: 65%"></div>
+                </div>
+            </div>
+            
+            <!-- XP条 -->
+            <div class="xp-section">
+                <div class="xp-header">
+                    <span>⭐ 升级进度</span>
+                    <span id="xpProgress">0 / 50 XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xpFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 连续打卡 -->
+        <div class="section">
+            <div class="section-title">🔥 连续打卡 <span id="streakDays">0天</span></div>
+            <div class="streak-bar" id="streakBar"></div>
+            <button class="secret-btn" onclick="claimDailyLogin()" id="loginBtn">📱 每日登录奖励 (+5积分)</button>
+        </div>
+        
+        <!-- 聊天券 -->
+        <div class="chat-ticket-section">
+            <div style="font-size: 1rem; font-weight: bold;">🎫 聊天券</div>
+            <div class="chat-ticket-count" id="chatTicketCount">0 张</div>
+            <div class="chat-ticket-info">
+                完成作业获得聊天券<br>找嘎嘎聊天需要消耗聊天券哦！
+            </div>
+            <div class="chat-ticket-rule">
+                💡 每完成1个任务 = 1张聊天券
+            </div>
+        </div>
+        
+        <!-- 今日任务 -->
+        <div class="section">
+            <div class="section-title">📋 今日探险任务 <span class="count" id="taskCount">0/6</span></div>
+            <div class="task-list" id="taskList"></div>
+            <div class="all-done" id="allDone">🎉 太棒了！今日任务全部完成！</div>
+        </div>
+        
+        <!-- 创造力工坊 -->
+        <div class="section" style="background: linear-gradient(135deg, #FF6B6B, #FFE66D); border: none; color: var(--bg-dark);">
+            <div class="section-title" style="color: var(--bg-dark);">🎨 创造力工坊 <span class="count" id="creativeCount" style="color: var(--bg-dark);">点击探索</span></div>
+            <div class="creative-grid" id="creativeGrid"></div>
+            <p style="font-size: 0.75rem; margin-top: 10px; text-align: center; color: rgba(0,0,0,0.7);">💡 点击卡片开始创造！完成后找爸爸确认获得创造力积分~</p>
+        </div>
+        
+        <!-- 嘎嘎能力介绍 -->
+        <div class="section gaga-power-section">
+            <div class="section-title" style="color: var(--bg-dark); justify-content: center;">🦆 嘎嘎的超能力</div>
+            <p style="font-size: 0.8rem; text-align: center; margin-bottom: 10px; color: rgba(0,0,0,0.8);">烁烁，嘎嘎会很多本领！点击卡片看看~</p>
+            <div class="power-grid" id="powerGrid"></div>
+        </div>
+        
+        <!-- 番茄钟 -->
+        <div class="section pomodoro-section">
+            <div class="section-title" style="justify-content:center; color: #fff;">⏱️ 专注探险计时器</div>
+            <div class="timer-circle">
+                <svg class="timer-svg" viewBox="0 0 160 160">
+                    <circle class="timer-bg" cx="80" cy="80" r="70"></circle>
+                    <circle class="timer-progress" id="timerProgress" cx="80" cy="80" r="70" stroke-dasharray="439.82" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="timer-center">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                </div>
+            </div>
+            <div class="timer-status" id="timerStatus">准备开始专注探险 ✨</div>
+            <div class="timer-buttons">
+                <button class="timer-btn btn-start" id="timerBtn" onclick="toggleTimer()">▶ 开始探险</button>
+                <button class="timer-btn btn-reset" onclick="resetTimer()">🔄 重置</button>
+            </div>
+            <div class="pomo-stats">
+                <span>⏱️ 完成：<strong id="pomoCount">0</strong> 轮</span>
+                <span>⭐ 获得：<strong id="pomoXP">0</strong> XP</span>
+            </div>
+        </div>
+        
+        <!-- 知识大陆 -->
+        <div class="section">
+            <div class="section-title">🗺️ 知识大陆 · 探险地图</div>
+            <div class="map-grid" id="mapGrid"></div>
+        </div>
+        
+        <!-- 迷雾怪兽 -->
+        <div class="section">
+            <div class="section-title">👹 迷雾怪兽图鉴 <span class="count" id="monsterCount">0/5</span></div>
+            <div class="monster-grid" id="monsterGrid"></div>
+            <p style="font-size:0.75rem; color: var(--text-muted); margin-top: 8px; text-align: center;">💡 点击怪兽卡片可以打败它！完成任务可获得打败怪兽的机会</p>
+        </div>
+        
+        <!-- 成就徽章 -->
+        <div class="section">
+            <div class="section-title">🏆 成就徽章 <span class="count" id="badgeCount">0/15</span></div>
+            <div class="badge-grid" id="badgeGrid"></div>
+        </div>
+        
+        <!-- 道具商城 -->
+        <div class="section" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border: none;">
+            <div class="section-title" style="justify-content:center; color: #fff;">🛒 道具商城</div>
+            <div class="shop-tabs" id="shopTabs"></div>
+            <div class="shop-grid" id="shopGrid"></div>
+            <p style="font-size:0.7rem; color: rgba(255,255,255,0.7); margin-top: 8px; text-align: center;">💰 积分可用于兑换道具，完成任务获得积分</p>
+        </div>
+        
+        <!-- 专属伙伴 -->
+        <div class="section">
+            <div class="section-title">🦕 专属伙伴 <span class="count" id="partnerCount">0/5</span></div>
+            <div class="partner-grid" id="partnerGrid"></div>
+            <p style="font-size:0.7rem; color: var(--text-muted); margin-top: 8px; text-align: center;">💡 达到指定条件即可解锁专属伙伴</p>
+        </div>
+        
+        <!-- 悄悄话 -->
+        <div class="section secret-section">
+            <div class="section-title" style="justify-content:center;">💬 悄悄话</div>
+            <textarea class="secret-input" id="secretInput" placeholder="对爸爸/妈妈说悄悄话..." rows="2"></textarea>
+            <button class="secret-btn" onclick="sendSecret()">📨 发送悄悄话</button>
+            <p style="font-size:0.65rem; color: rgba(255,255,255,0.6); margin-top: 6px; text-align: center;">💡 悄悄话会保存到本地，爸爸可以看到</p>
+        </div>
+    </div>
+    
+    <!-- 嘎嘎 -->
+    <div class="gaga-container" id="gagaContainer">
+        <div class="gaga-speech" id="gagaSpeech">嘎嘎！点击我~</div>
+        <button class="gaga-chat-btn" id="gagaChatBtn" onclick="startChat()" style="display:none;">🎫 开始聊天</button>
+        <div class="gaga-btn" onclick="onGagaClick()">🦆</div>
+    </div>
+    
+<script>
+const STORAGE_KEY = 'x1_explore_data';  // 固定key，不再随版本变化
+// 旧版本key列表（用于自动迁移数据）
+const OLD_KEYS = [
+    'x1_explore_creative_v4',  // v4 之前用的key
+    'x1_data',                   // 更早的key
+    'x1_explore_v3',
+    'X1_Explore_Data'
+];
+
+// ========== 配置数据 ==========
+const LEVELS = [
+    { lv: 1, icon: '🌱', name: '探险学徒', xp: 0, scene: '🏕️ 大本营' },
+    { lv: 2, icon: '🌿', name: '丛林新手', xp: 50, scene: '🌿 丛林区' },
+    { lv: 3, icon: '🧭', name: '洞穴探索者', xp: 150, scene: '🔢 数学洞穴' },
+    { lv: 4, icon: '⭐', name: '深海潜水员', xp: 300, scene: '🌊 英语海洋' },
+    { lv: 5, icon: '👑', name: '探险大王', xp: 500, scene: '🦕 远古平原' }
+];
+
+const TASKS = [
+    { id: 'chinese', icon: '📖', name: '语文探险', desc: '作业/预习/背诵', xp: 20, area: '🌿 丛林区' },
+    { id: 'math', icon: '🔢', name: '数学探险', desc: '作业/错题复习', xp: 20, area: '🔢 数学洞穴' },
+    { id: 'english', icon: '🔤', name: '英语探险', desc: '单词/听说练习', xp: 20, area: '🌊 英语海洋' },
+    { id: 'wrong', icon: '💪', name: '错题洞穴', desc: '本周错题复习', xp: 30, area: '🔢 数学洞穴' },
+    { id: 'habit', icon: '🏕️', name: '习惯打卡', desc: '任选1-3项好习惯', xp: 15, area: '🏕️ 大本营' },
+    { id: 'creative', icon: '🎨', name: '创造力任务', desc: '故事/实验/画画', xp: 25, area: '🎨 创造工坊' }
+];
+
+const CREATIVE_ACTIVITIES = [
+    { id: 'story', icon: '📚', name: '故事创作', desc: '和嘎嘎一起编故事', color: 'story', xp: 25 },
+    { id: 'science', icon: '🔬', name: '科学实验', desc: '做有趣的科学实验', color: 'science', xp: 30 },
+    { id: 'mathgame', icon: '🎮', name: '数学游戏', desc: '玩数学益智游戏', color: 'math', xp: 20 },
+    { id: 'art', icon: '🎨', name: '画画天地', desc: '画出你的想象力', color: 'art', xp: 25 }
+];
+
+const GAGA_POWERS = [
+    { icon: '📖', name: '讲故事', desc: '我会讲好多故事，还能一起编新故事！' },
+    { icon: '🔬', name: '教知识', desc: '我会回答各种问题，帮你学习新知识！' },
+    { icon: '🎨', name: '帮创作', desc: '一起写故事、编剧情、画图画！' },
+    { icon: '🎮', name: '玩中学', desc: '数学游戏、科学实验，边玩边学！' },
+    { icon: '💪', name: '改作业', desc: '帮你检查作业，找出错题！' },
+    { icon: '🌍', name: '开阔眼界', desc: '告诉你世界各地的有趣事情！' }
+];
+
+const MAP_AREAS = [
+    { id: 'camp', icon: '🏕️', name: '大本营', desc: '生活习惯', level: 'Lv1', unlocked: true },
+    { id: 'forest', icon: '🌿', name: '丛林区', desc: '语文探险', level: 'Lv2', unlocked: true },
+    { id: 'cave', icon: '🔢', name: '数学洞穴', desc: '数学探险', level: 'Lv3', unlocked: true },
+    { id: 'ocean', icon: '🌊', name: '英语海洋', desc: '英语探险', level: 'Lv4', unlocked: false },
+    { id: 'plain', icon: '🦕', name: '远古平原', desc: '科普兴趣', level: 'Lv5', unlocked: false },
+    { id: 'boss', icon: '🐉', name: '混沌龙殿', desc: '最终Boss', level: 'Boss', unlocked: false }
+];
+
+const MONSTERS = [
+    { id: 'lazy', icon: '😴', name: '懒惰怪', desc: '让你拖延', area: '大本营' },
+    { id: 'typo', icon: '🔤', name: '错字怪', desc: '写错字', area: '丛林区' },
+    { id: 'math', icon: '🔢', name: '乱算怪', desc: '算错题', area: '数学洞穴' },
+    { id: 'forget', icon: '🧠', name: '遗忘怪', desc: '忘单词', area: '英语海洋' },
+    { id: 'chaos', icon: '🐉', name: '混沌龙', desc: '最终Boss', area: '远古平原' }
+];
+
+const BADGES = [
+    { id: 'focus3', icon: '🧭', name: '专注探险家', desc: '连续3天番茄钟', condition: 'streak3' },
+    { id: 'wrong5', icon: '💪', name: '错题克星', desc: '搞懂5道错题', condition: 'wrong5' },
+    { id: 'proactive5', icon: '⚡', name: '勇敢启动', desc: '主动开始5次', condition: 'proactive5' },
+    { id: 'allsubject', icon: '📚', name: '全科霸主', desc: '一天完成所有科', condition: 'allsubject' },
+    { id: 'streak7', icon: '🔥', name: '探险连续7天', desc: '连续7天', condition: 'streak7' },
+    { id: 'taskking', icon: '🎯', name: '今日任务王', desc: '一天完成全部', condition: 'taskking' },
+    { id: 'earlybird', icon: '🌅', name: '早起鸟', desc: '7点前探险', condition: 'earlybird' },
+    { id: 'preview5', icon: '📖', name: '预习达人', desc: '连续5天预习', condition: 'preview5' },
+    { id: 'dino10', icon: '🦕', name: '远古生物专家', desc: '了解10个恐龙', condition: 'dino10' },
+    { id: 'animal10', icon: '🐾', name: '动物之友', desc: '了解10种动物', condition: 'animal10' },
+    { id: 'pet5', icon: '🐹', name: '宠物小专家', desc: '了解5种宠物', condition: 'pet5' },
+    { id: 'boss', icon: '👑', name: '探险大王', desc: '达到Lv5', condition: 'boss' },
+    { id: 'streak30', icon: '⭐', name: '全勤探险家', desc: '连续30天', condition: 'streak30' },
+    { id: 'week200', icon: '🎖️', name: '超级学霸', desc: '单周200+XP', condition: 'week200' },
+    { id: 'hero', icon: '🏅', name: '英雄勋章', desc: '击败区域首领', condition: 'hero' }
+];
+
+const SHOP_ITEMS = {
+    battle: [
+        { id: 'lightning', icon: '⚡', name: '知识闪电', price: 15, effect: '消灭1只怪兽' },
+        { id: 'shield', icon: '🛡️', name: '专注护盾', price: 20, effect: '防止1次干扰' },
+        { id: 'fire', icon: '🔥', name: '正确之火', price: 25, effect: '额外+10能量' },
+        { id: 'water', icon: '💧', name: '订正之水', price: 10, effect: '弱化怪兽防御' },
+        { id: 'wind', icon: '🌪️', name: '勤奋旋风', price: 30, effect: '攻击多只' }
+    ],
+    study: [
+        { id: 'light', icon: '🔦', name: '探照灯', price: 20, effect: '详细讲1题' },
+        { id: 'hourglass', icon: '⏳', name: '时光沙漏', price: 15, effect: '延15分钟' },
+        { id: 'magnifier', icon: '🔍', name: '错题放大镜', price: 25, effect: '分析错因' },
+        { id: 'scroll', icon: '📜', name: '知识百科卷', price: 30, effect: '解锁科普' },
+        { id: 'key', icon: '🗝️', name: '提示钥匙', price: 10, effect: '解题方向' },
+        { id: 'note', icon: '📝', name: '记忆便利贴', price: 5, effect: '标记重点' }
+    ],
+    special: [
+        { id: 'double', icon: '✨', name: '双倍能量符', price: 50, effect: '今日×2能量' },
+        { id: 'dice', icon: '🎲', name: '幸运骰子', price: 25, effect: '随机奖励' },
+        { id: 'crystal', icon: '🔮', name: '预言水晶', price: 40, effect: '查看剧情' },
+        { id: 'medal', icon: '🏅', name: '英雄勋章', price: 100, effect: '永久+5能量/天' }
+    ]
+};
+
+const PARTNERS = [
+    { id: 'triceratops', icon: '🦕', name: '小三角龙', nick: '尖尖', desc: '每日+3能量', condition: 'dino5' },
+    { id: 'cat', icon: '🐱', name: '小猫', nick: '橘橘', desc: '失败不扣', condition: 'habit5' },
+    { id: 'hamster', icon: '🐹', name: '小仓鼠', nick: '豆豆', desc: '专注+5分钟', condition: 'pomo10' },
+    { id: 'trex', icon: '🦖', name: '霸王龙', nick: '雷雷', desc: '战斗力翻倍', condition: 'lv4' },
+    { id: 'dolphin', icon: '🐬', name: '海豚', nick: '泡泡', desc: '英语+5', condition: 'english_ocean' }
+];
+
+const GAGA_QUOTES = [
+    '嘎嘎！今天也要加油哦~',
+    '烁烁快去做探险任务吧！',
+    '专注专注，嘎嘎嘎！',
+    '打败懒惰怪！加油！',
+    '你是最棒的小探险家！',
+    '知识能量越来越多了呢！',
+    '明天也要早起打卡哦~',
+    '嘎嘎嘎，学习真快乐！',
+    '爸爸会给你盖章的！',
+    '加油加油，嘎嘎嘎！💪',
+    '嘎嘎！任务完成了吗？',
+    '记得和嘎嘎一起探险哦~',
+    '嘎嘎会讲故事哦！',
+    '想编故事吗？找嘎嘎！',
+    '嘎嘎可以帮你写作文！'
+];
+
+// ========== 状态 ==========
+let state = {
+    xp: 0,
+    energy: 65,
+    streak: 0,
+    lastLogin: '',
+    loginDays: [],
+    points: 0,
+    gems: 0,      // 💎 宝石（累计财富）
+    creative: 0,
+    chatTickets: 0,  // 🎫 聊天券
+    tasks: { chinese: false, math: false, english: false, wrong: false, habit: false, creative: false },
+    pomo: { count: 0, xp: 0, isRunning: false, timeLeft: 25 * 60, mode: 'work' },
+    monsters: { lazy: false, typo: false, math: false, forget: false, chaos: false },
+    badges: {},
+    partners: {},
+    inventory: { lightning: 0, shield: 0, fire: 0, water: 0, wind: 0, light: 0, hourglass: 0, magnifier: 0, scroll: 0, key: 0, note: 0, double: 0, dice: 0, crystal: 0, medal: 0 },
+    secrets: [],
+    creativeTasks: { story: false, science: false, mathgame: false, art: false },
+    _version: '4.0'  // 数据版本号
+};
+
+let timerInterval = null;
+let currentShopTab = 'battle';
+let gagaClicks = 0;
+let gagaPowerIndex = 0;
+
+// ========== 初始化 ==========
+function init() {
+    loadState();
+    createStars();
+    cleanupLoginDays();  // 清理超过7天的旧数据
+    calculateStreak();   // 根据loginDays重新计算连续天数
+    renderAll();
+    startTimerTick();
+}
+
+function loadState() {
+    // 先尝试从固定key加载
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            state = {
+                ...state,
+                ...parsed,
+                points: parsed.points || 0,
+                gems: parsed.gems || 0,
+                creative: parsed.creative || 0,
+                chatTickets: parsed.chatTickets || 0,
+                secrets: parsed.secrets || [],
+                inventory: { ...state.inventory, ...(parsed.inventory || {}) },
+                creativeTasks: parsed.creativeTasks || { story: false, science: false, mathgame: false, art: false }
+            };
+            console.log('✅ 从固定key加载数据成功');
+            return;
+        }
+    } catch (e) {
+        console.error('从固定key加载失败:', e);
+    }
+    
+    // 固定key没有数据，尝试从旧key迁移
+    for (const oldKey of OLD_KEYS) {
+        try {
+            const oldData = localStorage.getItem(oldKey);
+            if (oldData) {
+                const parsed = JSON.parse(oldData);
+                // 迁移数据到新key
+                state = {
+                    ...state,
+                    ...parsed,
+                    points: parsed.points || 0,
+                    creative: parsed.creative || 0,
+                    secrets: parsed.secrets || [],
+                    inventory: { ...state.inventory, ...(parsed.inventory || {}) },
+                    creativeTasks: parsed.creativeTasks || { story: false, science: false, mathgame: false, art: false }
+                };
+                saveState();  // 立即保存到新key
+                console.log(`✅ 从旧key[${oldKey}]迁移数据成功`);
+                showNotification('📦 检测到历史数据，已自动迁移！\n\n你的打卡记录、积分、XP都保留啦~');
+                return;
+            }
+        } catch (e) {
+            console.error(`从旧key[${oldKey}]迁移失败:`, e);
+        }
+    }
+    
+    console.log('ℹ️ 没有找到历史数据，使用初始状态');
+}
+
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+        console.error('保存状态失败:', e);
+    }
+}
+
+function createStars() {
+    const c = document.getElementById('starsContainer');
+    for (let i = 0; i < 60; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2 + 1;
+        s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${size}px;height:${size}px;--d:${Math.random()*3+1}s;animation-delay:${Math.random()*3}s`;
+        c.appendChild(s);
+    }
+}
+
+function renderAll() {
+    renderUser();
+    renderStreak();
+    renderTasks();
+    renderCreative();
+    renderGagaPowers();
+    renderTimer();
+    renderMap();
+    renderMonsters();
+    renderBadges();
+    renderShopTabs();
+    renderShop();
+    renderPartners();
+}
+
+function getLevel() {
+    let result = LEVELS[0];
+    for (const lv of LEVELS) if (state.xp >= lv.xp) result = lv;
+    return result;
+}
+
+// ========== 用户信息 ==========
+function renderUser() {
+    const lv = getLevel();
+    const idx = LEVELS.indexOf(lv);
+    const nextLv = LEVELS[idx + 1];
+    
+    document.getElementById('levelIcon').textContent = lv.icon;
+    document.getElementById('levelName').textContent = lv.name;
+    document.getElementById('levelNum').textContent = lv.lv;
+    
+    document.getElementById('statXP').textContent = state.xp;
+    document.getElementById('statEnergy').textContent = state.energy;
+    document.getElementById('statStreak').textContent = state.streak;
+    document.getElementById('statPoints').textContent = state.points;
+    document.getElementById('statGems').textContent = state.gems;
+    document.getElementById('statCreative').textContent = state.creative;
+    document.getElementById('statChatTickets').textContent = state.chatTickets;
+    document.getElementById('chatTicketCount').textContent = state.chatTickets + ' 张';
+    
+    // 能量条
+    document.getElementById('energyPercent').textContent = state.energy + '%';
+    const ef = document.getElementById('energyFill');
+    ef.style.width = Math.min(state.energy, 100) + '%';
+    ef.className = 'energy-fill ' + (state.energy >= 80 ? 'energy-high' : state.energy >= 50 ? 'energy-mid' : 'energy-low');
+    
+    // XP条
+    const prevXP = lv.xp;
+    const nextXP = nextLv ? nextLv.xp : lv.xp;
+    const progress = nextLv ? Math.min((state.xp - prevXP) / (nextXP - prevXP) * 100, 100) : 100;
+    document.getElementById('xpFill').style.width = progress + '%';
+    document.getElementById('xpProgress').textContent = nextLv ? `${state.xp} / ${nextXP} XP` : 'MAX!';
+}
+
+// ========== 连续打卡 ==========
+function renderStreak() {
+    const bar = document.getElementById('streakBar');
+    bar.innerHTML = '';
+    for (let i = 1; i <= 7; i++) {
+        const day = document.createElement('div');
+        day.className = 'streak-day';
+        if (i <= state.streak) day.classList.add('claimed');
+        if (i === state.streak + 1 && state.streak < 7) day.classList.add('today');
+        day.innerHTML = `<span class="streak-num">第${i}天</span><span class="streak-label">+${i*5}</span>`;
+        bar.appendChild(day);
+    }
+    document.getElementById('streakDays').textContent = state.streak + '天';
+    
+    const btn = document.getElementById('loginBtn');
+    const today = new Date().toDateString();
+    const canClaim = !state.loginDays.includes(today);
+    btn.disabled = !canClaim;
+    btn.textContent = canClaim ? '📱 每日登录奖励 (+5积分)' : '✅ 今日已领取';
+}
+
+function checkLogin() {
+    const today = new Date().toDateString();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+    
+    if (state.lastLogin !== today) {
+        if (state.lastLogin === yesterdayStr) {
+            // 连续登录
+        } else if (state.lastLogin !== '') {
+            state.streak = 0;
+        }
+        state.lastLogin = today;
+        saveState();
+    }
+}
+
+function cleanupLoginDays() {
+    // 删除loginDays中超过7天的旧记录，防止数组无限增长
+    const today = new Date();
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    state.loginDays = state.loginDays.filter(day => new Date(day) >= sevenDaysAgo);
+}
+
+function calculateStreak() {
+    // 根据loginDays数组计算当前连续打卡天数
+    let streak = 0;
+    const checkDate = new Date();
+    const today = new Date().toDateString();
+    
+    // 如果今天还没打卡，从昨天开始数
+    if (!state.loginDays.includes(today)) {
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+    
+    // 从起始日期往前数，最多7天
+    for (let i = 0; i < 7; i++) {
+        const dateStr = checkDate.toDateString();
+        if (state.loginDays.includes(dateStr)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            break;  // 断了就不连续
+        }
+    }
+    state.streak = Math.min(streak, 7);
+    saveState();
+}
+
+function claimDailyLogin() {
+    const today = new Date().toDateString();
+    if (state.loginDays.includes(today)) return;
+    
+    state.loginDays.push(today);
+    state.lastLogin = today;
+    state.streak = Math.min(state.streak + 1, 7);
+    state.energy = Math.min(100, state.energy + 10);
+    state.xp += 5;
+    state.points += 5;
+    state.gems += 5;
+    
+    saveState();
+    renderStreak();
+    renderUser();
+    showNotification('📱 每日登录奖励！\n+5 XP, +5 积分, +5💎宝石, 能量+10%');
+    checkBadges();
+}
+
+// ========== 任务 ==========
+function renderTasks() {
+    const list = document.getElementById('taskList');
+    list.innerHTML = '';
+    let done = 0;
+    
+    TASKS.forEach(task => {
+        const completed = state.tasks[task.id];
+        if (completed) done++;
+        
+        const item = document.createElement('div');
+        item.className = `task-item ${completed ? 'completed' : ''}`;
+        item.onclick = () => toggleTask(task.id);
+        item.innerHTML = `
+            <div class="task-check">${completed ? '✓' : ''}</div>
+            <div class="task-icon">${task.icon}</div>
+            <div class="task-info">
+                <div class="task-name">${task.name} [${task.area}]</div>
+                <div class="task-desc">${task.desc}</div>
+            </div>
+            <div class="task-reward"><div class="reward-xp">${completed ? '✅' : '+'+task.xp + ' XP'}</div></div>
+        `;
+        list.appendChild(item);
+    });
+    
+    document.getElementById('taskCount').textContent = `${done}/6`;
+    document.getElementById('allDone').style.display = done === 6 ? 'block' : 'none';
+}
+
+function toggleTask(taskId) {
+    const task = TASKS.find(t => t.id === taskId);
+    if (!task) return;
+    
+    if (state.tasks[taskId]) {
+        showModal(`${task.icon} 取消完成`, `确定要取消【${task.name}】的完成状态吗？\n\n将扣除 ${task.xp} XP`, '确认取消', () => {
+            state.xp = Math.max(0, state.xp - task.xp);
+            state.tasks[taskId] = false;
+            state.points = Math.max(0, state.points - 5);
+            saveState();
+            renderTasks();
+            renderUser();
+            showNotification(`已取消【${task.name}】\n-${task.xp} XP`);
+        });
+        return;
+    }
+    
+    showModal(`${task.icon} 确认完成`, `确认完成【${task.name}】？\n\n奖励：+${task.xp} XP\n+5 积分, +5💎宝石\n${task.area}`, '确认完成', () => {
+        state.xp += task.xp;
+        state.energy = Math.min(100, state.energy + 10);
+        state.tasks[taskId] = true;
+        state.points += 5;
+        state.gems += 5;
+        state.inventory.lightning++;
+        state.chatTickets++;
+        
+        saveState();
+        renderTasks();
+        renderUser();
+        checkBadges();
+        
+        // 检查是否所有任务都完成了
+        const completedCount = Object.values(state.tasks).filter(Boolean).length;
+        if (completedCount === 6) {
+            state.chatTickets += 2;  // 额外奖励2张聊天券
+            showNotification(`🎉 ${task.name}完成！\n+${task.xp} XP, +5积分, +5💎宝石\n能量+10%\n获得⚡知识闪电×1\n🎫 获得1张聊天券！\n\n🎁 额外奖励：完成全部任务！\n🎫 额外获得2张聊天券！`);
+        } else {
+            showNotification(`🎉 ${task.name}完成！\n+${task.xp} XP, +5积分, +5💎宝石\n能量+10%\n获得⚡知识闪电×1\n🎫 获得1张聊天券！`);
+        }
+    });
+}
+
+// ========== 创造力工坊 ==========
+function renderCreative() {
+    const grid = document.getElementById('creativeGrid');
+    grid.innerHTML = '';
+    
+    CREATIVE_ACTIVITIES.forEach(activity => {
+        const card = document.createElement('div');
+        card.className = `creative-card ${activity.color}`;
+        card.onclick = () => openCreativeModal(activity.id);
+        card.innerHTML = `
+            <div class="creative-icon">${activity.icon}</div>
+            <div class="creative-name">${activity.name}</div>
+            <div class="creative-desc">${activity.desc}</div>
+            <button class="creative-btn btn-${activity.color}" onclick="event.stopPropagation(); openCreativeModal('${activity.id}')">开始创造</button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function openCreativeModal(activityId) {
+    const activity = CREATIVE_ACTIVITIES.find(a => a.id === activityId);
+    if (!activity) return;
+    
+    let content = '';
+    switch(activityId) {
+        case 'story':
+            content = `
+                <p><b>📚 故事创作任务</b></p>
+                <p>和嘎嘎一起编一个冒险故事吧！</p>
+                <p>📝 任务要求：</p>
+                <p>1. 选择一个主题（太空/海洋/恐龙/魔法等）</p>
+                <p>2. 创造主角和伙伴</p>
+                <p>3. 编一个有趣的情节</p>
+                <p>4. 写下来或讲给嘎嘎听</p>
+                <p style="margin-top: 10px;">💡 <b>提示</b>：可以问嘎嘎"我们编个故事吧！"</p>
+                <p style="margin-top: 10px;">✅ 完成后找爸爸确认，获得 <b>+25 XP, +15 创造力积分</b></p>
+            `;
+            break;
+        case 'science':
+            content = `
+                <p><b>🔬 科学实验任务</b></p>
+                <p>做一个有趣的科学小实验！</p>
+                <p>📝 任务要求：</p>
+                <p>1. 选择一个安全的小实验</p>
+                <p>2. 准备材料（问爸爸帮忙）</p>
+                <p>3. 动手做实验</p>
+                <p>4. 观察现象，记录下来</p>
+                <p style="margin-top: 10px;">💡 <b>实验推荐</b>：</p>
+                <p>- 彩虹牛奶（牛奶+食用色素+洗洁精）</p>
+                <p>- 漂浮的鸡蛋（水+盐）</p>
+                <p>- 纸杯电话（纸杯+棉线）</p>
+                <p style="margin-top: 10px;">✅ 完成后找爸爸确认，获得 <b>+30 XP, +20 创造力积分</b></p>
+            `;
+            break;
+        case 'mathgame':
+            content = `
+                <p><b>🎮 数学游戏任务</b></p>
+                <p>玩一个数学益智游戏！</p>
+                <p>📝 任务要求：</p>
+                <p>1. 选择一种数学游戏</p>
+                <p>2. 玩5-10分钟</p>
+                <p>3. 挑战自己的最高分</p>
+                <p style="margin-top: 10px;">💡 <b>游戏推荐</b>：</p>
+                <p>- 24点游戏（用4张牌算出24）</p>
+                <p>- 数独（9×9格子填数字）</p>
+                <p>- 口算挑战（快速算加减乘除）</p>
+                <p style="margin-top: 10px;">✅ 完成后找爸爸确认，获得 <b>+20 XP, +10 创造力积分</b></p>
+            `;
+            break;
+        case 'art':
+            content = `
+                <p><b>🎨 画画天地任务</b></p>
+                <p>画出你的想象力和创意！</p>
+                <p>📝 任务要求：</p>
+                <p>1. 选择一个主题</p>
+                <p>2. 用彩笔/蜡笔画出来</p>
+                <p>3. 给画起个名字</p>
+                <p>4. 讲讲画里的故事</p>
+                <p style="margin-top: 10px;">💡 <b>主题推荐</b>：</p>
+                <p>- 我心中的未来城市</p>
+                <p>- 和恐龙一起探险</p>
+                <p>- 太空中的奇妙星球</p>
+                <p style="margin-top: 10px;">✅ 完成后找爸爸确认，获得 <b>+25 XP, +15 创造力积分</b></p>
+            `;
+            break;
+    }
+    
+    document.getElementById('creativeModalTitle').textContent = `${activity.icon} ${activity.name}`;
+    document.getElementById('creativeModalContent').innerHTML = content;
+    document.getElementById('creativeModal').classList.add('show');
+}
+
+function closeCreativeModal() {
+    document.getElementById('creativeModal').classList.remove('show');
+}
+
+// ========== 嘎嘎能力 ==========
+function renderGagaPowers() {
+    const grid = document.getElementById('powerGrid');
+    grid.innerHTML = '';
+    
+    GAGA_POWERS.forEach(power => {
+        const card = document.createElement('div');
+        card.className = 'power-card';
+        card.onclick = () => showGagaPowerDetail(power);
+        card.innerHTML = `
+            <div class="power-icon">${power.icon}</div>
+            <div class="power-name">${power.name}</div>
+            <div class="power-desc">${power.desc}</div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function showGagaPowerDetail(power) {
+    showNotification(`🦆 嘎嘎的【${power.name}】本领\n\n${power.desc}\n\n烁烁，你可以直接问我哦~\n点击嘎嘎开始吧！`);
+}
+
+// ========== 番茄钟 ==========
+function renderTimer() {
+    const p = state.pomo;
+    const total = p.mode === 'work' ? 25 * 60 : 5 * 60;
+    const elapsed = total - p.timeLeft;
+    const progress = elapsed / total;
+    const circ = 2 * Math.PI * 70;
+    
+    document.getElementById('timerProgress').style.strokeDasharray = circ;
+    document.getElementById('timerProgress').style.strokeDashoffset = circ * (1 - progress);
+    
+    const m = Math.floor(p.timeLeft / 60);
+    const s = p.timeLeft % 60;
+    document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    
+    const btn = document.getElementById('timerBtn');
+    if (p.isRunning) {
+        btn.textContent = '⏸ 暂停';
+        btn.className = 'timer-btn btn-pause';
+    } else {
+        btn.textContent = p.timeLeft < total ? '▶ 继续' : '▶ 开始探险';
+        btn.className = 'timer-btn btn-start';
+    }
+    
+    document.getElementById('timerStatus').textContent = p.isRunning ? (p.mode === 'work' ? '专注探险中... 💪' : '休息中... ☕') : (p.timeLeft < total ? '已暂停' : '准备开始专注 ✨');
+    document.getElementById('pomoCount').textContent = p.count;
+    document.getElementById('pomoXP').textContent = p.xp;
+}
+
+function toggleTimer() {
+    state.pomo.isRunning = !state.pomo.isRunning;
+    if (state.pomo.isRunning && !timerInterval) startTimerTick();
+    renderTimer();
+    saveState();
+}
+
+function startTimerTick() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (!state.pomo.isRunning) return;
+        state.pomo.timeLeft--;
+        if (state.pomo.timeLeft <= 0) onTimerEnd();
+        renderTimer();
+        saveState();
+    }, 1000);
+}
+
+function onTimerEnd() {
+    state.pomo.isRunning = false;
+    const p = state.pomo;
+    
+    if (p.mode === 'work') {
+        p.count++;
+        p.xp += 10;
+        state.xp += 10;
+        state.points += 5;
+        state.inventory.shield++;
+        saveState();
+        renderUser();
+        showNotification(`⏱️ 专注探险完成！\n+10 XP, +5积分\n获得🛡️专注护盾×1\n休息5分钟吧~`);
+        p.mode = 'break';
+        p.timeLeft = 5 * 60;
+        checkBadges();
+    } else {
+        showNotification('☀️ 休息结束！继续加油！');
+        p.mode = 'work';
+        p.timeLeft = 25 * 60;
+    }
+    renderTimer();
+}
+
+function resetTimer() {
+    state.pomo.isRunning = false;
+    state.pomo.mode = 'work';
+    state.pomo.timeLeft = 25 * 60;
+    renderTimer();
+    saveState();
+}
+
+// ========== 知识大陆 ==========
+function renderMap() {
+    const grid = document.getElementById('mapGrid');
+    grid.innerHTML = '';
+    const lv = getLevel().lv;
+    
+    MAP_AREAS.forEach(area => {
+        const card = document.createElement('div');
+        const areaLevel = area.level === 'Boss' ? 5 : parseInt(area.level.replace('Lv',''));
+        const unlocked = area.id === 'boss' ? lv >= 5 && state.monsters.chaos : lv >= areaLevel;
+        
+        card.className = `map-card ${unlocked ? 'unlocked' : 'locked'}`;
+        if (unlocked && area.id !== 'boss') {
+            const scene = getLevel().scene;
+            if (scene.includes(area.name) || (area.id === 'camp' && scene.includes('大本营')) || (area.id === 'forest' && scene.includes('丛林')) || (area.id === 'cave' && scene.includes('洞穴')) || (area.id === 'ocean' && scene.includes('海洋')) || (area.id === 'plain' && scene.includes('平原'))) {
+                card.classList.add('current');
+            }
+        }
+        
+        card.innerHTML = `
+            <div class="map-icon">${area.icon}</div>
+            <div class="map-name">${area.name}</div>
+            <div class="map-desc">${area.desc}</div>
+            <div class="map-level">${area.level}</div>
+        `;
+        
+        if (unlocked) {
+            card.onclick = () => {
+                showNotification(`${area.icon} ${area.name}\n${area.desc}\n继续探险！`);
+            };
+        }
+        grid.appendChild(card);
+    });
+}
+
+// ========== 迷雾怪兽 ==========
+function renderMonsters() {
+    const grid = document.getElementById('monsterGrid');
+    grid.innerHTML = '';
+    let defeated = 0;
+    
+    MONSTERS.forEach(m => {
+        const isDefeated = state.monsters[m.id];
+        if (isDefeated) defeated++;
+        
+        const card = document.createElement('div');
+        card.className = `monster-card ${isDefeated ? 'defeated' : ''}`;
+        card.innerHTML = `
+            <div class="monster-icon">${m.icon}</div>
+            <div class="monster-name">${m.name}</div>
+            <span class="monster-badge ${isDefeated ? 'badge-done' : 'badge-active'}">${isDefeated ? '已打败' : '待打败'}</span>
+        `;
+        
+        if (!isDefeated) {
+            card.onclick = () => defeatMonster(m.id);
+            card.style.cursor = 'pointer';
+        } else {
+            card.style.cursor = 'default';
+        }
+        
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('monsterCount').textContent = `${defeated}/5`;
+}
+
+function defeatMonster(id) {
+    if (state.monsters[id]) return;
+    
+    const monster = MONSTERS.find(m => m.id === id);
+    
+    if (state.inventory.lightning > 0) {
+        showModal(`${monster.icon} 使用道具`, `是否使用【⚡知识闪电】打败${monster.name}？\n\n持有：${state.inventory.lightning}个`, '使用道具', () => {
+            state.inventory.lightning--;
+            state.monsters[id] = true;
+            state.xp += 50;
+            state.energy = Math.min(100, state.energy + 15);
+            state.points += 10;
+            saveState();
+            renderMonsters();
+            renderUser();
+            renderShop();
+            showNotification(`⚔️ 使用知识闪电！\n${monster.icon} ${monster.name}已打败！\n+50 XP, +10积分, 能量+15%`);
+            checkBadges();
+        });
+    } else {
+        showModal(`${monster.icon} 打败怪兽`, `确定要打败【${monster.name}】吗？\n\n消耗：1个⚡知识闪电\n\n如果没有道具，完成任务可以获得`, '确定打败', () => {
+            if (state.inventory.lightning > 0) {
+                state.inventory.lightning--;
+                state.monsters[id] = true;
+                state.xp += 50;
+                state.energy = Math.min(100, state.energy + 15);
+                state.points += 10;
+                saveState();
+                renderMonsters();
+                renderUser();
+                renderShop();
+                showNotification(`⚔️ ${monster.icon} ${monster.name}已打败！\n+50 XP, +10积分, 能量+15%`);
+                checkBadges();
+            } else {
+                showNotification('⚡知识闪电不足！\n完成任务可以获得', true);
+            }
+        });
+    }
+}
+
+// ========== 徽章 ==========
+function renderBadges() {
+    const grid = document.getElementById('badgeGrid');
+    grid.innerHTML = '';
+    let count = 0;
+    
+    BADGES.forEach(b => {
+        const unlocked = state.badges[b.id];
+        if (unlocked) count++;
+        
+        const card = document.createElement('div');
+        card.className = `badge-card ${unlocked ? 'unlocked' : ''}`;
+        card.innerHTML = `
+            <div class="badge-icon">${b.icon}</div>
+            <div class="badge-name">${b.name}</div>
+            <div class="badge-desc">${unlocked ? '已解锁' : b.desc}</div>
+        `;
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('badgeCount').textContent = `${count}/15`;
+}
+
+function unlockBadge(id) {
+    if (state.badges[id]) return;
+    state.badges[id] = true;
+    state.xp += 30;
+    state.points += 10;
+    saveState();
+    renderBadges();
+    renderUser();
+    const b = BADGES.find(x => x.id === id);
+    showNotification(`🏆 徽章解锁！\n${b.icon} ${b.name}\n+30 XP, +10积分`);
+}
+
+function checkBadges() {
+    if (state.pomo.count >= 3) unlockBadge('focus3');
+    if (state.streak >= 7) unlockBadge('streak7');
+    if (state.streak >= 30) unlockBadge('streak30');
+    if (getLevel().lv >= 5) unlockBadge('boss');
+    const taskDone = Object.values(state.tasks).filter(Boolean).length;
+    if (taskDone === 6) {
+        unlockBadge('taskking');
+        unlockBadge('allsubject');
+    }
+    const now = new Date();
+    if (now.getHours() < 7) unlockBadge('earlybird');
+}
+
+// ========== 道具商城 ==========
+function renderShopTabs() {
+    const tabs = document.getElementById('shopTabs');
+    const cats = [{id:'battle',name:'⚔️战斗'},{id:'study',name:'📚学习'},{id:'special',name:'✨特效'}];
+    tabs.innerHTML = cats.map(c => `<div class="shop-tab ${c.id===currentShopTab?'active':''}" onclick="switchShopTab('${c.id}')">${c.name}</div>`).join('');
+}
+
+function switchShopTab(tab) {
+    currentShopTab = tab;
+    renderShopTabs();
+    renderShop();
+}
+
+function renderShop() {
+    const grid = document.getElementById('shopGrid');
+    const items = SHOP_ITEMS[currentShopTab] || [];
+    grid.innerHTML = items.map(item => {
+        const owned = state.inventory[item.id] || 0;
+        const canBuy = state.points >= item.price;
+        return `
+            <div class="shop-card ${canBuy?'':'disabled'}" ${canBuy?`onclick="buyItem('${item.id}')"`:''}>
+                <div class="shop-icon">${item.icon}</div>
+                <div class="shop-name">${item.name}</div>
+                <div class="shop-price">💰 ${item.price}</div>
+                <div class="shop-effect">${item.effect}</div>
+                ${owned > 0 ? `<div style="font-size:0.65rem;color:var(--gold);margin-top:3px">持有:${owned}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function buyItem(itemId) {
+    let item = null;
+    for (const cat of Object.values(SHOP_ITEMS)) {
+        const found = cat.find(i => i.id === itemId);
+        if (found) { item = found; break; }
+    }
+    if (!item || state.points < item.price) {
+        showNotification('积分不足！继续加油~', true);
+        return;
+    }
+    
+    showModal(`${item.icon} 兑换确认`, `确认兑换【${item.name}】？\n需要 ${item.price} 积分\n\n持有积分：${state.points}\n\n效果：${item.effect}`, '确认兑换', () => {
+        state.points -= item.price;
+        state.inventory[item.id] = (state.inventory[item.id] || 0) + 1;
+        saveState();
+        renderShop();
+        renderUser();
+        showNotification(`🎁 兑换成功！\n${item.icon} ${item.name}\n找爸爸兑现哦~\n剩余积分：${state.points}`);
+    });
+}
+
+// ========== 伙伴 ==========
+function renderPartners() {
+    const grid = document.getElementById('partnerGrid');
+    grid.innerHTML = '';
+    let count = 0;
+    
+    PARTNERS.forEach(p => {
+        const unlocked = state.partners[p.id];
+        if (unlocked) count++;
+        
+        const card = document.createElement('div');
+        card.className = `partner-card ${unlocked ? 'unlocked' : ''}`;
+        card.innerHTML = `
+            <div class="partner-icon">${p.icon}</div>
+            <div class="partner-name">${p.nick}</div>
+            <div class="partner-desc">${unlocked ? p.desc : '???'}</div>
+        `;
+        
+        if (!unlocked) {
+            card.onclick = () => tryUnlockPartner(p.id);
+            card.style.cursor = 'pointer';
+        } else {
+            card.style.cursor = 'default';
+        }
+        
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('partnerCount').textContent = `${count}/5`;
+}
+
+function tryUnlockPartner(partnerId) {
+    const partner = PARTNERS.find(p => p.id === partnerId);
+    let canUnlock = false;
+    let conditionText = '';
+    
+    switch(partner.condition) {
+        case 'dino5':
+            canUnlock = state.badges.dino10;
+            conditionText = '需要解锁【远古生物专家】徽章';
+            break;
+        case 'habit5':
+            canUnlock = state.streak >= 5;
+            conditionText = '需要连续打卡5天';
+            break;
+        case 'pomo10':
+            canUnlock = state.pomo.count >= 10;
+            conditionText = '需要完成10轮番茄钟';
+            break;
+        case 'lv4':
+            canUnlock = getLevel().lv >= 4;
+            conditionText = '需要达到Lv4';
+            break;
+        case 'english_ocean':
+            canUnlock = state.tasks.english && getLevel().lv >= 4;
+            conditionText = '需要完成英语探险并达到Lv4';
+            break;
+    }
+    
+    if (canUnlock) {
+        showModal(`${partner.icon} 解锁伙伴`, `确定要解锁【${partner.nick}】吗？\n\n${partner.name}\n效果：${partner.desc}`, '确定解锁', () => {
+            state.partners[partnerId] = true;
+            state.xp += 40;
+            state.points += 15;
+            saveState();
+            renderPartners();
+            renderUser();
+            showNotification(`🎉 伙伴解锁！\n${partner.icon} ${partner.nick}加入了！\n+40 XP, +15积分`);
+        });
+    } else {
+        showModal(`${partner.icon} 解锁条件`, `【${partner.nick}】的解锁条件：\n\n${conditionText}\n\n继续努力吧！`, '知道了', () => {});
+    }
+}
+
+// ========== 悄悄话 ==========
+function sendSecret() {
+    const input = document.getElementById('secretInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const secret = {
+        text: text,
+        time: new Date().toLocaleString('zh-CN'),
+        from: '烁烁'
+    };
+    state.secrets.push(secret);
+    saveState();
+    
+    showNotification(`💬 悄悄话已发送！\n\n"${text.substring(0, 20)}${text.length > 20 ? '...' : ''}"\n\n爸爸会看到的~`);
+    input.value = '';
+}
+
+// ========== 嘎嘎 ==========
+function onGagaClick() {
+    gagaClicks++;
+    const c = document.getElementById('gagaContainer');
+    const speech = document.getElementById('gagaSpeech');
+    const chatBtn = document.getElementById('gagaChatBtn');
+    const tickets = state.chatTickets;
+    
+    // 显示聊天券信息
+    if (tickets > 0) {
+        speech.innerHTML = `嘎嘎！你有 <b>${tickets}</b> 张聊天券！<br><br>点击【开始聊天】按钮，<br>消耗1张券和我聊天吧！<br><br>💡 完成作业可以获得更多聊天券哦~`;
+        chatBtn.style.display = 'block';
+    } else {
+        speech.innerHTML = `嘎嘎！你没有聊天券了！<br><br>快去完成作业吧！<br>每完成1个任务获得1张聊天券~<br><br>💡 完成后记得来这里打卡哦！`;
+        chatBtn.style.display = 'none';
+    }
+    c.classList.add('show');
+    setTimeout(() => c.classList.remove('show'), 5000);
+}
+
+function startChat() {
+    if (state.chatTickets <= 0) {
+        showNotification('聊天券不足！\n完成作业获得更多聊天券~', true);
+        return;
+    }
+    
+    showModal('🎫 开始聊天', `确定要消耗1张聊天券吗？\n\n当前聊天券：${state.chatTickets}张\n\n💡 找爸爸/妈妈允许你使用平板\n   和嘎嘎聊天哦~`, '确定使用', () => {
+        state.chatTickets--;
+        saveState();
+        renderUser();
+        showNotification(`🎉 开始聊天！\n剩余聊天券：${state.chatTickets}张\n\n找爸爸/妈妈允许你使用平板~\n\n💡 聊天时间建议不超过20分钟哦！`);
+        
+        // 更新嘎嘎气泡
+        const speech = document.getElementById('gagaSpeech');
+        speech.innerHTML = `🎉 聊天开始！\n\n剩余聊天券：${state.chatTickets}张\n\n记得和嘎嘎分享今天的有趣事情哦~`;
+    });
+}
+
+// ========== 弹窗 ==========
+function showModal(title, desc, confirmText, onConfirm) {
+    document.getElementById('modalIcon').textContent = '📋';
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalDesc').textContent = desc;
+    document.getElementById('modalConfirm').textContent = confirmText;
+    const modal = document.getElementById('modal');
+    modal.classList.add('show');
+    document.getElementById('modalConfirm').onclick = () => { modal.classList.remove('show'); onConfirm(); };
+    document.getElementById('modalCancel').onclick = () => modal.classList.remove('show');
+}
+
+// ========== 通知 ==========
+function showNotification(msg, isError = false) {
+    const el = document.getElementById('notification');
+    el.textContent = msg;
+    el.className = 'notification' + (isError ? ' error' : '');
+    setTimeout(() => el.classList.add('show'), 10);
+    setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ========== 启动 ==========
+init();
+</script>
+</body>
+</html>
