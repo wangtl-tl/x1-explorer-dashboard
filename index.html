@@ -677,6 +677,38 @@ function init() {
     renderAll();
     startTimerTick();
     loadDynamicContent();  // 加载动态内容
+    startAutoRefresh();     // 启动自动刷新（每60秒）
+}
+
+// 自动刷新：每60秒检测服务器数据更新
+let autoRefreshInterval = null;
+let lastDataUpdate = '';
+function startAutoRefresh() {
+    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+    autoRefreshInterval = setInterval(async () => {
+        try {
+            const response = await fetch('data.json?t=' + Date.now());
+            if (!response.ok) return;
+            const data = await response.json();
+            if (data.last_updated && data.last_updated !== lastDataUpdate) {
+                if (lastDataUpdate !== '') {
+                    showNotification('🔄 检测到新数据！正在自动刷新...');
+                    setTimeout(() => location.reload(), 1500);
+                    return;
+                }
+                lastDataUpdate = data.last_updated;
+            }
+            if (data.chat_tickets !== undefined) {
+                const serverCount = parseInt(data.chat_tickets) || 0;
+                if (state.chatTickets !== serverCount) {
+                    state.chatTickets = serverCount;
+                    saveState();
+                    renderUser();
+                    showNotification('🎫 聊天券已同步！当前：' + serverCount + '张');
+                }
+            }
+        } catch (e) { /* 忽略网络错误 */ }
+    }, 60000);
 }
 
 function loadState() {
@@ -1636,6 +1668,11 @@ async function loadDynamicContent() {
                 saveState();
                 renderUser();
             }
+        }
+
+        // 初始化 lastDataUpdate（用于自动刷新检测）
+        if (data.last_updated) {
+            lastDataUpdate = data.last_updated;
         }
         
     } catch (error) {
