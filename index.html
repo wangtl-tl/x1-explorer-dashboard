@@ -146,6 +146,13 @@
         .btn-science { background: var(--science); color: #fff; }
         .btn-math { background: var(--purple); color: #fff; }
         .btn-art { background: var(--art); color: var(--text); }
+
+        /* 爸爸确认专区 */
+        .dad-confirm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+        .dad-confirm-btn { padding: 10px 8px; background: rgba(255,255,255,0.25); border: 2px solid rgba(255,255,255,0.4); border-radius: 12px; color: #fff; font-size: 0.78rem; font-weight: bold; cursor: pointer; transition: all 0.3s; text-align: center; }
+        .dad-confirm-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.03); }
+        .dad-confirm-btn.confirmed { background: rgba(76,175,80,0.5); border-color: #81C784; cursor: default; }
+        .dad-confirm-btn.confirmed::after { content: ' ✅'; }
         
         /* 嘎嘎能力卡片 */
         .gaga-power-section { background: linear-gradient(135deg, #FFD54F, #FFA726); border: none; color: #5D4037; box-shadow: 0 4px 12px rgba(255,213,79,0.25); }
@@ -271,7 +278,9 @@
         .creative-modal.show { opacity: 1; pointer-events: auto; }
         .creative-modal-box { background: #fff; border-radius: 20px; padding: 22px; max-width: 360px; width: 90%; max-height: 80vh; overflow-y: auto; transform: scale(0.9); transition: transform 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .creative-modal.show .creative-modal-box { transform: scale(1); }
-        .creative-modal-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; text-align: center; color: var(--text); }
+        .creative-modal-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; text-align: center; color: var(--text); position: relative; }
+        .creative-modal-close { position: absolute; top: -5px; right: -5px; width: 32px; height: 32px; background: #FF5252; color: #fff; border: none; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 2px 8px rgba(255,82,82,0.3); line-height: 1; }
+        .creative-modal-close:hover { background: #E53935; transform: scale(1.15); }
         .creative-modal-content { font-size: 0.85rem; line-height: 1.7; color: var(--text-muted); }
         
         @media (max-width: 400px) {
@@ -300,9 +309,9 @@
     </div>
     
     <!-- 创造力任务弹窗 -->
-    <div class="creative-modal" id="creativeModal">
+    <div class="creative-modal" id="creativeModal" onclick="if(event.target===this)closeCreativeModal()">
         <div class="creative-modal-box">
-            <div class="creative-modal-title" id="creativeModalTitle"></div>
+            <div class="creative-modal-title" id="creativeModalTitle"><button class="creative-modal-close" onclick="closeCreativeModal()">✕</button></div>
             <div class="creative-modal-content" id="creativeModalContent"></div>
             <button class="secret-btn" style="margin-top: 15px;" onclick="closeCreativeModal()">关闭</button>
         </div>
@@ -403,9 +412,16 @@
             <div class="all-done" id="allDone">🎉 太棒了！今日任务全部完成！</div>
         </div>
         
+        <!-- 爸爸确认 -->
+        <div class="section" id="dadConfirmSection" style="background: linear-gradient(135deg, #4A90D9, #7C4DFF); border: none;">
+            <div class="section-title" style="justify-content:center; color: #fff;">👨 爸爸确认任务</div>
+            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-align: center; margin-bottom: 12px;">爸爸，烁烁完成作业后，请点击对应任务确认：</p>
+            <div class="dad-confirm-grid" id="dadConfirmGrid"></div>
+        </div>
+
         <!-- 创造力工坊 -->
         <div class="section" style="background: linear-gradient(135deg, #FF6B6B, #FFE66D); border: none; color: var(--bg-dark);">
-            <div class="section-title" style="color: var(--bg-dark);">🎨 创造力工坊 <span class="count" id="creativeCount" style="color: var(--bg-dark);">点击探索</span></div>
+          <div class="section-title" style="color: var(--bg-dark);">🎨 创造力工坊 <span class="count" id="creativeCount" style="color: var(--bg-dark);">点击探索</span></div>
             <div class="creative-grid" id="creativeGrid"></div>
             <p style="font-size: 0.75rem; margin-top: 10px; text-align: center; color: rgba(0,0,0,0.7);">💡 点击卡片开始创造！完成后找爸爸确认获得创造力积分~</p>
         </div>
@@ -919,6 +935,9 @@ function renderTasks() {
         };
         list.parentNode.insertBefore(btn, document.getElementById('allDone'));
     }
+
+    // 渲染爸爸确认按钮
+    renderDadConfirm();
 }
 
 function toggleTask(taskId) {
@@ -960,6 +979,61 @@ function toggleTask(taskId) {
         } else {
             showNotification(`🎉 ${task.name}完成！\n+${task.xp} XP, +5积分, +5💎宝石\n能量+10%\n获得⚡知识闪电×1\n🎫 获得1张聊天券！`);
         }
+    });
+}
+
+// ========== 爸爸确认 & 企微推送 ==========
+const WECOM_WEBHOOK = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=fe8c4cca-7fea-4121-b8e8-9c2c1e8890c5';
+
+function renderDadConfirm() {
+    const grid = document.getElementById('dadConfirmGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    TASKS.forEach(task => {
+        const btn = document.createElement('button');
+        btn.className = `dad-confirm-btn ${state.tasks[task.id] ? 'confirmed' : ''}`;
+        btn.innerHTML = `${task.icon} ${task.name}`;
+        if (!state.tasks[task.id]) {
+            btn.onclick = () => confirmTaskByDad(task.id);
+        }
+        grid.appendChild(btn);
+    });
+}
+
+function sendWecomMessage(content) {
+    fetch(WECOM_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            msgtype: 'text',
+            text: { content: content }
+        })
+    })
+    .then(res => res.json())
+    .then(data => console.log('企微消息发送结果:', data))
+    .catch(err => console.error('企微消息发送失败:', err));
+}
+
+function confirmTaskByDad(taskId) {
+    const task = TASKS.find(t => t.id === taskId);
+    if (!task || state.tasks[taskId]) return;
+    showModal(`${task.icon} 爸爸确认完成`, `确定要确认【${task.name}】已完成吗？\n\n将发放奖励：\n+${task.xp} XP\n+10 积分\n+1张聊天券`, '确认完成', () => {
+        state.xp += task.xp;
+        state.energy = Math.min(100, state.energy + 10);
+        state.tasks[taskId] = true;
+        state.points += 10;
+        state.gems += 5;
+        state.chatTickets++;
+        const completedCount = Object.values(state.tasks).filter(Boolean).length;
+        if (completedCount === 6) {
+            state.chatTickets += 2;
+            showNotification(`🎉 全部任务完成！额外奖励 +2 聊天券！`);
+        }
+        saveState();
+        renderAll();
+        const msg = `【X1系统】任务完成确认\n👦 学生：王烁然\n📋 任务：${task.name}\n✅ 状态：已完成\n🕐 时间：${new Date().toLocaleString('zh-CN')}\n🎁 奖励：+${task.xp} XP，+10积分，+1聊天券`;
+        sendWecomMessage(msg);
+        showNotification(`✅ ${task.name}确认完成！企微群已通知`);
     });
 }
 
@@ -1050,7 +1124,7 @@ function openCreativeModal(activityId) {
             break;
     }
     
-    document.getElementById('creativeModalTitle').textContent = `${activity.icon} ${activity.name}`;
+    document.getElementById('creativeModalTitle').innerHTML = `<button class="creative-modal-close" onclick="closeCreativeModal()">✕</button>${activity.icon} ${activity.name}`;
     document.getElementById('creativeModalContent').innerHTML = content;
     document.getElementById('creativeModal').classList.add('show');
 }
