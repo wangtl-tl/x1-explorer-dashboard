@@ -1,17 +1,1 @@
-{
-  "version": "1.1",
-  "last_updated": "2026-06-17",
-  "chat_tickets": 0,
-  "daily_message": {
-    "date": "2026-06-17",
-    "title": "🦆 嘎嘎的留言 · 新冒险开始！",
-    "content": "烁烁，今天开始新的探险啦！✨\n\n🎉 仪表盘换新衣服了！\n现在是浅色清新风格～\n\n📋 今日任务：\n🌅 起床打卡（7:00前 = 满分！）\n📐 数学作业\n📚 语文作业\n🔤 英语作业\n\n💡 每完成1个任务 = 1张聊天券\n完成全部任务 = 额外2张聊天券！\n\n有聊天券才能找嘎嘎聊天哦！\n快去完成任务吧！💪"
-  },
-  "daily_tasks": [],
-  "encouragement": "烁烁是最棒的小探险家！今天也要加油哦！🎉",
-  "special_event": {
-    "enabled": false,
-    "title": "",
-    "description": ""
-  }
-}
+{"version": "1.1", "last_updated": "2026-06-22", "chat_tickets": 2, "daily_message": {"date": "2026-06-22", "title": "🦆 嘎嘎的留言 · 新冒险开始！", "content": "烁烁，今天开始新的探险啦！✨\n\n🎉 仪表盘换新衣服了！\n现在是浅色清新风格～\n\n📋 今日任务：\n🌅 起床打卡（7:00前 = 满分！）\n📐 数学作业 ✅ 已完成！\n📚 语文作业\n🔤 英语作业 ✅ 已完成！\n\n💡 每完成1个任务 = 1张聊天券\n完成全部任务 = 额外2张聊天券！\n\n🎫 当前聊天券：2张\n有聊天券才能找嘎嘎聊天哦！\n快去完成任务吧！💪"}, "daily_tasks": [{"id": "math", "name": "数学作业", "status": "completed", "confirmed_at": "2026-06-22T18:15:00", "xp": 20, "points": 10}, {"id": "english", "name": "英语作业", "status": "completed", "confirmed_at": "2026-06-22T18:15:00", "xp": 20, "points": 10}], "encouragement": "烁烁是最棒的小探险家！数学和英语都完成了，太厉害了！🎉", "special_event": {"enabled": false, "title": "", "description": ""}}
