@@ -637,6 +637,16 @@ const GAGA_QUOTES = [
 ];
 
 // ========== 状态 ==========
+// ⭐ 内嵌 fallback 数据（当 localStorage 被清零或 fetch 失败时的安全网）
+const FALLBACK_STATE = {
+    xp: 5,
+    energy: 75,
+    points: 5,
+    gems: 65,
+    creative: 0,
+    chatTickets: 0
+};
+
 let state = {
     xp: 0,
     energy: 65,
@@ -655,7 +665,7 @@ let state = {
     inventory: { lightning: 0, shield: 0, fire: 0, water: 0, wind: 0, light: 0, hourglass: 0, magnifier: 0, scroll: 0, key: 0, note: 0, double: 0, dice: 0, crystal: 0, medal: 0 },
     secrets: [],
     creativeTasks: { story: false, science: false, mathgame: false, art: false },
-    _version: '4.0'  // 数据版本号
+    _version: '4.1'  // 数据版本号
 };
 
 let timerInterval = null;
@@ -664,6 +674,7 @@ let gagaClicks = 0;
 let gagaPowerIndex = 0;
 
 // ========== 初始化 ==========
+let syncInterval = null;
 function init() {
     loadState();
     // 确保嘎嘎（小黄鸭）默认解锁
@@ -674,41 +685,35 @@ function init() {
     createStars();
     cleanupLoginDays();  // 清理超过7天的旧数据
     calculateStreak();   // 根据loginDays重新计算连续天数
+
+    // ⭐ 数据自检：如果 gems=0 但 xp>0 或 points>0，说明数据被异常清零，用 fallback 恢复
+    const needsRecovery = (state.gems === 0 && (state.xp > 0 || state.points > 0));
+    if (needsRecovery) {
+        console.warn('⚠️ 检测到数据异常（gems=0但有活跃记录），正在从 fallback 恢复...');
+        let recovered = false;
+        Object.keys(FALLBACK_STATE).forEach(key => {
+            if (FALLBACK_STATE[key] > 0 && state[key] === 0) {
+                console.log(`🔧 恢复 ${key}：${state[key]} → ${FALLBACK_STATE[key]}`);
+                state[key] = FALLBACK_STATE[key];
+                recovered = true;
+            }
+        });
+        if (recovered) {
+            saveState();
+            console.log('✅ 数据恢复完成！');
+        }
+    }
+
     renderAll();
     startTimerTick();
     loadDynamicContent();  // 加载动态内容
-    startAutoRefresh();     // 启动自动刷新（每60秒）
-}
-
-// 自动刷新：每60秒检测服务器数据更新
-let autoRefreshInterval = null;
-let lastDataUpdate = '';
-function startAutoRefresh() {
-    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-    autoRefreshInterval = setInterval(async () => {
-        try {
-            const response = await fetch('data.json?t=' + Date.now());
-            if (!response.ok) return;
-            const data = await response.json();
-            if (data.last_updated && data.last_updated !== lastDataUpdate) {
-                if (lastDataUpdate !== '') {
-                    showNotification('🔄 检测到新数据！正在自动刷新...');
-                    setTimeout(() => location.reload(), 1500);
-                    return;
-                }
-                lastDataUpdate = data.last_updated;
-            }
-            if (data.chat_tickets !== undefined) {
-                const serverCount = parseInt(data.chat_tickets) || 0;
-                if (state.chatTickets !== serverCount) {
-                    state.chatTickets = serverCount;
-                    saveState();
-                    renderUser();
-                    showNotification('🎫 聊天券已同步！当前：' + serverCount + '张');
-                }
-            }
-        } catch (e) { /* 忽略网络错误 */ }
-    }, 60000);
+    // 启动定期同步（每60秒从服务器拉取最新数据）
+    if (!syncInterval) {
+        syncInterval = setInterval(() => {
+            loadDynamicContent();
+        }, 60000);
+        console.log('🔄 定期同步已启动（每60秒）');
+    }
 }
 
 function loadState() {
@@ -729,6 +734,8 @@ function loadState() {
                 creativeTasks: parsed.creativeTasks || { story: false, science: false, mathgame: false, art: false }
             };
             console.log('✅ 从固定key加载数据成功');
+            // 🔄 数据迁移：把 loginDays/lastLogin 从旧格式转为 ISO 格式
+            migrateStateDates();
             return;
         }
     } catch (e) {
@@ -752,6 +759,9 @@ function loadState() {
                     creativeTasks: parsed.creativeTasks || { story: false, science: false, mathgame: false, art: false }
                 };
                 saveState();  // 立即保存到新key
+                // 🔄 数据迁移：把 loginDays/lastLogin 从旧格式转为 ISO 格式
+                migrateStateDates();
+                saveState();  // 保存迁移后的数据
                 console.log(`✅ 从旧key[${oldKey}]迁移数据成功`);
                 showNotification('📦 检测到历史数据，已自动迁移！\n\n你的打卡记录、积分、XP都保留啦~');
                 return;
@@ -762,6 +772,33 @@ function loadState() {
     }
     
     console.log('ℹ️ 没有找到历史数据，使用初始状态');
+}
+
+// ========== 数据迁移（日期格式）==========
+function migrateStateDates() {
+    // 把 loginDays 从旧格式（toDateString）转为 ISO 格式（YYYY-MM-DD）
+    if (state.loginDays && Array.isArray(state.loginDays)) {
+        const migrated = [];
+        state.loginDays.forEach(day => {
+            if (/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+                migrated.push(day);  // 已经是 ISO 格式
+            } else {
+                const d = new Date(day);
+                if (!isNaN(d.getTime())) {
+                    migrated.push(d.toISOString().slice(0, 10));
+                }
+            }
+        });
+        state.loginDays = [...new Set(migrated)];  // 去重
+    }
+    // 把 lastLogin 从旧格式转为 ISO 格式
+    if (state.lastLogin && state.lastLogin !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(state.lastLogin)) {
+        const d = new Date(state.lastLogin);
+        if (!isNaN(d.getTime())) {
+            state.lastLogin = d.toISOString().slice(0, 10);
+        }
+    }
+    console.log('✅ 日期格式迁移完成（已转为ISO格式）');
 }
 
 function saveState() {
@@ -852,22 +889,22 @@ function renderStreak() {
     document.getElementById('streakDays').textContent = state.streak + '天';
     
     const btn = document.getElementById('loginBtn');
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().slice(0, 10);  // ISO格式，跨浏览器兼容
     const canClaim = !state.loginDays.includes(today);
     btn.disabled = !canClaim;
     btn.textContent = canClaim ? '📱 每日登录奖励 (+5积分)' : '✅ 今日已领取';
 }
 
 function checkLogin() {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().slice(0, 10);  // ISO格式
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toDateString();
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
     
     if (state.lastLogin !== today) {
         if (state.lastLogin === yesterdayStr) {
             // 连续登录
-        } else if (state.lastLogin !== '') {
+        } else if (state.lastLogin !== '' && state.lastLogin !== undefined) {
             state.streak = 0;
         }
         state.lastLogin = today;
@@ -879,14 +916,15 @@ function cleanupLoginDays() {
     // 删除loginDays中超过7天的旧记录，防止数组无限增长
     const today = new Date();
     const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    state.loginDays = state.loginDays.filter(day => new Date(day) >= sevenDaysAgo);
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
+    state.loginDays = state.loginDays.filter(day => day >= sevenDaysAgoStr);
 }
 
 function calculateStreak() {
-    // 根据loginDays数组计算当前连续打卡天数
+    // 根据loginDays数组计算当前连续打卡天数（使用ISO日期格式）
     let streak = 0;
     const checkDate = new Date();
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().slice(0, 10);  // ISO格式
     
     // 如果今天还没打卡，从昨天开始数
     if (!state.loginDays.includes(today)) {
@@ -895,7 +933,7 @@ function calculateStreak() {
     
     // 从起始日期往前数，最多7天
     for (let i = 0; i < 7; i++) {
-        const dateStr = checkDate.toDateString();
+        const dateStr = checkDate.toISOString().slice(0, 10);  // ISO格式
         if (state.loginDays.includes(dateStr)) {
             streak++;
             checkDate.setDate(checkDate.getDate() - 1);
@@ -908,7 +946,7 @@ function calculateStreak() {
 }
 
 function claimDailyLogin() {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().slice(0, 10);  // ISO格式，跨浏览器兼容
     if (state.loginDays.includes(today)) return;
     
     state.loginDays.push(today);
@@ -924,6 +962,8 @@ function claimDailyLogin() {
     renderUser();
     showNotification('📱 每日登录奖励！\n+5 XP, +5 积分, +5💎宝石, 能量+10%');
     checkBadges();
+    // 同步到服务器
+    saveStateToServer();
 }
 
 // ========== 任务 ==========
@@ -1063,6 +1103,8 @@ function confirmTaskByDad(taskId) {
         }
         saveState();
         renderAll();
+        // 🔄 同步到服务器
+        saveStateToServer();
         const msg = `【X1系统】任务完成确认\n👦 学生：王烁然\n📋 任务：${task.name}\n✅ 状态：已完成\n🕐 时间：${new Date().toLocaleString('zh-CN')}\n🎁 奖励：+${task.xp} XP，+10积分，+1聊天券`;
         sendWecomMessage(msg);
         showNotification(`✅ ${task.name}确认完成！企微群已通知`);
@@ -1659,24 +1701,112 @@ async function loadDynamicContent() {
             document.getElementById('gagaMessageSection').style.display = 'block';
         }
         
-        // 🔄 自动同步聊天券数量（从服务器获取最新）
-        if (data.chat_tickets !== undefined) {
-            const serverCount = parseInt(data.chat_tickets) || 0;
-            if (state.chatTickets !== serverCount) {
-                console.log(`🔄 同步聊天券：${state.chatTickets} → ${serverCount}`);
-                state.chatTickets = serverCount;
-                saveState();
-                renderUser();
+        // 🔄 自动同步服务器数据（增量合并，取最大值，不回退！）
+        if (data.state) {
+            const serverState = data.state;
+            let synced = false;
+            // 数值字段：取最大值（防止服务器零值覆盖本地真实进度）
+            const syncFields = ['xp', 'points', 'gems', 'chatTickets', 'energy', 'streak', 'creative'];
+            syncFields.forEach(field => {
+                const sv = Number(serverState[field]) || 0;
+                const lv = Number(state[field]) || 0;
+                if (sv > 0 && sv !== lv) {  // 服务器有有效数据且与本地不同
+                    state[field] = Math.max(sv, lv);  // ⭐ 取最大值，永不倒退
+                    console.log(`🔄 同步 ${field}：本地${lv} / 服务器${sv} → 最终 ${state[field]} (取最大)`);
+                    synced = true;
+                }
+            });
+            // 同步任务完成状态
+            if (serverState.tasks) {
+                TASKS.forEach(task => {
+                    if (serverState.tasks[task.id] && !state.tasks[task.id]) {
+                        console.log(`🔄 同步任务完成：${task.name}`);
+                        state.tasks[task.id] = true;
+                        synced = true;
+                    }
+                });
             }
-        }
-
-        // 初始化 lastDataUpdate（用于自动刷新检测）
-        if (data.last_updated) {
-            lastDataUpdate = data.last_updated;
+            // 同步登录天数（用于连续打卡）
+            if (serverState.loginDays && Array.isArray(serverState.loginDays)) {
+                const localDays = new Set(state.loginDays);
+                let daysAdded = false;
+                serverState.loginDays.forEach(day => {
+                    if (!localDays.has(day)) {
+                        state.loginDays.push(day);
+                        daysAdded = true;
+                    }
+                });
+                if (daysAdded) {
+                    synced = true;
+                    calculateStreak();
+                }
+            }
+            // 同步徽章
+            if (serverState.badges) {
+                Object.keys(serverState.badges).forEach(badgeId => {
+                    if (serverState.badges[badgeId] && !state.badges[badgeId]) {
+                        state.badges[badgeId] = true;
+                        synced = true;
+                    }
+                });
+            }
+            if (synced) {
+                saveState();
+                renderAll();
+                console.log('✅ 数据同步完成，界面已刷新');
+            }
         }
         
     } catch (error) {
-        console.log('ℹ️ 加载动态内容失败（可能是首次使用）', error);
+        console.log('⚠️ data.json 加载失败（可能是 file:// 协议或文件不存在），启用 fallback 恢复...', error.message);
+        // fetch 失败时（常见于本地双击打开HTML），用内嵌 fallback 数据修复被清零的字段
+        let recovered = false;
+        Object.keys(FALLBACK_STATE).forEach(key => {
+            if (FALLBACK_STATE[key] > 0 && state[key] === 0) {
+                state[key] = FALLBACK_STATE[key];
+                recovered = true;
+                console.log(`🔧 [fallback] 恢复 ${key} → ${FALLBACK_STATE[key]}`);
+            }
+        });
+        if (recovered) {
+            saveState();
+            renderAll();
+            console.log('✅ [fallback] 数据恢复完成！');
+        }
+    }
+}
+
+// ========== 保存状态到服务器 ==========
+async function saveStateToServer() {
+    try {
+        // 尝试通过本地服务器保存（需要后端支持）
+        // 如果本地服务器运行在 5000 或 5001 端口，可以调用 API
+        const serverUrls = [
+            'http://localhost:5000/api/save_state',
+            'http://localhost:5001/api/save_state'
+        ];
+        const stateData = { ...state, last_synced: new Date().toISOString() };
+        
+        for (const url of serverUrls) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(stateData)
+                });
+                if (response.ok) {
+                    console.log('✅ 状态已同步到服务器');
+                    return true;
+                }
+            } catch (e) {
+                // 服务器未启动，跳过
+            }
+        }
+        console.log('ℹ️ 本地服务器未启动，状态仅保存在本地');
+        return false;
+    } catch (error) {
+        console.error('同步到服务器失败:', error);
+        return false;
     }
 }
 
