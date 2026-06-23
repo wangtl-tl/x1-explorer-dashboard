@@ -414,7 +414,10 @@
         
         <!-- 爸爸确认 -->
         <div class="section" id="dadConfirmSection" style="background: linear-gradient(135deg, #4A90D9, #7C4DFF); border: none;">
-            <div class="section-title" style="justify-content:center; color: #fff;">👨 爸爸确认任务</div>
+            <div class="section-title" style="justify-content:center; color: #fff; position: relative;">
+                👨 爸爸确认任务
+                <button onclick="setDadPin()" style="position:absolute; right:0; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:#fff; padding:4px 10px; border-radius:12px; font-size:0.7rem; cursor:pointer;">🔒 设置密码</button>
+            </div>
             <p style="font-size: 0.8rem; color: rgba(255,255,255,0.8); text-align: center; margin-bottom: 12px;">爸爸，烁烁完成作业后，请点击对应任务确认：</p>
             <div class="dad-confirm-grid" id="dadConfirmGrid"></div>
         </div>
@@ -1089,6 +1092,20 @@ function sendWecomMessage(content) {
 function confirmTaskByDad(taskId) {
     const task = TASKS.find(t => t.id === taskId);
     if (!task || state.tasks[taskId]) return;
+
+    // 🔒 先验证爸爸密码
+    const savedPin = localStorage.getItem('x1_dad_pin') || '';
+    if (!savedPin) {
+        showNotification('⚠️ 请先设置爸爸密码！\n\n点击右上角 ⚙️ 设置密码', true);
+        return;
+    }
+    const inputPin = prompt('🔒 请输入爸爸确认密码（4位数字）');
+    if (inputPin === null) return;  // 用户取消
+    if (inputPin !== savedPin) {
+        showNotification('❌ 密码错误！只有爸爸才能确认哦~', true);
+        return;
+    }
+
     showModal(`${task.icon} 爸爸确认完成`, `确定要确认【${task.name}】已完成吗？\n\n将发放奖励：\n+${task.xp} XP\n+10 积分\n+1张聊天券`, '确认完成', () => {
         state.xp += task.xp;
         state.energy = Math.min(100, state.energy + 10);
@@ -1128,6 +1145,28 @@ function renderCreative() {
         `;
         grid.appendChild(card);
     });
+}
+
+// ========== 爸爸密码设置 ==========
+function setDadPin() {
+    const savedPin = localStorage.getItem('x1_dad_pin') || '';
+    const title = savedPin ? '🔒 修改爸爸密码' : '🔒 设置爸爸密码';
+    const msg = savedPin
+        ? '请输入新的4位数字密码：'
+        : '请设置一个4位数字密码（只有爸爸知道）：';
+    const input = prompt(msg);
+    if (input === null) return;
+    if (!/^\d{4}$/.test(input)) {
+        showNotification('⚠️ 密码必须是4位数字！', true);
+        return;
+    }
+    const confirmInput = prompt('请再次输入密码确认：');
+    if (confirmInput !== input) {
+        showNotification('❌ 两次密码不一致！请重新设置', true);
+        return;
+    }
+    localStorage.setItem('x1_dad_pin', input);
+    showNotification('✅ 爸爸密码设置成功！\n\n只有输入正确密码才能确认任务~');
 }
 
 function openCreativeModal(activityId) {
