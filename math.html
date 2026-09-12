@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="wI6IYDov2VJivqNHEfUBtG">
+<head data-page-node-id="wkz6AoNths7gH8sbgZr3AN">
+<meta charset="UTF-8" data-page-node-id="dnsIlq3xZN8U7AxPz9D29A">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" data-page-node-id="WVnyLJzo59rFEGQ5s5Hpm4">
+<title>⚓ 坚忍烁号 · 数学闯关</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:linear-gradient(180deg,#dff3ec 0%,#f4fbf8 40%,#e8f4fa 100%); min-height:100vh; color:#1e3d33; }
+  .wrap { max-width:640px; margin:0 auto; padding:16px 14px 40px; }
+  .card { background:#fff; border-radius:18px; padding:18px; margin-bottom:14px; box-shadow:0 3px 14px rgba(20,90,70,.10); }
+  h1 { font-size:22px; text-align:center; color:#0b6b4f; margin:4px 0 2px; }
+  .sub { text-align:center; color:#5f8f80; font-size:13px; margin-bottom:12px; }
+  .stats { display:flex; justify-content:space-around; text-align:center; margin-bottom:8px; }
+  .stat b { font-size:20px; color:#0b6b4f; display:block; }
+  .stat span { font-size:12px; color:#6b9587; }
+  .lvbar { background:#e7f5ef; border-radius:12px; padding:8px 14px; text-align:center; font-size:13px; color:#0b6b4f; }
+  .bigbtn { display:block; width:100%; padding:16px; border:none; border-radius:16px; background:#12a06b; color:#fff; font-size:19px; font-weight:bold; cursor:pointer; }
+  .bigbtn:active { transform:scale(.98); }
+  .bigbtn.alt { background:#2f86c9; }
+  .timer { text-align:center; font-size:15px; color:#a34808; margin-bottom:8px; }
+  .qnum { text-align:center; color:#6b9587; font-size:13px; margin-bottom:6px; }
+  .story { background:#eaf6fb; border-radius:14px; padding:12px 14px; font-size:16px; line-height:1.6; color:#155a80; margin-bottom:12px; }
+  .story b { color:#0b6b4f; }
+  .qexpr { text-align:center; font-size:30px; font-weight:bold; color:#123f33; margin:10px 0 18px; letter-spacing:2px; }
+  .ansrow { display:flex; gap:10px; align-items:center; }
+  input.ans { flex:1; font-size:26px; text-align:center; padding:12px; border:2px solid #bfe0d2; border-radius:14px; outline:none; color:#123f33; }
+  input.ans:focus { border-color:#12a06b; }
+  .okbtn { padding:12px 22px; font-size:18px; border:none; border-radius:14px; background:#12a06b; color:#fff; font-weight:bold; cursor:pointer; }
+  .feedback { text-align:center; margin-top:14px; min-height:64px; }
+  .monster { font-size:40px; }
+  .fbtitle { font-size:17px; font-weight:bold; margin-top:4px; }
+  .fbtext { font-size:14px; color:#546e64; margin-top:4px; line-height:1.55; }
+  .good { color:#0b8a55; }
+  .bad { color:#c25b1e; }
+  .stars { text-align:center; font-size:15px; margin:6px 0 10px; color:#b8860b; }
+  .result-grid { display:flex; justify-content:space-around; text-align:center; margin:12px 0; }
+  .rg b { font-size:24px; color:#0b6b4f; display:block; }
+  .rg span { font-size:12px; color:#6b9587; }
+  .code { background:#0e2f24; color:#7be3b0; font-family:Consolas,monospace; font-size:13px; padding:10px 12px; border-radius:10px; word-break:break-all; text-align:center; margin:8px 0; }
+  .vsy { text-align:center; font-size:15px; font-weight:bold; color:#b8860b; margin:8px 0; }
+  .badge { display:inline-block; background:#fff3d6; color:#a3690a; font-size:13px; padding:3px 10px; border-radius:20px; margin:2px; }
+  details { margin-top:10px; }
+  summary { cursor:pointer; font-size:14px; color:#0b6b4f; font-weight:bold; padding:8px 0; }
+  table.rt { width:100%; border-collapse:collapse; font-size:13px; }
+  table.rt td, table.rt th { padding:6px 8px; border-bottom:1px solid #e5efe9; text-align:left; }
+  table.rt th { background:#eaf6f0; color:#0b6b4f; }
+  .say { color:#0b8a55; } .dont { color:#c04c4c; }
+  .teach { background:#fdf6e3; border-radius:12px; padding:12px; margin-top:10px; font-size:14px; line-height:1.6; color:#7a5a10; }
+  .hidden { display:none; }
+  .duckline { text-align:center; font-size:14px; color:#6b9587; margin-top:10px; font-style:italic; }
+</style>
+</head>
+<body data-page-node-id="czZJCq4OdapkVVRKqCCzQZ">
+<div class="wrap" data-page-node-id="oBkYQ83C2y801JpZLK1S1w">
+
+<div class="card" id="homeCard" data-page-node-id="sNLdZaUEzDb7tMTIJEXEGj">
+  <h1 data-page-node-id="SX4wAY2alxDODBbkTLTeoV">⚓ 坚忍烁号 · 数学闯关</h1>
+  <div class="sub" data-page-node-id="oaHYF3Gle3pjulqeNSgHw1">每天 5 分钟，打败乱算怪！🦆 嘎嘎陪你航海</div>
+  <div class="stats" data-page-node-id="ZgtRtIUQ9LyVFpXzAZeVvj">
+    <div class="stat" data-page-node-id="ENd9WYoSvlj3SplVWz2VKY"><b id="streakNum" data-page-node-id="Zs5Oa6JDG1dXxSK7ixmIJf">0</b><span data-page-node-id="uhskObbcKCZQ5UGN6oAqXT">连续航海(天)</span></div>
+    <div class="stat" data-page-node-id="DYseIN8S664GYQsJs5Cuga"><b id="totalNum" data-page-node-id="t974zJkHHEI6OphYVt1gkt">0</b><span data-page-node-id="EHBZTKzFqbHoBqYW0rEMVS">累计战斗(场)</span></div>
+    <div class="stat" data-page-node-id="e2n9hj8eRWa8PtUvvCSyha"><b id="gemNum" data-page-node-id="nNXPrlrpA6dssuDLadUnkk">0</b><span data-page-node-id="KQDF87LdRCRPysdf3LEDrC">💎 宝石</span></div>
+  </div>
+  <div class="lvbar" id="lvBar" data-page-node-id="S0jWxSAWrFVdQcBXkk4DIE">🏅 当前舰队等级：L1 · 见习水手（口算热身）</div>
+  <div style="height:12px" data-page-node-id="RuBAk2NbaYoTvNDccUYl9n"></div>
+  <button class="bigbtn" onclick="startQuiz()" data-page-node-id="kjPf8r1YXAGiV2d9ubMdDw">⚔️ 开始今日闯关（10题·约5分钟）</button>
+  <div style="height:10px" data-page-node-id="JffIvWV4AiVchChi2ZoFvt"></div>
+  <button class="bigbtn alt" onclick="showRules()" data-page-node-id="6hh0nNcnOFRmKEHoUwHrmE">📜 闯关规则 & 爸爸手册</button>
+  <div class="duckline" data-page-node-id="FWJFpwYy5aPansMFLw1csX">嘎嘎：烁烁船长，风向正好，出发吧！🦆</div>
+  <div id="cloudStats" style="display:none;text-align:center;font-size:13px;color:#2a6f5f;background:#eaf7f1;border-radius:10px;padding:8px;margin-top:10px" data-page-node-id="CloudStatsNode">云端账户加载中…</div>
+</div>
+
+<div class="card hidden" id="quizCard" data-page-node-id="tIWmyUPryeuFRQvhhLbwkl">
+  <div class="timer" id="timer" data-page-node-id="9gB6OarbTGY1VuXMwegCoP">⏱ 05:00</div>
+  <div class="qnum" id="qnum" data-page-node-id="Fhqcoi1K0dVz4WjL0jt0fU">第 1 / 10 题</div>
+  <div class="story" id="story" data-page-node-id="MHs3rHv5P5tbHLubcHfb31"></div>
+  <div class="qexpr" id="qexpr" data-page-node-id="1YtLHGxTUs8Fgnj8pACfin"></div>
+  <div class="ansrow" data-page-node-id="uBdJntY3PPYuvUOw2Cke8V">
+    <input class="ans" id="ansInput" type="number" inputmode="numeric" placeholder="答案" autocomplete="off" data-page-node-id="shg8alwhwXtzx58VfmRz50">
+    <button class="okbtn" onclick="submitAns()" data-page-node-id="k2WnSqkZ2HTz2SAwBOxKlO">报告！</button>
+  </div>
+  <div class="feedback" id="feedback" data-page-node-id="O2MMi6GKRrdM5vxP3fPVn8"></div>
+</div>
+
+<div class="card hidden" id="resultCard" data-page-node-id="EODy2kGoFGFDq2HC2saNUs">
+  <h1 id="resultTitle" data-page-node-id="PmrApnwsINEaFB8B5pQTIu">🎉 战斗胜利！</h1>
+  <div class="stars" id="stars" data-page-node-id="zmqsCgwDn9TPzYkXeHgYTB">⭐⭐⭐</div>
+  <div class="vsy" id="vsYest" data-page-node-id="gYXe8XZiUumHoXqAZgt5BX"></div>
+  <div class="result-grid" data-page-node-id="wyGUfB2zUxmHFcm07CdHRY">
+    <div class="rg" data-page-node-id="HGz8Hida3LwGYihezhq80v"><b id="rCorrect" data-page-node-id="I2PbQZbBwImo0FLqr2bABP">0/10</b><span data-page-node-id="RwT0I05gxeEpOdSrHRRECN">击败乱算怪</span></div>
+    <div class="rg" data-page-node-id="92GNd7qrim1SBAtxRPngEe"><b id="rRate" data-page-node-id="KBBjqOHd9s0NyeGjzqcoH4">0%</b><span data-page-node-id="VfoHVzzkHgisAYuPaH2AEB">正确率</span></div>
+    <div class="rg" data-page-node-id="VEvPxtVhuCGyYuJV9RBkvw"><b id="rTime" data-page-node-id="QI63tl7bchiqdaC9hcqvv6">0:00</b><span data-page-node-id="m9Jylcrnu6eplmjAIjiUDl">用时</span></div>
+  </div>
+  <div style="text-align:center" id="rewardLine" data-page-node-id="REI0CHCynWiCkDNtgy5yls"></div>
+  <div style="text-align:center; margin-top:6px" id="badges" data-page-node-id="xvNWvLmVhno2OZYB0N4kiR"></div>
+  <div class="teach" id="teachBox" data-page-node-id="VfWA9ijbPTdGnPNAv7Jr0u">
+    🎓 <b data-page-node-id="57nksxt5dreMo3pJpsHGEb">小老师时间</b>：最后一道航海题，讲给爸爸听听吧！<br data-page-node-id="2jk6CaqESTg7XF8OTnnyFE">
+    说清楚三件事：①题目讲的是什么 ②你是怎么想的 ③为什么这样算<br data-page-node-id="IrADC8RDQupvHFtzXvZVUe">
+    爸爸点头后，点下面的按钮领双倍宝石！
+  </div>
+  <div style="height:10px" data-page-node-id="b8eMxP5RSDvMgBxAdJvSTJ"></div>
+  <button class="bigbtn alt hidden" id="teachBtn" onclick="teachDone()" data-page-node-id="JSvwVytmYabr6Mi6u669m6">🎓 爸爸已验收我讲的题（+5💎）</button>
+  <div style="height:12px" data-page-node-id="l8DErehtFPdIV6QH9eNy9Q"></div>
+  <div style="font-size:13px;color:#6b9587;text-align:center" data-page-node-id="RXgdz6KzmHeFPpatczDA03">点下面按钮复制奖励码，粘贴发给<strong>嘎嘎（X1）</strong>，奖励自动到账！</div>
+  <div class="code" id="rewardCode" data-page-node-id="XruLF8CfQZLg3K9GHsEATa"></div>
+  <button class="bigbtn alt" id="copyBtn" onclick="copyCode()" style="margin-bottom:12px" data-page-node-id="CopyBtnNode">📋 复制奖励码（发给嘎嘎）</button>
+  <button class="bigbtn" onclick="location.reload()" data-page-node-id="GErlnkhg2gv8NHsmTpdJBf">🛏 收工回舱休息</button>
+</div>
+
+<div class="card hidden" id="rulesCard" data-page-node-id="avJiECqEaBPbCjgW9OeacG">
+  <h1 data-page-node-id="ZLHQKQM0xruA4GDILbQngF">📜 闯关规则</h1>
+  <table class="rt" data-page-node-id="ZjrimrNUTGG7EpsSVhIU0X">
+    <tr data-page-node-id="qpCyhGzoS8ipuKjR7ZErVG"><th data-page-node-id="b3t2VQHKJA8cCrPcFXF1DS">等级</th><th data-page-node-id="SSoiP34mF1GkyzY0rugivW">内容</th></tr>
+    <tr data-page-node-id="KIzHS5UQLDv6w3TWcxBQ8N"><td data-page-node-id="PUUCWGC3RDXENEGCfwSq7s">L1 见习水手</td><td data-page-node-id="xxhMqdgrSJHUVIgUay785d">口算乘除、口诀近区</td></tr>
+    <tr data-page-node-id="DEwLfmTnXcIKVCcmC4GV7z"><td data-page-node-id="lSHqWr7t3P66xndt3Nv3qs">L2 舵手</td><td data-page-node-id="mDCeGL4gq8S1rP3wUHkR8y">三位数×两位数竖式</td></tr>
+    <tr data-page-node-id="k45UwG24HzxB6kOXDXkIvH"><td data-page-node-id="2YOvXFu0NLBnRt3eG17zjM">L3 航海士</td><td data-page-node-id="4TAHECit7uwhusu0tzWCIo">除数两位数试商、简便运算</td></tr>
+    <tr data-page-node-id="GGq1HRj4m9D2VQuqtdMcB9"><td data-page-node-id="gT4byOnW7oZZDXBe6a0utA">L4 舰队长</td><td data-page-node-id="XfGS0pfScRz10TInVpw5PH">混合两步、多步航海应用题</td></tr>
+  </table>
+  <div style="font-size:14px;line-height:1.8;margin-top:10px" data-page-node-id="xBPjwez9oDcCPhQE5QRjEx">
+    ⚔️ 每天 1 关，正确率 <b data-page-node-id="UlhC78wP7q6bo54qCv3UyA">90%以上</b> 连续 <b data-page-node-id="D1cXYkFDefVOIJiz1W5hrE">7 天</b> 自动升一级<br data-page-node-id="gEIv9QSA3QJQUAOxJBr8VB">
+    ⚓ 正确率 <b data-page-node-id="7fCc4CljRdNfLBcGjUYkgD">低于70%</b> 会回基地练兵（降一级），这不是退步，是补给！<br data-page-node-id="pRzsQZCaohLjxANli2Z37w">
+    👾 答错的题会被乱算怪收藏，第二天再出来，打败它两次它就消失<br data-page-node-id="TVoI8UR1EbiFaTmPEjiPRg">
+    🎓 每天最后一题是"小老师题"，讲给爸爸听，验收后 +5💎
+  </div>
+  <details open data-page-node-id="qUlRqHoEjLQsQPqVmikS5d">
+    <summary data-page-node-id="viBwXQWOhxcPAi9Gy8XOMD">👨 爸爸手册（话术对照）</summary>
+    <table class="rt" data-page-node-id="i3blnmoiNVTgPIu7Gsd4ac">
+      <tr data-page-node-id="QDqWCfLg9pfkUBGAuIs5HA"><th data-page-node-id="UupTaGxx0yAB6po9kiw8hJ">情况</th><th class="say" data-page-node-id="LIxGPkkIfUM0E0Fc5odkAm">✅ 要说</th><th class="dont" data-page-node-id="ZGPlKiSbtkSHdpelyHmIAs">❌ 不说</th></tr>
+      <tr data-page-node-id="bO7m3CmfwSSq0ooH5O3efi"><td data-page-node-id="mwoM2FoPhTEMsbRbZ9NTGd">答错了</td><td class="say" data-page-node-id="snjGVv2R8n0yIEbe5kjkHy">"乱算怪又冒头了，我们抓住它！"</td><td class="dont" data-page-node-id="elUVTKkYyzVmkA7CTwA5bA">"怎么又错了"</td></tr>
+      <tr data-page-node-id="FI9RiX890rgu8AAoGGAsAa"><td data-page-node-id="U2G7DSPIJasjssVFLYlsJO">正确率高</td><td class="say" data-page-node-id="BFnvlD9W3718rarJPbKntW">"比昨天的你更稳了！"</td><td class="dont" data-page-node-id="Uq9L9LAUXSjiGDJHMZGJxT">"别人都能全对"</td></tr>
+      <tr data-page-node-id="x8RoiEVfcFKnuRx2dtsXnE"><td data-page-node-id="SI5Ih1hAuK440b84qjulEO">想放弃</td><td class="say" data-page-node-id="eXwREwzqtLiAvY8aSvDiuV">"只打 5 题也行，嘎嘎等着你"</td><td class="dont" data-page-node-id="wQVYt5LLWTKIMskRQoWfhq">"必须做完"</td></tr>
+      <tr data-page-node-id="D1yQVQbF1squ2fLpH1OZKd"><td data-page-node-id="7HOhwMtYcmVCiW1iSa3Q73">讲解题</td><td class="say" data-page-node-id="UCEAEtmv7vr6tjgr7yAzg0">"这里你是怎么想到的？"（追问）</td><td class="dont" data-page-node-id="rJ06uzfC7HCnrom735MdBn">"这么简单还讲这么久"</td></tr>
+    </table>
+    <div style="font-size:13px;color:#7a5a10;margin-top:8px" data-page-node-id="UuVZzDx2K8tKQzSJNNjpAC">💡 核心原则：只和昨天的自己比。正确率连续一周 90%+ 系统才升级，急不来。</div>
+  </details>
+  <div style="height:10px" data-page-node-id="OZfQdNhLqUnFx7o54HIfHh"></div>
+  <button class="bigbtn" onclick="hideRules()" data-page-node-id="yFjL5nEZb1YJ5PgJghzUy8">回到甲板</button>
+</div>
+
+</div>
+<script>
+var KEY="x1_math_daily";
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}} }
+function save(d){ localStorage.setItem(KEY,JSON.stringify(d)); }
+var D=load();
+var today=new Date().toISOString().slice(0,10);
+if(!D.level) D.level=1;
+if(!D.records) D.records={};
+if(!D.wrongBank) D.wrongBank=[];
+if(!D.teachDates) D.teachDates=[];
+
+var LVNAME={1:"L1 · 见习水手（口算热身）",2:"L2 · 舵手（乘法竖式）",3:"L3 · 航海士（除法试商）",4:"L4 · 舰队长（航海应用）"};
+function streak(){
+  var n=0,d=new Date();
+  for(;;){ var s=d.toISOString().slice(0,10); if(D.records[s]&&D.records[s].done){n++;d.setDate(d.getDate()-1);}else break; }
+  return n;
+}
+function renderHome(){
+  document.getElementById("streakNum").textContent=streak();
+  var total=0,gems=0;
+  for(var k in D.records){ if(D.records[k].done){total++; gems+=D.records[k].gems||0;} }
+  document.getElementById("totalNum").textContent=total;
+  document.getElementById("gemNum").textContent=gems;
+  document.getElementById("lvBar").textContent="🏅 当前舰队等级："+LVNAME[D.level];
+}
+renderHome();
+
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function pick(arr){ return arr[rnd(0,arr.length-1)]; }
+
+var stories=[
+  function(a,b,expr){ return "坚忍烁号以每小时 <b>"+a+"</b> 海里航行了 <b>"+b+"</b> 小时，一共航行了多少海里？（"+expr+"）"; },
+  function(a,b,expr){ return "船舱里有 <b>"+a+"</b> 箱补给，每箱装 <b>"+b+"</b> 罐淡水，一共有多少罐？（"+expr+"）"; },
+  function(a,b,expr){ return "甲板上 <b>"+a+"</b> 排救生圈，每排 <b>"+b+"</b> 个，一共多少个？（"+expr+"）"; },
+  function(a,b,expr){ return "嘎嘎一天吃 <b>"+b+"</b> 粒鱼干，<b>"+a+"</b> 天要准备多少粒？（"+expr+"）"; }
+];
+var divStories=[
+  function(a,b,expr){ return "船上共有 <b>"+a+"</b> 罐淡水，分给 <b>"+b+"</b> 名船员，每人分几罐？（"+expr+"）"; },
+  function(a,b,expr){ return "<b>"+a+"</b> 块饼干平均装进 <b>"+b+"</b> 个箱子，每箱装几块？（"+expr+"）"; }
+];
+
+function genCalc(lv){
+  var expr,ans,st="";
+  if(lv===1){
+    var t=rnd(1,4);
+    if(t===1){ a=rnd(12,19); b=rnd(3,9); expr=a+" × "+b; ans=a*b; st=pick(stories)(a,b,expr); }
+    else if(t===2){ a=rnd(2,9)*10; b=rnd(2,9); expr=a+" ÷ "+b; ans=a/b; st=pick(divStories)(a,b,expr); }
+    else if(t===3){ a=rnd(11,15); b=rnd(6,9); expr=a+" × "+b; ans=a*b; st=pick(stories)(a,b,expr); }
+    else { a=rnd(3,9); b=rnd(3,9)*a; expr=b+" ÷ "+a; ans=b/a/1; b=a*(b/a); ans=b/a; expr=b+" ÷ "+a; st=pick(divStories)(b,a,expr); }
+  } else if(lv===2){
+    var t2=rnd(1,2);
+    if(t2===1){ a=rnd(102,499); b=rnd(11,29); expr=a+" × "+b; ans=a*b; st=pick(stories)(a,b,expr); }
+    else { a=rnd(21,49); b=rnd(12,25); expr=a+" × "+b; ans=a*b; st=pick(stories)(a,b,expr); }
+  } else if(lv===3){
+    var t3=rnd(1,2);
+    if(t3===1){ var q=rnd(12,45), dv=rnd(12,39), rem=rnd(1,dv-1); a=dv*q+rem; ans=q; expr=a+" ÷ "+dv+"（商）"; st=divStories[0](a,dv,expr)+"<br>💡 只需要填<b>商</b>，余数不用管！"; }
+    else { var m=rnd(1,2); if(m===1){ var b1=pick([25,125,50]), b2=rnd(2,8), b3=rnd(2,8); expr=b1+" × "+b2+" × "+b3; ans=b1*b2*b3; st="用<b>简便算法</b>巧算：<b>"+expr+"</b> = ?<br>💡 先凑整十整百更好算！"; } else { var c1=rnd(4,12), c2=rnd(20,90); expr=c1+" × "+c2+" + "+c1; ans=c1*(c2+1); st="巧算：<b>"+expr+"</b> = ?<br>💡 想想乘法的意义！"; } }
+  } else {
+    var t4=rnd(1,3);
+    if(t4===1){ var sp=rnd(20,60), h1=rnd(2,5), h2=rnd(2,5); expr=sp+"×("+h1+"+"+h2+")"; ans=sp*(h1+h2); st="坚忍烁号上午航行 <b>"+h1+"</b> 小时，下午又航行 <b>"+h2+"</b> 小时，全程速度都是每小时 <b>"+sp+"</b> 海里。今天一共航行多少海里？（"+expr+"）"; }
+    else if(t4===2){ var box=rnd(3,6), per=rnd(40,120), give=rnd(50,200); ans=box*per-give; expr=""+box+"×"+per+"−"+give; st="船上装了 <b>"+box+"</b> 箱罐头，每箱 <b>"+per+"</b> 罐。途中吃掉了 <b>"+give+"</b> 罐，还剩多少罐？（"+expr+"）"; }
+    else { var pp=rnd(200,400), days=rnd(3,8); ans=Math.round(pp*days/1); expr=pp+"×"+days; st="全船每天消耗 <b>"+pp+"</b> 升淡水，航行 <b>"+days+"</b> 天需要准备多少升？（"+expr+"）"; }
+  }
+  return {story:st, expr:expr, ans:ans, type:"calc"};
+}
+
+function genTeach(lv){
+  if(lv<=2){ var a=rnd(15,35), b=rnd(3,8), c=rnd(2,4); var ans=a*b*c; return {story:"坚忍烁号有 <b>"+a+"</b> 个货舱，每个货舱放 <b>"+b+"</b> 层货架，每层摆 <b>"+c+"</b> 桶燃油。全船一共有多少桶燃油？", expr:"分步算出来", ans:ans, type:"teach"}; }
+  var sp=rnd(18,45), h=rnd(3,6); var ans=sp*h; return {story:"坚忍烁号去【咕噜咕噜岛】送货，去时每小时航行 <b>"+sp+"</b> 海里，用了 <b>"+h+"</b> 小时。这条路一共多少海里？如果半路风景太好看，速度减半，要多用几小时？", expr:"第一问填总海里数", ans:ans, type:"teach"};
+}
+
+var quiz, qi, correct, wrongToday, t0, timerId, lastTeach;
+function shuffle(arr){ for(var i=arr.length-1;i>0;i--){ var j=rnd(0,i); var t=arr[i];arr[i]=arr[j];arr[j]=t; } return arr; }
+
+function startQuiz(){
+  quiz=[]; qi=0; correct=0; wrongToday=[];
+  var wrongs=D.wrongBank.filter(function(w){return w.times<2;}).slice(0,2);
+  wrongs.forEach(function(w){ quiz.push({story:"👾 乱算怪又来了！上次的题还敢再来吗？", expr:w.expr, ans:w.ans, type:"calc", fromBank:true}); });
+  var calcN=9-quiz.length;
+  for(var i=0;i<calcN;i++) quiz.push(genCalc(D.level));
+  lastTeach=genTeach(D.level);
+  quiz.push(lastTeach);
+  quiz=shuffle(quiz);
+  document.getElementById("homeCard").classList.add("hidden");
+  document.getElementById("rulesCard").classList.add("hidden");
+  document.getElementById("quizCard").classList.remove("hidden");
+  t0=Date.now();
+  timerId=setInterval(tick,1000);
+  showQ();
+  setTimeout(function(){document.getElementById("ansInput").focus();},100);
+}
+function tick(){
+  var el=Date.now()-t0, left=5*60-Math.floor(el/1000);
+  if(left<=0){ finish(); return; }
+  var m=Math.floor(left/60), s=left%60;
+  document.getElementById("timer").textContent="⏱ "+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+}
+function showQ(){
+  var q=quiz[qi];
+  document.getElementById("qnum").textContent="第 "+(qi+1)+" / "+quiz.length+" 题";
+  document.getElementById("story").innerHTML=q.story;
+  document.getElementById("qexpr").textContent=q.expr.indexOf("×")>=0||q.expr.indexOf("÷")>=0||q.expr.indexOf("+")>=0 ? q.expr : "";
+  document.getElementById("feedback").innerHTML="";
+  document.getElementById("ansInput").value="";
+  document.getElementById("ansInput").focus();
+}
+function submitAns(){
+  var q=quiz[qi];
+  var v=document.getElementById("ansInput").value;
+  if(v===""){ return; }
+  var ok=(parseFloat(v)===q.ans);
+  var fb=document.getElementById("feedback");
+  if(ok){
+    correct++;
+    fb.innerHTML="<div class='monster'>🎯</div><div class='fbtitle good'>命中！乱算怪被击败！</div><div class='fbtext'>嘎嘎嘎！好准的炮法！🦆</div>";
+  } else {
+    fb.innerHTML="<div class='monster'>👾</div><div class='fbtitle bad'>乱算怪闪开了！</div><div class='fbtext'>正确答案是 <b>"+q.ans+"</b>。别急，找到它的躲法，明天再揍它一次！</div>";
+    wrongToday.push({expr:q.expr, ans:q.ans, times:1});
+  }
+  qi++;
+  if(qi>=quiz.length){ setTimeout(finish,900); }
+  else setTimeout(showQ,1100);
+}
+function finish(){
+  clearInterval(timerId);
+  var total=quiz.length, rate=Math.round(correct/total*100);
+  var used=Math.floor((Date.now()-t0)/1000);
+  var mm=Math.floor(used/60), ss=used%60;
+  var xp=10, gems=5;
+  if(rate===100){ xp+=5; gems+=3; }
+  var lvUp=false, lvDown=false;
+  D.records[today]={done:true, correct:correct, total:total, rate:rate, xp:xp, gems:gems, level:D.level};
+  var last7=[], d=new Date();
+  for(var i=0;i<7;i++){ var k=d.toISOString().slice(0,10); if(D.records[k]&&D.records[k].done&&k!==today) last7.push(D.records[k].rate); d.setDate(d.getDate()-1); }
+  if(last7.length>=6 && last7.every(function(r){return r>=90;}) && rate>=90 && D.level<4){ D.level++; lvUp=true; }
+  if(last7.length>=3 && last7.slice(-3).every(function(r){return r<70;}) && rate<70 && D.level>1){ D.level--; lvDown=true; }
+  var yesterday=(function(){var dd=new Date();dd.setDate(dd.getDate()-1);return dd.toISOString().slice(0,10);})();
+  var yR=D.records[yesterday]&&D.records[yesterday].done?D.records[yesterday].rate:null;
+  wrongToday.forEach(function(w){
+    var f=D.wrongBank.find(function(x){return x.expr===w.expr;});
+    if(f){ f.times++; if(f.times>=2){ f.gone=true; } } else D.wrongBank.push(w);
+  });
+  D.wrongBank=D.wrongBank.filter(function(w){return !w.gone && w.times<2;}).slice(-20);
+  var isTeach=today, badges=[];
+  if(D.teachDates.indexOf(today)>=0) gems+=5;
+  var streakN=streak();
+  if(streakN===7) badges.push("🥇 金算盘徽章 +30XP+20💎");
+  save(D);
+  document.getElementById("quizCard").classList.add("hidden");
+  document.getElementById("resultCard").classList.remove("hidden");
+  document.getElementById("resultTitle").textContent = rate>=90?"🎉 大捷！乱算怪落荒而逃！" : (rate>=70?"⚔️ 战斗结束，有收获！" : "⚓ 回基地休整，明天再战！");
+  var starsN = rate>=90?3:(rate>=70?2:1);
+  document.getElementById("stars").textContent="⭐".repeat(starsN)+"☆".repeat(3-starsN);
+  document.getElementById("rCorrect").textContent=correct+"/"+total;
+  document.getElementById("rRate").textContent=rate+"%";
+  document.getElementById("rTime").textContent=mm+":"+(ss<10?"0":"")+ss;
+  var vsEl=document.getElementById("vsYest");
+  if(yR===null){ vsEl.textContent="🦆 第一次出海，嘎嘎记住了你今天的表现！"; }
+  else if(rate>yR){ vsEl.textContent="📈 比昨天多拿下 "+(rate-yR)+"%！你在变强！"; }
+  else if(rate===yR){ vsEl.textContent="🎯 和昨天打平，稳定也是实力！"; }
+  else { vsEl.textContent="🌱 昨天更好，今天没退步多少——明天翻盘！"; }
+  var rw="🪙 +"+xp+" XP　💎 +"+gems+" 宝石"+(rate===100?"（全对加成！）":"");
+  if(lvUp) rw="🎖 升级！进入"+LVNAME[D.level]+"<br>"+rw;
+  if(lvDown) rw="⚓ 回基地练兵（降到"+LVNAME[D.level]+"），补给充足再出发！<br>"+rw;
+  document.getElementById("rewardLine").innerHTML=rw;
+  document.getElementById("badges").innerHTML=badges.map(function(b){return "<span class='badge'>"+b+"</span>";}).join("");
+  if(D.teachDates.indexOf(today)<0){ document.getElementById("teachBtn").classList.remove("hidden"); }
+  document.getElementById("teachBox").style.display = D.teachDates.indexOf(today)>=0?"none":"block";
+  document.getElementById("rewardCode").textContent="MATH|"+today+"|L"+(lvUp?D.level-1:D.level)+"|"+correct+"/"+total+"|rate"+rate+"|XP"+xp+"|GEM"+gems+"|streak"+streakN+(D.teachDates.indexOf(today)>=0?"|teach":"");
+  renderHome();
+}
+function teachDone(){
+  D.teachDates.push(today);
+  save(D);
+  document.getElementById("teachBtn").classList.add("hidden");
+  document.getElementById("teachBox").innerHTML="🎓 <b>小老师认证完成！</b>+5💎 已加入结算。能讲明白才是真的会，烁烁老师真棒！";
+  var codeEl=document.getElementById("rewardCode");
+  codeEl.textContent=codeEl.textContent+"|teach";
+}
+function showRules(){ document.getElementById("rulesCard").classList.remove("hidden"); }
+function hideRules(){ document.getElementById("rulesCard").classList.add("hidden"); }
+function copyCode(){
+  var code=document.getElementById("rewardCode").textContent;
+  function ok(){ var b=document.getElementById("copyBtn"); b.textContent="✅ 已复制！去企微粘贴给嘎嘎"; setTimeout(function(){b.textContent="📋 复制奖励码（发给嘎嘎）";},2500); }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(code).then(ok,function(){fallbackCopy(code);ok();}); }
+  else { fallbackCopy(code); ok(); }
+}
+function fallbackCopy(code){
+  var ta=document.createElement("textarea"); ta.value=code; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(e){} document.body.removeChild(ta);
+}
+function showCloudStats(){
+  fetch("data.json?t="+Date.now()).then(function(r){return r.json();}).then(function(d){
+    var st=d.state||{};
+    var el=document.getElementById("cloudStats");
+    el.innerHTML="🪙 "+(st.xp||0)+" XP　💎 "+(st.gems||0)+" 宝石　🎫 "+(st.chatTickets||d.chat_tickets||0)+" 聊天券";
+    el.style.display="block";
+  }).catch(function(){ /* file:// 或离线时静默隐藏 */ });
+}
+document.getElementById("ansInput").addEventListener("keydown",function(e){ if(e.key==="Enter") submitAns(); });
+showCloudStats();
+</script>
+</body>
+</html>
