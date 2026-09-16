@@ -254,12 +254,11 @@ function answer(el,v,q,isBoss){
     stats[cat][0]++; saveStats();
     hp--; renderHP(); setMonster();
     const f=document.getElementById('mFace'); f.classList.remove('hit'); void f.offsetWidth; f.classList.add('hit');
-    let gain=(isBoss?3:1);
-    if(doubleArmed){ gain*=2; doubleArmed=false; }
+    let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; document.getElementById('gem').textContent=gem;
     // 连击道具（按命中数）
     if((10-hp)%3===0) grantItem();
-    say("咻——正中！"+q.tip+(isBoss?" BOSS狩猎成功！+3宝石！":"")+(doubleArmed?" ✖️2已激活！":""));
+    say("咻——正中！"+q.tip+(isBoss?" BOSS狩猎成功！+3宝石！":"")+(dbl?" ✖️2翻倍到账！":""));
     if(hp<=0){ setTimeout(endGame,1000); return; }
     setTimeout(()=>{ qi++; nextQ(); },isBoss?1600:1300);
   } else {
