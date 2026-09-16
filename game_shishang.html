@@ -289,7 +289,7 @@ function startBoss(q){
   bossTimer=setInterval(()=>{
     bossLeft--; fill.style.width=(bossLeft/20*100)+"%";
     if(bossLeft<=0){ clearInterval(bossTimer);
-      if(!lock){ lock=true; revealCorrect(); loseLife("⏰ 时间到！BOSS逃走了…商是 "+cur.q+" 哦！"); }
+      if(!lock){ lock=true; revealCorrect(); loseLife("⏰ 时间到！BOSS逃走了…商是 "+cur.q+" 哦！"); if(window.XP3)XP3.miss('shishang',cur.cat||"near"); setTimeout(()=>{ qi++; nextQ(); },1800); }
     }
   },1000);
   say("嘎嘎！BOSS来了！先算 "+cur.b+"×10 大概多少，再逼近！");
@@ -314,6 +314,11 @@ function answer(el,v){
     popCombo();
     say(pick(["嘎嘎嘎！斩！","商是"+cur.q+"，一击必中！","宝石+"+gain+"！","连击×"+combo+"，错算怪发抖了！"]));
     if(isBoss) toast("👹 BOSS被击败！+3宝石");
+    // 复仇成功：答对就把这道题移出复仇名单，不再重复出现
+    if(cur.revenge){
+      mistakes.shishang=(mistakes.shishang||[]).filter(m=>!(m.a===cur.a&&m.b===cur.b));
+      saveMistakes(); toast("⚔️ 复仇成功！这道题移出名单！");
+    }
   } else {
     if(items.shield>0){ items.shield--; renderItemBar(); toast("🛡️ 护盾挡下一击！宝石没丢！");
       el.classList.add('wrong'); revealCorrect();
