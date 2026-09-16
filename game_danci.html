@@ -270,11 +270,10 @@ function answerPick(el,v,w,isBoss){
   if(lock) return; lock=true; statHit(w,v===w.cn);
   if(v===w.cn){
     el.classList.add('correct');
-    let gain=(isBoss?3:1);
-    if(doubleArmed){ gain*=2; doubleArmed=false; }
+    let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
     if((qi+1)%3===0) grantItem();
-    say("咕噜咕噜——气泡捞上来啦！"+w.en+" = 【"+w.cn+"】"+(isBoss?" 章鱼王被击退！":"")+(doubleArmed?" ✖️2已激活！":""));
+    say("咕噜咕噜——气泡捞上来啦！"+w.en+" = 【"+w.cn+"】"+(isBoss?" 章鱼王被击退！":"")+(dbl?" ✖️2翻倍到账！":""));
     setTimeout(()=>{ qi++; nextQ(); },isBoss?1600:1200);
   } else {
     el.classList.add('wrong');
@@ -349,52 +348,27 @@ function checkSpell(){
   if(got.toLowerCase()===want.toLowerCase()){
     lock=true; clearInterval(bossTimer);
     statHit(curWord,true);
-    let gain=2; if(doubleArmed){ gain*=2; doubleArmed=false; }
+    let gain=2; const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
-    say("叮叮叮——拼写完美！【"+curWord.en+"】+"+gain+"气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:""));
+    say("叮叮叮——拼写完美！【"+curWord.en+"】+"+gain+"气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:"")+(dbl?" ✖️2翻倍到账！":""));
     setTimeout(()=>{ qi++; nextQ(); },1600);
   } else {
-    lock=true;
-    if(items.shield>0){
-      // 护盾：只清掉错误位置的字母
-      items.shield--; renderItemBar();
-      let fixed=0;
-      slots.forEach((s,i)=>{
-        if(s.dataset.char.toLowerCase()!==want[i].toLowerCase()){
-          s.textContent=''; s.classList.remove('filled'); delete s.dataset.char; fixed++;
-        }
-      });
-      // 恢复被清掉字母的按钮
-      const usedBtns=typed.filter(t=>!t.s.dataset.char);
-      const usedLetters=[...document.querySelectorAll('.lt.used')];
-      document.querySelectorAll('.lt.used').forEach(b=>{
-        const ch=b.textContent;
-        const need=want.split('').filter((x,i)=>slots[i]&&!slots[i].dataset.char&&x.toLowerCase()===ch.toLowerCase()).length;
-        const placed=[...document.querySelectorAll('.slot.filled')].filter(s=>s.dataset.char&&s.dataset.char.toLowerCase()===ch.toLowerCase()).length;
-        const inPool=letters=0; // noop
-      });
-      // 简化：全部解锁未匹配按钮
-      document.querySelectorAll('.lt.used').forEach(b=>{
-        const ch=b.textContent.toLowerCase();
-        const stillNeeded=[...slots].filter(s=>!s.dataset.char||!s.classList.contains('filled')).length;
-        const targetIdx=[...slots].findIndex(s=>s.classList.contains('filled')&&s.dataset.char&&s.dataset.char.toLowerCase()===ch);
-        // 若该字母按钮对应的槽被清空则恢复
-      });
-      // 重新同步按钮状态：按槽内容重建
-      typed.forEach(t=>{ if(!t.s.dataset.char){ t.btn.classList.remove('used'); } });
-      typed=typed.filter(t=>t.s.dataset.char);
-      toast("🛡️ 护盾修正了 "+fixed+" 个字母，再试一次！");
-      say("嘎！护盾帮你把错的字母擦掉了，剩下的位置想想 "+curWord.cn+" 的拼写！");
+    lock=true; clearInterval(bossTimer);
+    const usedShield = items.shield>0;
+    if(usedShield){ items.shield--; } else { statHit(curWord,false); missWord(curWord); }
+    renderItemBar();
+    slots.forEach(s=>{ s.style.color = usedShield ? '#e8a020' : '#e05555'; });
+    setTimeout(()=>{
+      // 统一全量重置：槽位清空 + 所有字母按钮解锁，杜绝卡死
+      slots.forEach(s=>{ s.textContent=''; s.classList.remove('filled','hint'); s.style.color=''; delete s.dataset.char; });
+      document.querySelectorAll('.lt').forEach(b=>{ b.classList.remove('used'); });
+      typed=[];
       lock=false;
+      if(usedShield) toast("🛡️ 护盾生效：字母已重排，不扣宝石、不记错题！");
+    },800);
+    if(usedShield){
+      say("嘎！有字母站错位置啦！护盾帮你全部重排好了，再拼一次，稳稳的！");
     } else {
-      statHit(curWord,false); missWord(curWord);
-      slots.forEach(s=>s.style.color='#e05555');
-      setTimeout(()=>{
-        slots.forEach(s=>{ s.textContent=''; s.classList.remove('filled'); s.style.color=''; delete s.dataset.char; });
-        document.querySelectorAll('.lt').forEach(b=>{ b.classList.remove('used'); });
-        typed=[];
-        lock=false;
-      },700);
       say("嘎…顺序不对哦！"+curWord.cn+" 的单词是 "+want.length+" 个字母，它进复仇名单啦！");
     }
     updateHUD();
