@@ -69,6 +69,7 @@
   <button class="bigbtn alt" onclick="showRules()" data-page-node-id="6hh0nNcnOFRmKEHoUwHrmE">📜 闯关规则 & 爸爸手册</button>
   <div class="duckline" data-page-node-id="FWJFpwYy5aPansMFLw1csX">嘎嘎：烁烁船长，风向正好，出发吧！🦆</div>
   <div id="cloudStats" style="display:none;text-align:center;font-size:13px;color:#2a6f5f;background:#eaf7f1;border-radius:10px;padding:8px;margin-top:10px" data-page-node-id="CloudStatsNode">云端账户加载中…</div>
+  <div id="customTip" style="display:none;text-align:center;font-size:13px;color:#8a4b00;background:#fff3e0;border-radius:10px;padding:8px;margin-top:8px;font-weight:bold" data-page-node-id="CustomTipNode"></div>
 </div>
 
 <div class="card hidden" id="quizCard" data-page-node-id="tIWmyUPryeuFRQvhhLbwkl">
@@ -217,6 +218,7 @@ function startQuiz(){
   quiz=[]; qi=0; correct=0; wrongToday=[];
   var wrongs=D.wrongBank.filter(function(w){return w.times<2;}).slice(0,2);
   wrongs.forEach(function(w){ quiz.push({story:"👾 乱算怪又来了！上次的题还敢再来吗？", expr:w.expr, ans:w.ans, type:"calc", fromBank:true}); });
+  CUSTOM_QS.forEach(function(q){ quiz.push(q); }); // 今日真实作业变式题
   var calcN=9-quiz.length;
   for(var i=0;i<calcN;i++) quiz.push(genCalc(D.level));
   lastTeach=genTeach(D.level);
@@ -330,12 +332,23 @@ function fallbackCopy(code){
   var ta=document.createElement("textarea"); ta.value=code; ta.style.position="fixed"; ta.style.opacity="0";
   document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(e){} document.body.removeChild(ta);
 }
+var CUSTOM_QS=[]; // 今日真实作业变式题（由 data.json 下发）
 function showCloudStats(){
   fetch("data.json?t="+Date.now()).then(function(r){return r.json();}).then(function(d){
     var st=d.state||{};
     var el=document.getElementById("cloudStats");
     el.innerHTML="🪙 "+(st.xp||0)+" XP　💎 "+(st.gems||0)+" 宝石　🎫 "+(st.chatTickets||d.chat_tickets||0)+" 聊天券";
     el.style.display="block";
+    // 今日变式题注入：state.math_custom = {date:"YYYY-MM-DD", questions:[{story,expr,ans}]}
+    var mc=st.math_custom;
+    var today=new Date().toISOString().slice(0,10);
+    if(mc && mc.date===today && mc.questions && mc.questions.length){
+      CUSTOM_QS=mc.questions.slice(0,3).map(function(q){
+        return {story:"🎯 今日特训（来自你的真实作业）：<br>"+q.story, expr:q.expr, ans:q.ans, type:"calc", fromBank:false};
+      });
+      var tip=document.getElementById("customTip");
+      if(tip){ tip.innerHTML="🎯 嘎嘎从你今天的作业里抓到了 "+CUSTOM_QS.length+" 只乱算怪，混进了这一关！"; tip.style.display="block"; }
+    }
   }).catch(function(){ /* file:// 或离线时静默隐藏 */ });
 }
 document.getElementById("ansInput").addEventListener("keydown",function(e){ if(e.key==="Enter") submitAns(); });
