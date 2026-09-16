@@ -207,7 +207,7 @@ function startGame(){
   document.getElementById('mistBox').style.display='none';
   document.getElementById('gem').textContent=0;
   renderHP(); setMonster();
-  const revengeWords=(mistakes.cuozi||[]).map(w=>BANK.find(b=>b.w===w)).filter(Boolean).slice(0,3);
+  const revengeWords=(mistakes.cuozi||[]).map(w=>BANK.find(b=>b.w===w)).filter(Boolean).slice(0,3).map(b=>({...b,revenge:true}));
   // 复仇字优先 + 随机补满10——先开局，特训字后台异步混入
   deck=[...revengeWords];
   const used=new Set(deck.map(q=>q.w));
@@ -273,6 +273,8 @@ function answer(el,v,q,isBoss){
     el.classList.add('correct');
     stats[cat][0]++; saveStats();
     if(window.XP3)XP3.hit('cuozi',cat,isBoss);
+    // 复仇成功：答对就把这个字移出复仇名单
+    mistakes.cuozi=(mistakes.cuozi||[]).filter(x=>x!==q.w); saveMistakes();
     hp--; renderHP(); setMonster();
     const f=document.getElementById('mFace'); f.classList.remove('hit'); void f.offsetWidth; f.classList.add('hit');
     let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
