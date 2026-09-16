@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="sLXxIJJgwNcOMPvMid2eao">
+<head data-page-node-id="L8me8WpARP4iaXvi2lKJph">
+<meta charset="UTF-8" data-page-node-id="qlT2kb0revLBz8EtkimqRC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="vrrBOLv8oFpAz1tywfHi1p">
+<title>错字怪猎人 · 语文保卫战</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,#fdf1e0 0%,#f3e8ff 55%,#e0f4ff 100%);
+    min-height:100vh; color:#3a2c4a; display:flex; flex-direction:column; align-items:center; }
+  .header { width:100%; max-width:520px; padding:14px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; }
+  .stats { display:flex; gap:8px; }
+  .pill { background:#fff; border-radius:14px; padding:4px 10px; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(90,50,120,.12); }
+  .pill b { color:#e0559a; }
+  .monster-zone { width:100%; max-width:520px; background:#fff; border-radius:22px; padding:18px;
+    box-shadow:0 8px 24px rgba(90,50,120,.14); margin:10px 14px 6px; text-align:center; }
+  .mface { font-size:52px; transition:transform .2s; }
+  .mface.hit { animation:mhit .45s; }
+  @keyframes mhit { 0%{transform:scale(1)} 40%{transform:scale(1.25) rotate(-8deg); filter:brightness(1.4)} 100%{transform:scale(1)} }
+  .hpbar { height:14px; background:#f2e6f7; border-radius:8px; overflow:hidden; margin:10px auto 4px; max-width:320px; }
+  .hpbar i { display:block; height:100%; background:linear-gradient(90deg,#ff7aa8,#e0559a); border-radius:8px; transition:width .5s; }
+  .hpnum { font-size:12px; color:#a083b5; font-weight:700; }
+  .mname { font-weight:900; font-size:16px; margin-top:4px; }
+  .card { width:100%; max-width:520px; background:#fff; border-radius:22px; padding:20px 18px;
+    box-shadow:0 8px 24px rgba(90,50,120,.14); margin:6px 14px; text-align:center; }
+  .qtip { font-size:15px; color:#7a5f95; font-weight:700; margin-bottom:14px; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .opt { background:#faf5ff; border:2px solid #ead9f7; border-radius:16px; padding:16px 6px;
+    font-size:22px; font-weight:800; color:#5d3a80; cursor:pointer; transition:transform .12s; }
+  .opt:active { transform:scale(.95); }
+  .opt.correct { background:#dcf7e5; border-color:#4fc47f; }
+  .opt.wrong { background:#ffe3e0; border-color:#f0716b; animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .duckmsg { display:flex; align-items:flex-start; gap:8px; margin-top:14px; text-align:left; min-height:46px; }
+  .duckmsg .face { font-size:26px; }
+  .bubble { background:#f5efff; border-radius:4px 14px 14px 14px; padding:8px 12px; font-size:14px; color:#6a4a92; line-height:1.6; flex:1; }
+  .screen { display:none; width:100%; max-width:520px; padding:30px 20px; text-align:center; }
+  .screen.active { display:block; }
+  .bigface { font-size:64px; }
+  h1 { font-size:22px; margin:10px 0 6px; }
+  .desc { font-size:14px; color:#7a5f95; line-height:1.8; margin-bottom:20px; }
+  .btn { display:inline-block; background:linear-gradient(90deg,#c98cff,#8f6bff); color:#fff; font-weight:900;
+    font-size:17px; border:none; border-radius:999px; padding:13px 40px; cursor:pointer; box-shadow:0 5px 0 #6d4bd4; }
+  .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #6d4bd4; }
+  .progress { font-size:13px; color:#a083b5; font-weight:700; }
+</style>
+</head>
+<body data-page-node-id="amMgmsjLn84hpaBgGyRbbl">
+
+<div class="header" data-page-node-id="HkD30nQc0rJrg72FW6qNyo">
+  <div class="brand" data-page-node-id="gpfjyUVDnVMklydWpGyRNe">🏹 错字怪猎人</div>
+  <div class="stats" data-page-node-id="XujtoEmlZsTMAAFpOntPcT">
+    <span class="pill" data-page-node-id="NJCJz6mvMw2ZOeeCBrsKpH">💎 <b id="gem" data-page-node-id="ghonHIapZk8PWNOeYg0VOG">0</b></span>
+    <span class="pill" data-page-node-id="PbCFDBwsPRQ4KBPyJ9GY7m">🏹 箭 <b id="shots" data-page-node-id="G83tAW2j6Sf2Jiql2pawek">10</b>/10</span>
+  </div>
+</div>
+
+<div class="screen active" id="startScreen" data-page-node-id="pBI0Echnhff8vXUe6aC6Iw">
+  <div class="bigface" data-page-node-id="2OHGQbkVGRo1JGb4vesrlR">👾🏹🦆</div>
+  <h1 data-page-node-id="WUCb41J2GyvagHIkDa15Yu">错字怪猎人</h1>
+  <div class="desc" data-page-node-id="PUMmsc1Edyu6fMxTbCVHZ2">
+    错字怪混进了语文森林，把课文词语都写错了！<br data-page-node-id="8PIOe4fRdUVZ8d2wz8tIk0">
+    看到被它改坏的词，<b data-page-node-id="yYLA1sKyCEBy5xHC5axioh">选出正确的写法</b>，<br data-page-node-id="mqeJFYTlwUIqRDIBgxyoPT">
+    就能射它一箭！10箭把它打败！<br data-page-node-id="srslwwduGn1yAq1h73pJxn">
+    全部都是四上课文里的易错字哦～
+  </div>
+  <button class="btn" onclick="startGame()" data-page-node-id="hgPEgjyxvcPxHwwHYPZhoi">⚔️ 开始狩猎</button>
+</div>
+
+<div class="monster-zone" id="gameZone" style="display:none" data-page-node-id="xHspa8vtyYWNcwQBqENLXH">
+  <div class="mface" id="mFace" data-page-node-id="5pkDOrztXd8DiBIghTGDvj">👾</div>
+  <div class="hpbar" data-page-node-id="JvkxE6wKifs1e6yWqkR6LS"><i id="hpFill" style="width:100%" data-page-node-id="gvD2ZmU5UHiRhmFZif93Mb"></i></div>
+  <div class="hpnum" id="hpNum" data-page-node-id="soYFgDhbMVcHXj3mBUBSQC">HP 10/10</div>
+  <div class="mname" id="mName" data-page-node-id="l8ENBFzYDBVOU6B28F9akZ">错字怪 · 爪爪</div>
+</div>
+
+<div class="card" id="gameCard" style="display:none" data-page-node-id="PSEBJNBGZrn6CfeWqUIt7R">
+  <div class="progress" id="prog" data-page-node-id="YU7twGK7pn3e8wAJTrhhUR">第 1 箭</div>
+  <div class="qtip" id="qTip" data-page-node-id="ULMT1XNc1gvmAMjgfCFGcz">哪个写法是<b data-page-node-id="EHZUA1aez1Xpl64C6Sgpn1">正确</b>的？</div>
+  <div class="options" id="opts" data-page-node-id="MSWq5rICMLlgQ2nliYCGQ7"></div>
+  <div class="duckmsg" data-page-node-id="ac2jtk1CYSKSorpGRxAlPV">
+    <span class="face" data-page-node-id="54TnRHoDYOka06brbJmwAJ">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="LuGBZekBny58XpPIy0u7YZ">嘎！张弓搭箭，看清楚每个字哦！</div>
+  </div>
+</div>
+
+<div class="screen" id="endScreen" data-page-node-id="6NzkC3MjKB9UtmBhQqYxMW">
+  <div class="bigface" id="endFace" data-page-node-id="KAdEp8MKFRmeZRGmd1LCZT">🏆</div>
+  <h1 id="endTitle" data-page-node-id="gK9C1hRsG2S9Jmj6PhYiee">狩猎成功！</h1>
+  <div class="desc" id="endDesc" data-page-node-id="lbZDZjpWwRy8Fmw2a0kqVF"></div>
+  <button class="btn" onclick="startGame()" data-page-node-id="kxdAM2H7VqvDJrBtQLgyJk">再战一轮</button>
+  <div class="desc" style="margin-top:14px" data-page-node-id="k6u3vW0L7UTDmGMOTdSzP5">📸 截图发群里，X1 给你登记奖励！</div>
+</div>
+
+<script>
+const BANK = [
+  {w:"卧室", bad:["屋室","卧市","卧式"], tip:"「卧」是睡的意思，别写成屋顶的「屋」！"},
+  {w:"痕迹", bad:["狠迹","痕记","恨迹"], tip:"痕迹跟「狠心」「悔恨」都没关系，是病字旁的「痕」！"},
+  {w:"均匀", bad:["钧匀","菌匀","均君"], tip:"均匀的「均」是土字旁，平衡的意思！"},
+  {w:"遮蔽", bad:["遮敝","蔗蔽","遮弊"], tip:"「蔽」上面是草字头，像草一样盖住！"},
+  {w:"倾斜", bad:["顷斜","清斜","倾谢"], tip:"是「倾向」的「倾」，不是公顷的「顷」！"},
+  {w:"宽阔", bad:["宽扩","宽括","宽库"], tip:"宽阔用三点水的「阔」，跟宽阔的江面有关！"},
+  {w:"沸腾", bad:["沸滕","拂腾","沸疼"], tip:"是「腾」不是「滕」！水烧开翻滚叫沸腾！"},
+  {w:"横贯", bad:["横惯","横灌","横冠"], tip:"「贯」是穿过，横贯江面就是横着穿过去！"},
+  {w:"恢复", bad:["灰复","恢腹","挥复"], tip:"恢复用「恢复」，不是灰色也不是肚子哦！"},
+  {w:"蜗牛", bad:["涡牛","蜗午","瓜牛"], tip:"蜗牛是虫字旁的「蜗」，它背着壳慢慢爬！"},
+  {w:"叶柄", bad:["叶病","叶丙","叶并"], tip:"「柄」是木字旁，连接叶子和茎的部分！"},
+  {w:"慎重", bad:["镇重","真重","慎中"], tip:"「慎重」是竖心旁，认真小心的意思！"},
+  {w:"陡峭", bad:["徒峭","陡俏","陡悄"], tip:"陡峭的山壁，用「陡」不是「徒」！"},
+  {w:"堡垒", bad:["保垒","堡磊","宝垒"], tip:"堡垒下面是「土」，用土石筑成的！"},
+  {w:"胸怀", bad:["凶怀","胸坏","胸杯"], tip:"胸怀的「胸」是月字旁，跟身体有关！"},
+  {w:"训斥", bad:["训赤","驯斥","训翅"], tip:"训斥的「斥」，不是红色的赤！"},
+  {w:"严厉", bad:["严历","严励","严禁"], tip:"严厉用「厉害」的「厉」，不是日历的「历」！"},
+  {w:"屹立", bad:["屹力","乞立","屹例"], tip:"屹立像山一样站着不动，是山字旁的「屹」！"},
+  {w:"花圃", bad:["花普","花埔","花铺"], tip:"「圃」是围着种花草的地方，全包围结构！"},
+  {w:"霎时", bad:["需时","霞时","雬时"], tip:"「霎时」是一眨眼的工夫，雨字头的霎！"}
+];
+const MONSTERS = [
+  {name:"错字怪 · 爪爪", face:"👾"},
+  {name:"错字怪 · 涂涂", face:"👹"},
+  {name:"错字怪 BOSS · 白卷王", face:"👺"}
+];
+let deck, qi, gem, hp, lock;
+function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+
+function startGame(){
+  deck = shuffle(BANK).slice(0,10);
+  qi=0; gem=0; lock=false;
+  hp = 10;
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('endScreen').classList.remove('active');
+  document.getElementById('gameZone').style.display='block';
+  document.getElementById('gameCard').style.display='block';
+  setMonster();
+  renderHP();
+  nextQ();
+  say("嘎嘎！错字怪出现啦！选出正确的写法射它一箭！");
+}
+function setMonster(){
+  const m = MONSTERS[Math.min(Math.floor((10-hp)/4),2)];
+  document.getElementById('mName').textContent = m.name;
+  document.getElementById('mFace').textContent = m.face;
+}
+function renderHP(){
+  document.getElementById('hpFill').style.width = (hp/10*100)+"%";
+  document.getElementById('hpNum').textContent = "HP "+hp+"/10";
+}
+function nextQ(){
+  if(qi>=10){ endGame(); return; }
+  lock=false;
+  const q = deck[qi];
+  document.getElementById('prog').textContent = "第 "+(qi+1)+" 箭 / 10";
+  document.getElementById('qTip').innerHTML = "哪个写法是<b>正确</b>的？";
+  const opts = shuffle([q.w, ...q.bad]);
+  const box=document.getElementById('opts'); box.innerHTML='';
+  opts.forEach(v=>{
+    const d=document.createElement('div'); d.className='opt'; d.textContent=v;
+    d.onclick=()=>answer(d,v,q); box.appendChild(d);
+  });
+}
+function answer(el,v,q){
+  if(lock) return; lock=true;
+  if(v===q.w){
+    el.classList.add('correct');
+    hp--; renderHP(); setMonster();
+    const f=document.getElementById('mFace'); f.classList.remove('hit'); void f.offsetWidth; f.classList.add('hit');
+    gem += (hp===5?2:1); // 打到半血奖励双倍
+    document.getElementById('gem').textContent=gem;
+    say("咻——射中了！"+q.tip+(hp===5?" 错字怪暴怒换形态，宝石翻倍！":""));
+    if(hp<=0){ setTimeout(endGame,1000); return; }
+    setTimeout(()=>{ qi++; nextQ(); },1400);
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===q.w) e.classList.add('correct'); });
+    say("嘎…射偏了！正确写法是【"+q.w+"】。"+q.tip+" 错字怪在偷笑！");
+    setTimeout(()=>{ qi++; nextQ(); },2000);
+  }
+}
+function say(t){ document.getElementById('duckSay').textContent=t; }
+function endGame(){
+  document.getElementById('gameZone').style.display='none';
+  document.getElementById('gameCard').style.display='none';
+  const s=document.getElementById('endScreen'); s.classList.add('active');
+  const face = document.getElementById('endFace');
+  const title = document.getElementById('endTitle');
+  if(hp<=0){ face.textContent="🏆"; title.textContent="错字怪被消灭啦！"; }
+  else { face.textContent="💪"; title.textContent="错字怪逃跑了…"; }
+  document.getElementById('endDesc').innerHTML=
+    "本轮得分：<b>"+gem+"</b> 宝石<br>命中：<b>"+(10-hp)+"</b> / 10 箭<br>"+
+    (hp<=0?"语文森林恢复安全，嘎嘎送你三颗星星！⭐⭐⭐":"记住刚才写错的字，再来一箭把它拿下！");
+}
+</script>
+</body>
+</html>
