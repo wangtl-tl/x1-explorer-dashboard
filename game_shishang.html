@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="MdqONHjFWHqUvFvGNcQyAn">
+<head data-page-node-id="sjG1oZvgWybO9buq3evaDm">
+<meta charset="UTF-8" data-page-node-id="bCTfIfjoSqU3zWlDl7nuSM">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="4bPzFzIDWpusgbI3aCYzrG">
+<title>试商大冒险 · 坚忍烁号数学任务</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei",sans-serif;
+    background: linear-gradient(160deg,#e8f7ec 0%,#dff1ff 55%,#fff8dc 100%);
+    min-height:100vh; color:#22343c; display:flex; flex-direction:column; align-items:center;
+  }
+  .header { width:100%; max-width:520px; padding:14px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; }
+  .duck { font-size:26px; }
+  .stats { display:flex; gap:8px; }
+  .pill { background:#fff; border-radius:14px; padding:4px 10px; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(34,80,60,.12); }
+  .pill b { color:#e8a020; }
+  .card {
+    width:100%; max-width:520px; background:#fff; border-radius:22px; padding:22px 18px;
+    box-shadow:0 8px 24px rgba(40,90,70,.14); margin:10px 14px; text-align:center;
+  }
+  .levelbar { height:10px; background:#edf3ee; border-radius:6px; overflow:hidden; margin:6px 0 14px; }
+  .levelbar i { display:block; height:100%; background:linear-gradient(90deg,#4fc47f,#2fa3d6); border-radius:6px; transition:width .4s; }
+  .lvtag { font-size:13px; color:#5b7a6a; font-weight:700; }
+  .question { font-size:34px; font-weight:800; letter-spacing:2px; margin:10px 0 4px; font-family:"DIN Alternate","Segoe UI",sans-serif; }
+  .sub { font-size:14px; color:#7a8f86; margin-bottom:16px; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .opt {
+    background:#f4faf6; border:2px solid #d9ece1; border-radius:16px; padding:16px 0;
+    font-size:24px; font-weight:800; color:#28604c; cursor:pointer; transition:transform .12s, background .2s;
+  }
+  .opt:active { transform:scale(.95); }
+  .opt.correct { background:#d8f5e3; border-color:#4fc47f; }
+  .opt.wrong { background:#ffe3e0; border-color:#f0716b; animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .hint { margin-top:14px; font-size:14px; color:#8a6d1f; background:#fff6d8; border-radius:12px; padding:8px 12px; display:none; text-align:left; line-height:1.6; }
+  .hintbtn { margin-top:12px; font-size:13px; color:#3c78a8; background:none; border:none; font-weight:700; cursor:pointer; }
+  .duckmsg { display:flex; align-items:flex-start; gap:8px; margin-top:14px; text-align:left; min-height:44px; }
+  .duckmsg .face { font-size:26px; }
+  .bubble { background:#f2f8ff; border-radius:4px 14px 14px 14px; padding:8px 12px; font-size:14px; color:#2b5f8a; line-height:1.6; flex:1; }
+  .combo { position:fixed; top:18%; left:50%; transform:translateX(-50%); font-size:30px; font-weight:900; color:#ff9a3c; text-shadow:0 2px 0 #fff; opacity:0; pointer-events:none; }
+  .combo.show { animation:pop 1s forwards; }
+  @keyframes pop { 0%{opacity:0; transform:translateX(-50%) scale(.5)} 20%{opacity:1; transform:translateX(-50%) scale(1.15)} 80%{opacity:1} 100%{opacity:0} }
+  .screen { display:none; width:100%; max-width:520px; padding:30px 20px; text-align:center; }
+  .screen.active { display:block; }
+  .bigduck { font-size:64px; }
+  h1 { font-size:22px; margin:10px 0 6px; }
+  .desc { font-size:14px; color:#5b7a6a; line-height:1.8; margin-bottom:20px; }
+  .btn {
+    display:inline-block; background:linear-gradient(90deg,#ffcf5c,#ffa53c); color:#5a3d00; font-weight:900;
+    font-size:17px; border:none; border-radius:999px; padding:13px 40px; cursor:pointer; box-shadow:0 5px 0 #e08a1e;
+  }
+  .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #e08a1e; }
+  .result-gem { font-size:42px; margin:8px 0; }
+  .best { font-size:13px; color:#9aa9a1; margin-top:14px; }
+</style>
+</head>
+<body data-page-node-id="Wy6YCCJXETPcmUn1EUtDyv">
+
+<div class="header" data-page-node-id="YklH32h3XC3hDFHyoXHw8h">
+  <div class="brand" data-page-node-id="lBhojxbpDRpeeTl45EZelJ"><span class="duck" data-page-node-id="wu0BnLEKSbGxvvIIzTnrbP">🦆</span>试商大冒险</div>
+  <div class="stats" data-page-node-id="T6fev1TJb9rx45NVhodsrm">
+    <span class="pill" data-page-node-id="ZCtbPUbAMFGXuRllHLZgJ6">💎 <b id="gem" data-page-node-id="Z6pcaLVga7NAkOMgAk6HKl">0</b></span>
+    <span class="pill" data-page-node-id="o0wJWEE0a6Uz6kS3zhz4ry">🔥 连击 <b id="combo" data-page-node-id="znW3VbQsHkPXMOey1Q2tV7">0</b></span>
+  </div>
+</div>
+
+<!-- 开始页 -->
+<div class="screen active" id="startScreen" data-page-node-id="jiZFLN9zVsqm6yMQtuB3zS">
+  <div class="bigduck" data-page-node-id="Sv3DL6r8ixTe2snfiDJMN0">⚓🦆</div>
+  <h1 data-page-node-id="hruaPssI3S9UcBoPfnHWdZ">试商大冒险</h1>
+  <div class="desc" data-page-node-id="tbEJiSoqdVuKzxHBFdeQcp">
+    错算怪在商的密林里设了 5 道关卡！<br data-page-node-id="5jmx8x3EoYQV3xYklXY7hw">
+    帮嘎嘎算出 <b data-page-node-id="EavI3WtpXqdpMUxcpFlKlg">三位数 ÷ 两位数</b> 的商，<br data-page-node-id="yJLOEjl0fWajfuHNARHrAT">
+    打败错算怪，赢回宝石！<br data-page-node-id="DEk8SVVrLiywiVZnFwRO4o">
+    连对不出错，连击奖励翻倍哦～
+  </div>
+  <button class="btn" onclick="startGame()" data-page-node-id="HCTy5yXY6sDGZAB2zHSH5L">🚀 出发闯关</button>
+  <div class="best" id="bestInfo" data-page-node-id="PSZ8TALfH1WqM2lebdfYAy"></div>
+</div>
+
+<!-- 游戏页 -->
+<div class="card" id="gameScreen" style="display:none" data-page-node-id="2B3HoAoM5nVt4tBvt6jrI9">
+  <div class="lvtag" id="lvTag" data-page-node-id="Ay6s2o1ArvdpMZKXT9ZJjT">第 1 关 · 试商热身</div>
+  <div class="levelbar" data-page-node-id="eTBzudXzyMYLe0lC0fgH3r"><i id="lvFill" style="width:10%" data-page-node-id="RRBxerXT7i9LoP508W80ff"></i></div>
+  <div class="question" id="qText" data-page-node-id="U4MqB92UKHYEochQvz7fkk">000 ÷ 00</div>
+  <div class="sub" data-page-node-id="4NRVmWRkzZY9qQfoDCrwEE">商是多少？点下面的选项！</div>
+  <div class="options" id="opts" data-page-node-id="sTR96rF5P04CWc2LpGQClw"></div>
+  <button class="hintbtn" onclick="showHint()" data-page-node-id="68dN8vjEWxktYEHsZQejGm">🦆 嘎嘎的试商锦囊（用了这一题减1宝石）</button>
+  <div class="hint" id="hintBox" data-page-node-id="fYexzoCP9eltRN8Go8fv9Y"></div>
+  <div class="duckmsg" data-page-node-id="rtrydyaTvbZJbLBEA0JsGV">
+    <span class="face" data-page-node-id="COvQllVOJsPFe2b5jNFaoX">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="lcWewUF8lTETTDkJ497jor">嘎嘎嘎！第一题来啦，稳住！把除数看作整十数试商～</div>
+  </div>
+</div>
+
+<!-- 结束页 -->
+<div class="screen" id="endScreen" data-page-node-id="GSnp1avxe2THrZUnORwyQx">
+  <div class="bigduck" id="endFace" data-page-node-id="AXzcuVFj6AewXR4sY9gNj3">🎉</div>
+  <h1 id="endTitle" data-page-node-id="58w14lCzsPLJz13tlbypc0">闯关成功！</h1>
+  <div class="result-gem" id="endGem" data-page-node-id="BfhSbfUDgN2ALMmqSUQmzm">💎💎💎</div>
+  <div class="desc" id="endDesc" data-page-node-id="jtPvWHo0oMzngYiy11jiG6"></div>
+  <button class="btn" onclick="resetGame()" data-page-node-id="0DR6Yct5RyUN05gK9u30MG">再来一轮</button>
+  <div class="desc" style="margin-top:14px" data-page-node-id="ugnLgky2iGpSNCusLmHVHC">📸 截图发到群里给 X1 看看，领额外奖励！</div>
+</div>
+
+<div class="combo" id="comboPop" data-page-node-id="f9USKT2e8ZH3IxSq0DEC01"></div>
+
+<script>
+const LV_NAMES = ["试商热身","整十邻近","四舍试商","五入试商","错算怪BOSS"];
+const TOTAL = 10; // 每关10题？不，每关2题，5关共10题
+const PER_LEVEL = 2;
+let qIndex, gem, combo, maxCombo, cur, curLevel, hintUsed, lock;
+
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+function makeQ(level){
+  // 生成 a ÷ b = q ... r，聚焦试商：b两位数，q一位数（1-9，BOSS关允许两位商）
+  let b, q, r, a, tries=0;
+  do {
+    if(level<=1){ b = rnd(12,29); }
+    else if(level===2){ b = rnd(21,49); }
+    else if(level===3){ b = rnd(21,49); q = rnd(3,7); } // 四舍：b个位1-4
+    else if(level===4){ b = rnd(26,49); q = rnd(3,7); } // 五入：b个位5-9
+    else { b = rnd(31,49); }
+    if(level<=2){ q = rnd(2,9); }
+    if(level===5){ q = rnd(10,19); }
+    r = rnd(0,b-1);
+    a = b*q + r;
+    tries++;
+  } while((a<200 || a>999) && tries<80);
+  if(a<200||a>999){ b=rnd(31,49); q=rnd(6,9); r=rnd(0,b-1); a=b*q+r; }
+  // 干扰项
+  const wrongs = new Set();
+  const cands = [q+1,q-1,q+2,q-2,q+10,q-10];
+  for(const c of cands){ if(c>=1 && c!==q && c<=99) wrongs.add(c); if(wrongs.size>=3) break; }
+  let arr = [q, ...Array.from(wrongs).slice(0,3)];
+  arr.sort(()=>Math.random()-0.5);
+  return {a,b,q,r,opts:arr};
+}
+
+function startGame(){
+  qIndex=0; gem=0; combo=0; maxCombo=0; curLevel=1; hintUsed=false; lock=false;
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('endScreen').classList.remove('active');
+  document.getElementById('gameScreen').style.display='block';
+  nextQ();
+  say("嘎！第一关出发！记住口诀：除数看作整十数，试商要乘一乘来检验！");
+}
+
+function nextQ(){
+  if(qIndex >= 5*PER_LEVEL){ endGame(); return; }
+  curLevel = Math.floor(qIndex/PER_LEVEL)+1;
+  cur = makeQ(curLevel);
+  hintUsed=false; lock=false;
+  document.getElementById('lvTag').textContent = "第 "+curLevel+" 关 · "+LV_NAMES[curLevel-1]+"（第"+(qIndex%PER_LEVEL+1)+"/"+PER_LEVEL+"题）";
+  document.getElementById('lvFill').style.width = (qIndex/(5*PER_LEVEL)*100)+"%";
+  document.getElementById('qText').textContent = cur.a+" ÷ "+cur.b+" = ?";
+  const box=document.getElementById('opts'); box.innerHTML='';
+  cur.opts.forEach(v=>{
+    const d=document.createElement('div'); d.className='opt'; d.textContent=v;
+    d.onclick=()=>answer(d,v); box.appendChild(d);
+  });
+  document.getElementById('hintBox').style.display='none';
+}
+
+function answer(el,v){
+  if(lock) return; lock=true;
+  const isOk = v===cur.q;
+  if(isOk){
+    el.classList.add('correct');
+    combo++; maxCombo=Math.max(maxCombo,combo);
+    let gain = 1 + Math.floor(combo/3);
+    gem += hintUsed ? Math.max(1,gain-1) : gain;
+    popCombo();
+    say(pick(["嘎嘎嘎！全对！错算怪被打飞啦！","厉害！这个商稳稳的！","宝石+1！烁烁是试商小船长！","哇，连击"+combo+"！错算怪吓哭了！"]));
+    updateHUD();
+    setTimeout(()=>{ qIndex++; nextQ(); },900);
+  } else {
+    el.classList.add('wrong');
+    combo=0; updateHUD();
+    revealCorrect();
+    say("嘎…商是 "+cur.q+" 哦！用 "+cur.b+" × "+cur.q+" = "+(cur.b*cur.q)+" 检验一下，再加 "+cur.r+" 正好等于 "+cur.a+"！下一题加油！");
+    updateHUD();
+    setTimeout(()=>{ qIndex++; nextQ(); },1800);
+  }
+}
+
+function revealCorrect(){
+  document.querySelectorAll('.opt').forEach(e=>{
+    if(+e.textContent===cur.q) e.classList.add('correct');
+  });
+}
+
+function showHint(){
+  if(hintUsed) return; hintUsed=true;
+  const b=cur.b, near=b%5<3 ? b-(b%10) : b+(10-b%10);
+  let tip = "把 "+b+" 看作整十数 "+near+" 来试商！试完再用 「除数 × 商」 检验，余数要比除数小哦。";
+  const box=document.getElementById('hintBox');
+  box.textContent="🦆 "+tip; box.style.display='block';
+}
+
+function popCombo(){
+  const c=document.getElementById('comboPop');
+  if(combo>=3){
+    c.textContent="🔥 连击 ×"+combo+"！";
+    c.classList.remove('show'); void c.offsetWidth; c.classList.add('show');
+  }
+}
+
+function say(t){ document.getElementById('duckSay').textContent=t; }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function updateHUD(){
+  document.getElementById('gem').textContent=gem;
+  document.getElementById('combo').textContent=combo;
+}
+
+function endGame(){
+  document.getElementById('gameScreen').style.display='none';
+  const s=document.getElementById('endScreen'); s.classList.add('active');
+  const full=5*PER_LEVEL;
+  let face,title;
+  if(gem>=13){ face="🏆"; title="试商王者！"; }
+  else if(gem>=8){ face="🎉"; title="闯关成功！"; }
+  else { face="💪"; title="继续加油！"; }
+  document.getElementById('endFace').textContent=face;
+  document.getElementById('endTitle').textContent=title;
+  document.getElementById('endGem').textContent="💎".repeat(Math.min(gem,10))+(gem>10?" +"+(gem-10):"");
+  document.getElementById('endDesc').innerHTML=
+    "本轮得分：<b>"+gem+"</b> 宝石<br>最高连击：<b>×"+maxCombo+"</b><br>"+
+    (gem>=13?"错算怪被打跑啦，商的密林恢复光明！":"错算怪还在，下次用试商口诀收拾它！");
+  let best=+(localStorage.getItem('x1_shishang_best')||0);
+  if(gem>best){ best=gem; localStorage.setItem('x1_shishang_best',best); }
+  document.getElementById('bestInfo').textContent="";
+  say("");
+}
+function resetGame(){ startGame(); }
+(function(){ let best=+(localStorage.getItem('x1_shishang_best')||0);
+  if(best>0) document.getElementById('bestInfo').textContent="🏆 历史最高：["+best+"] 宝石"; })();
+</script>
+</body>
+</html>
