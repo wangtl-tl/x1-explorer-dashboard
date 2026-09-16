@@ -191,8 +191,21 @@ async function fetchCustom(){
     return arr.filter(q=>q&&q.b&&q.q).map(q=>({a:q.b*q.q+(q.r!=null?q.r:rnd(0,q.b-1)),b:q.b,q:q.q,r:q.r!=null?q.r:0,opts:null,custom:true}));
   }catch(e){ return []; }
 }
+function normalizeQ(q){
+  if(!q) return q;
+  if(q.r===undefined||q.r===null) q.r=0;
+  if(q.q===undefined&&q.a!==undefined&&q.b){ q.q=Math.floor(q.a/q.b); q.r=q.a%q.b; }
+  if(q.a===undefined||q.a===null) q.a=q.b*(q.q||0)+q.r;
+  if(!q.opts||!q.opts.length){
+    const wrongs=new Set();
+    [q.q+1,q.q-1,q.q+2,q.q-2,q.q+10,q.q-10].forEach(c=>{ if(c>=1&&c!==q.q&&c<=99) wrongs.add(c); });
+    q.opts=[q.q,...Array.from(wrongs).slice(0,3)].sort(()=>Math.random()-0.5);
+  }
+  if(!q.cat) q.cat=catOf(q.b);
+  return q;
+}
 function getRevenge(){
-  return (mistakes.shishang||[]).slice(-3).map(m=>({a:m.a,b:m.b,q:m.q,r:m.r,opts:null,revenge:true}));
+  return (mistakes.shishang||[]).slice(-3).map(m=>normalizeQ({a:m.a,b:m.b,q:m.q,r:m.r,opts:null,revenge:true}));
 }
 
 /* ---------- 出题 ---------- */
@@ -252,6 +265,7 @@ function nextQ(){
     const lv=Math.min(5,Math.floor(qi/2)+1);
     q=makeQ(lv,adaptiveShift);
   }
+  q=normalizeQ(q);
   cur=q;
   const lv=Math.min(5,Math.floor(qi/2)+1);
   if(isBoss) startBoss(q);
