@@ -140,6 +140,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
+const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const WORDS = [
   {en:"classroom",cn:"教室",cat:"学校"},{en:"window",cn:"窗户",cat:"学校"},{en:"light",cn:"灯",cat:"学校"},
   {en:"picture",cn:"图画",cat:"学校"},{en:"door",cn:"门",cat:"学校"},{en:"computer",cn:"计算机",cat:"学校"},
@@ -159,14 +161,14 @@ const HINTS={classroom:"class+room",schoolbag:"school+bag",notebook:"note+book",
 const SKINS=[{name:"小帆船",face:"⛵",need:0},{name:"远洋巨轮",face:"🚢",need:30},{name:"黄金舰队",face:"🛳️",need:80}];
 let deck,qi,gem,lock,curWord,typed,items,doubleArmed,bossTimer,bossLeft;
 let stats=load("x1_stats_danci",{});
-let totalGems=+(localStorage.getItem("x1_total_gems")||0);
-let skinSel=+(localStorage.getItem("x1_skin_danci")||0);
-let mistakes=JSON.parse(localStorage.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
+let totalGems=+(LS.getItem("x1_total_gems")||0);
+let skinSel=+(LS.getItem("x1_skin_danci")||0);
+let mistakes=JSON.parse(LS.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
 
-function load(k,d){ try{ return JSON.parse(localStorage.getItem(k))||d; }catch(e){ return d; } }
+function load(k,d){ try{ return JSON.parse(LS.getItem(k))||d; }catch(e){ return d; } }
 function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
-function saveStats(){ localStorage.setItem("x1_stats_danci",JSON.stringify(stats)); }
-function saveMistakes(){ localStorage.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
+function saveStats(){ LS.setItem("x1_stats_danci",JSON.stringify(stats)); }
+function saveMistakes(){ LS.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
 function toast(t){ const e=document.getElementById('toast'); e.textContent=t; e.classList.remove('show'); void e.offsetWidth; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1800); }
 
 function renderSkins(){
@@ -176,7 +178,7 @@ function renderSkins(){
     d.className='skin'+(i===skinSel?' sel':'')+(totalGems<s.need?' lock':'');
     d.innerHTML='<div>'+s.face+'</div><div class="skinname">'+(totalGems<s.need?'🔒'+s.need:'')+'</div>';
     d.onclick=()=>{ if(totalGems<s.need){ toast("还差 "+(s.need-totalGems)+" 颗宝石解锁 "+s.name); return; }
-      skinSel=i; localStorage.setItem("x1_skin_danci",i); renderSkins(); applySkin(); toast("换上【"+s.name+"】！出发！"); };
+      skinSel=i; LS.setItem("x1_skin_danci",i); renderSkins(); applySkin(); toast("换上【"+s.name+"】！出发！"); };
     line.appendChild(d);
   });
 }
@@ -194,26 +196,36 @@ async function fetchCustom(){
   }catch(e){ return []; }
 }
 
-async function startGame(){
+function startGame(){
   qi=0; gem=0; lock=false; items={shield:1,double:0,hint:1}; doubleArmed=false;
   document.getElementById('startScreen').classList.remove('active');
   document.getElementById('endScreen').classList.remove('active');
   document.getElementById('gameCard').style.display='block';
   document.getElementById('mistBox').style.display='none';
   renderItemBar(); updateHUD();
-  const custom=await fetchCustom();
   const revenge=(mistakes.danci||[]).map(w=>WORDS.find(x=>x.en===w)).filter(Boolean).slice(0,3);
   const picks=shuffle(WORDS).slice(0,5);
   const spellPool=WORDS.filter(w=>!w.en.includes(" "));
   const spells=shuffle(spellPool).slice(0,5);
-  // 前5=认一认(含复仇/特训)，后5=拼一拼(复仇词优先)
-  let pickDeck=[...revenge.filter(w=>true).slice(0,2).map(w=>({...w,mode:"pick",revenge:true})),...custom.map(w=>({...w,mode:"pick"}))];
+  // 前5=认一认(含复仇)，后5=拼一拼(复仇词优先)——先开局，特训题后台异步混入
+  let pickDeck=[...revenge.slice(0,2).map(w=>({...w,mode:"pick",revenge:true}))];
   pickDeck=pickDeck.concat(picks.filter(p=>!pickDeck.some(x=>x.en===p.en)).map(w=>({...w,mode:"pick"}))).slice(0,5);
   let spellDeck=spells.map(w=>({...w,mode:"spell"}));
   spellDeck=spellDeck.map(s=> revenge.some(r=>r.en===s.en)?{...s,revenge:true}:s);
   deck=shuffle(pickDeck).concat(spellDeck);
   nextQ();
-  say("嘎！远航开始！"+((revenge.length||custom.length)?"注意，今天混进了复仇词和特训气泡！":"盯紧行动，捞起单词气泡！"));
+  say("嘎！远航开始！"+(revenge.length?"注意，复仇词混进来了！":"盯紧行动，捞起单词气泡！"));
+  // 特训气泡：不阻塞开局，加载到后插入尚未作答的"认一认"槽位
+  fetchCustom().then(cs=>{
+    if(!cs.length||lock===undefined) return;
+    let j=qi+1, added=0;
+    for(const c of cs){
+      while(j<deck.length&&deck[j].mode!=="pick") j++;
+      if(j>=deck.length) break;
+      deck[j]={...c,mode:"pick",custom:true}; j++; added++;
+    }
+    if(added) say("⭐ X1特训气泡混进来了"+added+"个，捞到有惊喜！");
+  }).catch(()=>{});
 }
 function updateHUD(){
   document.getElementById('gem').textContent=gem;
@@ -411,7 +423,7 @@ function endGame(){
   clearInterval(bossTimer);
   document.getElementById('gameCard').style.display='none';
   const s=document.getElementById('endScreen'); s.classList.add('active');
-  totalGems+=gem; localStorage.setItem("x1_total_gems",totalGems);
+  totalGems+=gem; LS.setItem("x1_total_gems",totalGems);
   if(gem>=12){ document.getElementById('endFace').textContent="🏆"; document.getElementById('endTitle').textContent="满载而归！"; }
   else if(gem>=7){ document.getElementById('endFace').textContent="🎉"; document.getElementById('endTitle').textContent="收获满满！"; }
   else { document.getElementById('endFace').textContent="💪"; document.getElementById('endTitle').textContent="继续练习！"; }
