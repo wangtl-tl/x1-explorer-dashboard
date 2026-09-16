@@ -128,6 +128,7 @@
 
 <div class="toast" id="toast" data-page-node-id="FaitzF7CCcDMQorOB5FFtz"></div>
 
+<script src="x3_common.js?v=3"></script>
 <script>
 // 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
 window.onerror=function(msg,src,line,col){
@@ -271,6 +272,7 @@ function answer(el,v,q,isBoss){
   if(v===q.w){
     el.classList.add('correct');
     stats[cat][0]++; saveStats();
+    if(window.XP3)XP3.hit('cuozi',cat,isBoss);
     hp--; renderHP(); setMonster();
     const f=document.getElementById('mFace'); f.classList.remove('hit'); void f.offsetWidth; f.classList.add('hit');
     let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
@@ -284,7 +286,7 @@ function answer(el,v,q,isBoss){
     el.classList.add('wrong');
     document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===q.w) e.classList.add('correct'); });
     if(items.shield>0){ items.shield--; renderItemBar(); toast("🛡️ 护盾挡下！HP没掉！"); }
-    else { hp--; renderHP(); }
+    else { hp--; renderHP(); if(window.XP3)XP3.miss('cuozi',cat); }
     // 错字复仇名单
     mistakes.cuozi=(mistakes.cuozi||[]).filter(w=>w!==q.w);
     mistakes.cuozi.push(q.w); mistakes.cuozi=mistakes.cuozi.slice(-12); saveMistakes();
@@ -295,6 +297,7 @@ function answer(el,v,q,isBoss){
   updateShots();
 }
 function answerMiss(q){
+  if(window.XP3)XP3.miss('cuozi',q.cat||"其他");
   say("⏰ 超时啦！正确写法是【"+q.w+"】。"+q.tip);
   document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===q.w) e.classList.add('correct'); });
   mistakes.cuozi=(mistakes.cuozi||[]).filter(w=>w!==q.w);
@@ -350,6 +353,7 @@ function endGame(){
     return '<div class="row"><span style="width:64px">'+n+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+v[0]+'/'+v[1]+'</span></div>';
   }).join(""):'<div class="row">本轮暂无数据</div>');
   renderSkins();
+  if(window.XP3)XP3.settle({game:'cuozi',name:'错字怪猎人',gems:gem});
 }
 function exportMistakes(){
   const m=mistakes.cuozi||[];
