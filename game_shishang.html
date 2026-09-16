@@ -135,6 +135,7 @@
 <div class="combo" id="comboPop" data-page-node-id="axbPkpoiYBuuatLeSHvPZ5"></div>
 <div class="toast" id="toast" data-page-node-id="cwgKxDVJYV3DWEsBAynSmK"></div>
 
+<script src="x3_common.js?v=3"></script>
 <script>
 // 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
 window.onerror=function(msg,src,line,col){
@@ -289,6 +290,7 @@ function answer(el,v){
   if(isOk){
     el.classList.add('correct');
     stats[cat][0]++;
+    if(window.XP3)XP3.hit('shishang',cat,isBoss);
     combo++; maxCombo=Math.max(maxCombo,combo);
     let gain=(isBoss?3:1)+Math.floor(combo/3);
     const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
@@ -304,6 +306,7 @@ function answer(el,v){
       say("好险！护盾替你挡了！记住商是 "+cur.q+"，用 "+cur.b+"×"+cur.q+" 检验！");
     } else {
       el.classList.add('wrong'); combo=0;
+      if(window.XP3)XP3.miss('shishang',cat);
       // 错题入复仇名单
       mistakes.shishang=(mistakes.shishang||[]).filter(m=>!(m.a===cur.a&&m.b===cur.b));
       mistakes.shishang.push({a:cur.a,b:cur.b,q:cur.q,r:cur.r,ts:Date.now()});
@@ -381,6 +384,7 @@ function endGame(){
   const rev=(mistakes.shishang||[]).length;
   if(rev>0) toast("🔁 复仇名单里有 "+rev+" 道题等你收拾！");
   renderSkins();
+  if(window.XP3)XP3.settle({game:'shishang',name:'试商大冒险',gems:gem});
 }
 function exportMistakes(){
   const m=mistakes.shishang||[];
