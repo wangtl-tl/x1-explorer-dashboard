@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识点星图 · 坚忍烁号航海图鉴</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"PingFang SC","Microsoft YaHei",sans-serif; background:linear-gradient(180deg,#0b1d3a 0%,#122a52 60%,#1a3a6b 100%); min-height:100vh; color:#eaf2ff; padding:20px 14px; }
+  .wrap { max-width:720px; margin:0 auto; }
+  h1 { text-align:center; font-size:22px; color:#ffe082; text-shadow:0 0 12px rgba(255,224,130,.4); }
+  .sub { text-align:center; font-size:13px; color:#8fb3dd; margin:6px 0 20px; }
+  .progress { text-align:center; font-size:15px; margin-bottom:18px; color:#b3e5fc; }
+  .route { position:relative; padding:6px 0; }
+  .island { position:relative; background:rgba(255,255,255,.07); border:2px solid rgba(143,179,221,.35); border-radius:18px; padding:16px 18px 14px; margin:0 0 26px; cursor:pointer; transition:all .25s; }
+  .island:last-child { margin-bottom:8px; }
+  .island::after { content:"▼"; position:absolute; left:50%; bottom:-22px; transform:translateX(-50%); color:#4a6fa5; font-size:13px; }
+  .island:last-child::after { display:none; }
+  .island:active { transform:scale(.98); }
+  .island.lit { border-color:#ffd54f; background:rgba(255,213,79,.10); box-shadow:0 0 18px rgba(255,213,79,.25); }
+  .ihead { display:flex; align-items:center; gap:12px; }
+  .star { font-size:30px; filter:grayscale(1) opacity(.45); }
+  .island.lit .star { filter:none; text-shadow:0 0 14px rgba(255,213,79,.8); }
+  .ititle { font-size:17px; font-weight:bold; }
+  .island.lit .ititle { color:#ffe082; }
+  .idesc { font-size:13px; color:#a9c4e8; margin-top:3px; }
+  .status { margin-left:auto; font-size:12px; padding:3px 10px; border-radius:12px; background:rgba(255,255,255,.1); color:#8fb3dd; white-space:nowrap; }
+  .island.lit .status { background:rgba(255,213,79,.2); color:#ffe082; }
+  .detail { display:none; margin-top:12px; border-top:1px dashed rgba(143,179,221,.4); padding-top:12px; font-size:13.5px; }
+  .island.open .detail { display:block; }
+  .kpoint { margin:6px 0; color:#d6e6fb; }
+  .kpoint b { color:#90caf9; }
+  .quiz { margin-top:10px; background:rgba(0,0,0,.25); border-radius:10px; padding:10px 12px; }
+  .quiz .q { color:#ffe0b2; }
+  .quiz .a { color:#a5d6a7; display:none; margin-top:6px; }
+  .quiz.open .a { display:block; }
+  .actions { margin-top:12px; display:flex; gap:10px; }
+  .btn { flex:1; border:none; border-radius:10px; padding:10px 0; font-size:14px; font-weight:bold; cursor:pointer; }
+  .btn-lit { background:linear-gradient(135deg,#ffd54f,#ffb300); color:#5d4037; }
+  .btn-go { background:rgba(144,202,249,.18); color:#90caf9; border:1px solid rgba(144,202,249,.4); text-decoration:none; display:flex; align-items:center; justify-content:center; }
+  .duck { text-align:center; margin:18px 0 6px; font-size:13px; color:#ffd54f; }
+  .hint { text-align:center; font-size:12px; color:#6484ad; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🗺️ 坚忍烁号 · 知识点星图</h1>
+  <div class="sub">四年级上册数学航海图 · 每征服一座岛，星星就会点亮 ✨</div>
+  <div class="progress" id="progress">已点亮 0 / 8 座知识岛</div>
+  <div class="route" id="route"></div>
+  <div class="duck">🦆 嘎嘎：船长，八座岛全部点亮，就能拿到「航海制图师」称号！</div>
+  <div class="hint">进度保存在本机浏览器 · 点岛屿展开攻略，点「点亮」或「再去考考我」切换</div>
+</div>
+<script>
+var KEY="x1_map_progress";
+var ISLANDS=[
+ {id:"u1",name:"🏝️ 大数的认识",desc:"亿以内的数 · 数位与计数单位",
+  points:[["数位顺序表","个、十、百、千、万、十万、百万、千万、亿——每四位一级（个级、万级、亿级）"],
+          ["大数的读法","先读亿级再读万级；每级末尾的0不读，中间不管几个0都只读一个“零”"],
+          ["大数的写法与改写","写数先分级；整万整亿可改写成“万”“亿”作单位，如 250000=25万"]],
+  quiz:"10000000 里面有多少个十万？（答案：100 个）"},
+ {id:"u2",name:"🌾 公顷和平方千米",desc:"测量土地的面积单位",
+  points:[["公顷","边长100米的正方形土地，面积是1公顷 = 10000平方米"],
+          ["平方千米","边长1000米的正方形，1平方千米=100公顷=1000000平方米"],
+          ["单位选择","校园、广场用公顷；国家、省市面积用平方千米"]],
+  quiz:"天安门广场约44公顷，合多少平方米？（答案：440000）"},
+ {id:"u3",name:"📐 角的度量",desc:"线段·直线·射线 · 角的分类与量角",
+  points:[["三种线","线段2个端点可测量；射线1个端点无限长；直线无端点无限长"],
+          ["角的度量","量角器中心对顶点，0刻度线对边，看另一边刻度。单位：度（°）"],
+          ["角的分类","锐角<90°；直角=90°；90°<钝角<180°；平角=180°；周角=360°"]],
+  quiz:"一个平角减去一个35°的角，还剩多少度？（答案：145°）"},
+ {id:"u4",name:"🚢 三位数乘两位数",desc:"竖式乘法 · 积的变化规律",
+  points:[["竖式法则","先算个位×三位数，再算十位×三位数（错位相加）"],
+          ["积的变化规律","一个因数不变，另一因数乘几，积也乘几"],
+          ["常见数量关系","速度×时间=路程；单价×数量=总价（坚忍烁号天天用！）"]],
+  quiz:"145 × 12 = ?（答案：1740，先用个位2乘，再十位1乘错位加）"},
+ {id:"u5",name:"🪟 平行四边形和梯形",desc:"平行与垂直 · 四边形分类",
+  points:[["垂直与平行","同一平面内不相交=平行；相交成直角=垂直"],
+          ["平行四边形","两组对边分别平行，容易变形（不稳定）"],
+          ["梯形","只有一组对边平行的四边形；两腰相等的叫等腰梯形"]],
+  quiz:"正方形是特殊的长方形，对吗？（答案：对！正方形也符合长方形全部特征）"},
+ {id:"u6",name:"⚔️ 除数是两位数的除法",desc:"试商 · 调商 · 商不变规律（本学期最大BOSS）",
+  points:[["试商","把除数看作接近的整十数来试，如 312÷14 把14看作10先试"],
+          ["调商","余数比除数大→商小了要调大；不够减→商大了要调小"],
+          ["商不变规律","被除数和除数同时乘或除以相同的数（0除外），商不变"]],
+  quiz:"312 ÷ 14 的商是几？（先试商：14×2=28太接近31，商2余32？再调！答案：22……4）"},
+ {id:"u7",name:"📊 条形统计图",desc:"1格表示多个单位 · 数据分析",
+  points:[["1格表示多个","数据大时，1格可以表示2、5、10甚至更大的数"],
+          ["画图要点","先确定1格代表多少，再根据数据画条形"],
+          ["读图分析","谁最多谁最少、相差多少，都能从图上直接看出来"]],
+  quiz:"数据最大是100，1格表示多少最合适？（答案：10，画10格刚好）"},
+ {id:"u8",name:"🧠 数学广角 · 优化",desc:"烙饼问题 · 沏茶问题 · 统筹安排",
+  points:[["沏茶问题","先找哪些事可以同时做，节省时间"],
+          ["烙饼问题","锅里每次最多烙2张，烙3张饼的最优方案：交替烙，别让锅空着"],
+          ["核心思想","运筹帷幄——同样的活儿，安排得好就省时间！"]],
+  quiz:"烙1张饼要2分钟（两面各1分钟），锅里能同时烙2张，烙3张最快几分钟？（答案：3分钟）"}
+];
+var D={};
+try{ D=JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ D={}; }
+var lit=D.lit||{};
+function save(){ localStorage.setItem(KEY, JSON.stringify({lit:lit})); }
+function render(){
+  var route=document.getElementById("route");
+  route.innerHTML="";
+  var n=0;
+  ISLANDS.forEach(function(is,idx){
+    var on=!!lit[is.id];
+    if(on)n++;
+    var el=document.createElement("div");
+    el.className="island"+(on?" lit":"");
+    var pts=is.points.map(function(p){ return "<div class='kpoint'><b>"+p[0]+"</b>："+p[1]+"</div>"; }).join("");
+    el.innerHTML="<div class='ihead'><div class='star'>"+(on?"⭐":"☆")+"</div>"
+      +"<div><div class='ititle'>"+(idx+1)+". "+is.name+"</div><div class='idesc'>"+is.desc+"</div></div>"
+      +"<div class='status'>"+(on?"已点亮 ✓":"未点亮")+"</div></div>"
+      +"<div class='detail'>"+pts
+      +"<div class='quiz' id='q-"+is.id+"'><div class='q'>🧭 考考你："+is.quiz+"</div></div>"
+      +"<div class='actions'>"
+      +"<button class='btn btn-lit' onclick='toggle(\""+is.id+"\")'>"+(on?"再去考考我":"点亮这座岛 ⭐")+"</button>"
+      +"<a class='btn btn-go' href='math.html' target='_blank'>去闯关练兵 ⚔️</a>"
+      +"</div></div>";
+    el.querySelector(".ihead").addEventListener("click",function(){
+      el.classList.toggle("open");
+    });
+    el.querySelector(".btn-lit").addEventListener("click",function(ev){
+      ev.stopPropagation();
+      var q=document.getElementById("q-"+is.id);
+      if(!on){ // 先展示考题，再点亮
+        q.classList.add("open");
+        lit[is.id]=true;
+      } else {
+        q.classList.toggle("open");
+        if(lit[is.id]) delete lit[is.id];
+      }
+      save(); render();
+    });
+    route.appendChild(el);
+  });
+  document.getElementById("progress").innerHTML="已点亮 <b style='color:#ffe082;font-size:20px'>"+n+"</b> / 8 座知识岛"
+    +(n===8?"　🏆 解锁称号：<b>航海制图师</b>！":"");
+}
+function toggle(id){ lit[id]?delete lit[id]:lit[id]=true; save(); render(); }
+render();
+</script>
+</body>
+</html>
