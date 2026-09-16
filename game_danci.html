@@ -1,27 +1,35 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="YRzyV6Sxfnq7JqYvgjR9Vd">
-<head data-page-node-id="HLa1jVOGtGhNJNBL5hfCRe">
-<meta charset="UTF-8" data-page-node-id="BH21fNDScaBFJeuZn7x1Ta">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="90ik7J8C6t5jS1EKFjDrXQ">
-<title>单词打捞队 · 英语海洋寻宝</title>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>单词打捞队 v2 · 英语海洋寻宝</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   body { font-family:"PingFang SC","Microsoft YaHei",sans-serif;
     background:linear-gradient(180deg,#cdeeff 0%,#9fd8f5 40%,#4aa8d8 100%);
     min-height:100vh; color:#123a52; display:flex; flex-direction:column; align-items:center; }
-  .header { width:100%; max-width:520px; padding:14px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
-  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; }
-  .stats { display:flex; gap:8px; }
-  .pill { background:#fff; border-radius:14px; padding:4px 10px; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(20,80,120,.18); }
+  .header { width:100%; max-width:520px; padding:12px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:16px; }
+  .brand .ship { font-size:24px; }
+  .v2 { font-size:10px; background:#2b8ac4; color:#fff; border-radius:6px; padding:2px 6px; font-weight:900; }
+  .stats { display:flex; gap:6px; }
+  .pill { background:#fff; border-radius:14px; padding:4px 9px; font-size:12px; font-weight:700; box-shadow:0 2px 6px rgba(20,80,120,.18); }
   .pill b { color:#2b8ac4; }
-  .ship { font-size:30px; text-align:center; margin-top:2px; }
   .card { width:100%; max-width:520px; background:rgba(255,255,255,.95); border-radius:22px; padding:20px 18px;
     box-shadow:0 8px 24px rgba(20,80,120,.22); margin:8px 14px; text-align:center; }
-  .qtag { font-size:13px; font-weight:800; color:#2b8ac4; background:#e2f4ff; border-radius:999px;
-    display:inline-block; padding:4px 14px; margin-bottom:12px; }
-  .bigword { font-size:32px; font-weight:900; letter-spacing:1px; color:#155a86; font-family:"Segoe UI",sans-serif; }
+  .qtag { font-size:11px; font-weight:900; color:#fff; background:#2b8ac4; border-radius:999px;
+    display:inline-block; padding:4px 14px; margin-bottom:10px; }
+  .qtag.boss { background:#c0392b; animation:bpulse 1s infinite alternate; }
+  @keyframes bpulse { from{filter:brightness(1)} to{filter:brightness(1.3)} }
+  .bigword { font-size:30px; font-weight:900; letter-spacing:1px; color:#155a86; font-family:"Segoe UI",sans-serif; }
   .bigcn { font-size:26px; font-weight:900; color:#155a86; }
-  .sub { font-size:13px; color:#6b93a8; margin:6px 0 14px; }
+  .sub { font-size:13px; color:#6b93a8; margin:6px 0 12px; }
+  .items { display:flex; gap:8px; justify-content:center; margin-bottom:12px; min-height:38px; flex-wrap:wrap; }
+  .item { background:#fff6d8; border:2px solid #f2d98a; border-radius:12px; padding:6px 12px;
+    font-size:13px; font-weight:800; color:#8a6d1f; cursor:pointer; }
+  .item:active { transform:scale(.93); }
+  .item.none { opacity:.35; pointer-events:none; }
   .options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .opt { background:#eff9ff; border:2px solid #cfe9f7; border-radius:16px; padding:15px 6px;
     font-size:20px; font-weight:800; color:#1b6e9e; cursor:pointer; transition:transform .12s; }
@@ -30,188 +38,281 @@
   .opt.wrong { background:#ffe3e0; border-color:#f0716b; animation:shake .4s; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   .slots { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; min-height:46px; margin-bottom:12px; }
-  .slot { width:38px; height:44px; border-bottom:3px solid #9ccfe8; display:flex; align-items:center;
+  .slot { width:36px; height:44px; border-bottom:3px solid #9ccfe8; display:flex; align-items:center;
     justify-content:center; font-size:22px; font-weight:900; color:#155a86; }
   .slot.filled { border-color:#2b8ac4; }
+  .slot.hint { border-color:#e8a020; color:#e8a020; }
   .letters { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
   .lt { background:linear-gradient(180deg,#fff,#e8f6ff); border:2px solid #bfe4f5; border-radius:12px;
-    width:44px; height:48px; font-size:22px; font-weight:900; color:#1b6e9e; cursor:pointer; box-shadow:0 3px 0 #a8d4e8; }
+    width:42px; height:46px; font-size:22px; font-weight:900; color:#1b6e9e; cursor:pointer; box-shadow:0 3px 0 #a8d4e8; }
   .lt:active { transform:translateY(2px); box-shadow:0 1px 0 #a8d4e8; }
   .lt.used { opacity:.25; pointer-events:none; }
-  .ctrl { margin-top:14px; display:flex; gap:10px; justify-content:center; }
-  .mini { border:none; border-radius:999px; padding:9px 22px; font-weight:800; font-size:14px; cursor:pointer; }
+  .ctrl { margin-top:12px; display:flex; gap:10px; justify-content:center; }
+  .mini { border:none; border-radius:999px; padding:9px 20px; font-weight:800; font-size:13px; cursor:pointer; }
   .undo { background:#fff3cd; color:#8a6d1f; }
   .giveup { background:#ffe3e0; color:#c0392b; }
-  .duckmsg { display:flex; align-items:flex-start; gap:8px; margin-top:14px; text-align:left; min-height:46px; }
+  .duckmsg { display:flex; align-items:flex-start; gap:8px; margin-top:12px; text-align:left; min-height:46px; }
   .duckmsg .face { font-size:26px; }
   .bubble { background:#e9f7ff; border-radius:4px 14px 14px 14px; padding:8px 12px; font-size:14px; color:#1b6e9e; line-height:1.6; flex:1; }
-  .screen { display:none; width:100%; max-width:520px; padding:30px 20px; text-align:center; }
+  .screen { display:none; width:100%; max-width:520px; padding:26px 20px; text-align:center; }
   .screen.active { display:block; }
-  .bigface { font-size:64px; }
-  h1 { font-size:22px; margin:10px 0 6px; }
-  .desc { font-size:14px; color:#1b6e9e; line-height:1.8; margin-bottom:20px; }
+  .bigface { font-size:60px; }
+  h1 { font-size:22px; margin:8px 0 6px; }
+  .desc { font-size:14px; color:#1b6e9e; line-height:1.8; margin-bottom:16px; }
   .btn { display:inline-block; background:linear-gradient(90deg,#59c1ef,#2b8ac4); color:#fff; font-weight:900;
     font-size:17px; border:none; border-radius:999px; padding:13px 40px; cursor:pointer; box-shadow:0 5px 0 #1c6793; }
   .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #1c6793; }
+  .btn2 { display:inline-block; background:#fff; border:2px solid #bfe4f5; color:#1c6793; font-weight:800;
+    font-size:13px; border-radius:999px; padding:8px 18px; cursor:pointer; margin-top:12px; }
+  .skinline { display:flex; gap:10px; justify-content:center; margin:8px 0 4px; }
+  .skin { font-size:30px; cursor:pointer; padding:6px 12px; border-radius:14px; border:2px solid transparent; }
+  .skin.sel { border-color:#2b8ac4; background:#e2f4ff; }
+  .skin.lock { opacity:.35; }
+  .skinname { font-size:11px; color:#4a7a96; }
+  .radar { margin-top:12px; text-align:left; }
+  .radar .row { display:flex; align-items:center; gap:8px; margin:5px 0; font-size:12px; color:#1b6e9e; }
+  .radar .bar { flex:1; height:10px; background:#dff0fa; border-radius:6px; overflow:hidden; }
+  .radar .bar i { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#59c1ef,#2b8ac4); }
+  .mistbox { margin-top:12px; font-size:13px; background:#fff0f0; border-radius:12px; padding:10px; color:#a04040; text-align:left; display:none; line-height:1.7; }
+  .toast { position:fixed; bottom:12%; left:50%; transform:translateX(-50%); background:rgba(10,50,80,.92); color:#fff;
+    padding:10px 20px; border-radius:999px; font-size:14px; font-weight:700; opacity:0; pointer-events:none; transition:opacity .3s; z-index:20; }
+  .toast.show { opacity:1; }
 </style>
 </head>
-<body data-page-node-id="YM4XV8JwzmncEqcwqdcLNG">
+<body>
 
-<div class="header" data-page-node-id="s3U5Q7W76wauFXApbBEHvB">
-  <div class="brand" data-page-node-id="ODUlDFF8l3HkawRybCbREy">🫧 单词打捞队</div>
-  <div class="stats" data-page-node-id="jqmMWWTpN9KfuzXmVJmExo">
-    <span class="pill" data-page-node-id="cp3La03brG7vul5MQ05GT7">🫧 <b id="gem" data-page-node-id="MAdjKn4OaXGFGNqnwFVjuB">0</b></span>
-    <span class="pill" data-page-node-id="yNuV0UQ8vw0W6UzWL9JNL5">进度 <b id="prog" data-page-node-id="qGFBJKUDc2l4pfdenzpAWw">0</b>/10</span>
+<div class="header">
+  <div class="brand"><span class="ship" id="shipFace">⛵</span>单词打捞队<span class="v2">V2</span></div>
+  <div class="stats">
+    <span class="pill">🫧 <b id="gem">0</b></span>
+    <span class="pill">进度 <b id="prog">0</b>/10</span>
   </div>
 </div>
 
-<div class="screen active" id="startScreen" data-page-node-id="zSABm9ddM66ptrJrWRH5D7">
-  <div class="bigface" data-page-node-id="lgj4BDn1JIHdnPv5aGX57p">⛵🫧🦆</div>
-  <h1 data-page-node-id="qLBpAKj3sJTh3qTj7RTM5P">单词打捞队</h1>
-  <div class="desc" data-page-node-id="atOTnwfif7yd5qP60o7cPZ">
-    英语海洋里漂着好多<b data-page-node-id="bVYF4AtrSDzXeITULVHCeL">单词气泡</b>！<br data-page-node-id="k9ZHpPcb8UAmrhBYu730SI">
-    坚忍烁号出海打捞：先<b data-page-node-id="KAtv7DukoY1avXGsbTv7Qk">看英文选中文</b>，<br data-page-node-id="kkSNHN3yaW7HquRgKY2nfd">
-    再<b data-page-node-id="CGnK1mvTtGlawW70Zx7yHG">点字母拼出单词</b>，捞满 10 个就满载而归！<br data-page-node-id="ZCq0lAMItmHMw2FXvPDZk0">
-    全是四年级上册课本里的单词哦～
+<div class="screen active" id="startScreen">
+  <div class="bigface" id="startFace">⛵🫧🦆</div>
+  <h1>单词打捞队 <span style="font-size:13px;color:#2b8ac4">V2 远航版</span></h1>
+  <div class="desc">
+    新机制：<b>🎁道具</b> · <b>👹章鱼王限时拦截</b> · <b>🔁错词复仇</b><br>
+    X1 每天还可能投下“特训气泡”，捞起来有惊喜！
   </div>
-  <button class="btn" onclick="startGame()" data-page-node-id="f2NhhGscRsp4TcFeMFpvGX">⛵ 起锚出发</button>
+  <div class="skinline" id="skinLine"></div>
+  <div class="skinname" id="skinHint">点击换船（累计宝石解锁）</div>
+  <button class="btn" onclick="startGame()" style="margin-top:10px">⛵ 起锚出发</button>
+  <button class="btn2" onclick="exportMistakes()">📤 导出错词给X1</button>
+  <div class="mistbox" id="mistBox"></div>
+  <div class="radar" id="startRadar"></div>
 </div>
 
-<div class="card" id="gameCard" style="display:none" data-page-node-id="HdYPSfSUzv7XZWwSHS31vu">
-  <div class="qtag" id="qTag" data-page-node-id="KNadDQf4OobFwyQYE18tpR">🫧 打捞任务 1 · 认一认</div>
-  <div id="pickArea" data-page-node-id="ENGGMy5LqqVVmPwch4D5mF">
-    <div class="bigword" id="bigWord" data-page-node-id="0lB1jNxpZ89kcD7StscIZB">word</div>
-    <div class="sub" data-page-node-id="35UXkYjZGG48jOF67oX9Bv">这个单词是什么意思？</div>
-    <div class="options" id="opts" data-page-node-id="7qyOUJqSTuWGR6aSTrsp66"></div>
+<div class="card" id="gameCard" style="display:none">
+  <div class="qtag" id="qTag">🫧 打捞任务 1 · 认一认</div>
+  <div id="pickArea">
+    <div class="bigword" id="bigWord">word</div>
+    <div class="sub">这个单词是什么意思？</div>
+    <div class="options" id="opts"></div>
   </div>
-  <div id="spellArea" style="display:none" data-page-node-id="YBT6WfJ1yxqAJdH04F4Cr9">
-    <div class="bigcn" id="bigCn" data-page-node-id="98ZaFP2KnJI2ZwM6XJ6Hlu">中文</div>
-    <div class="sub" data-page-node-id="SnlLjd9hQPOvvPNstvhcDo">点字母把单词拼出来！</div>
-    <div class="slots" id="slots" data-page-node-id="SRnc5Zp2gyffKuo0pOsDue"></div>
-    <div class="letters" id="letters" data-page-node-id="v1ACosn9HCdOAfA3jbVTnx"></div>
-    <div class="ctrl" data-page-node-id="EV2B8zX0ClCmXHB43cKuij">
-      <button class="mini undo" onclick="undoLetter()" data-page-node-id="yF87fmhcuDXNJvwZBlx6vZ">↩️ 撤销</button>
-      <button class="mini giveup" onclick="revealWord()" data-page-node-id="LZgVBhxFndPww8D4cmvOdT">🙋 求助嘎嘎（0宝石）</button>
+  <div id="spellArea" style="display:none">
+    <div class="bigcn" id="bigCn">中文</div>
+    <div class="sub" id="spellSub">点字母把单词拼出来！</div>
+    <div class="slots" id="slots"></div>
+    <div class="letters" id="letters"></div>
+    <div class="ctrl">
+      <button class="mini undo" onclick="undoLetter()">↩️ 撤销</button>
+      <button class="mini giveup" onclick="revealWord()">🙋 求助嘎嘎（0宝石）</button>
     </div>
   </div>
-  <div class="duckmsg" data-page-node-id="8YiOvWXe7oE3G26AHpDWGd">
-    <span class="face" data-page-node-id="jM8oU2NER8ycL5UqITEyfu">🦆</span>
-    <div class="bubble" id="duckSay" data-page-node-id="17F2KQJc0hi3HNqEYg0TFl">嘎！起锚！盯紧水里的气泡，单词就藏在里面！</div>
+  <div class="duckmsg">
+    <span class="face" id="duckFace">🦆</span>
+    <div class="bubble" id="duckSay">嘎！起锚！盯紧水里的气泡！</div>
   </div>
 </div>
 
-<div class="screen" id="endScreen" data-page-node-id="toXrfxW7xpbJbJLjmWUuq1">
-  <div class="bigface" id="endFace" data-page-node-id="tm5753GLY38OjbUuToHjmd">🏆</div>
-  <h1 id="endTitle" data-page-node-id="nXtCuHOi14HbCjqQUfHLSJ">满载而归！</h1>
-  <div class="desc" id="endDesc" data-page-node-id="5NxXp7LiTMMqtqZ70GwC4g"></div>
-  <button class="btn" onclick="startGame()" data-page-node-id="9hVyygyYjMWFHuXCEB66zL">再捞一轮</button>
-  <div class="desc" style="margin-top:14px" data-page-node-id="CEBn9HIBrC9lsuvoGepNNO">📸 截图发群里，X1 给你登记奖励！</div>
+<div class="screen" id="endScreen">
+  <div class="bigface" id="endFace">🏆</div>
+  <h1 id="endTitle">满载而归！</h1>
+  <div class="desc" id="endDesc"></div>
+  <div class="radar" id="radar"></div>
+  <button class="btn" onclick="startGame()">再捞一轮</button>
+  <button class="btn2" onclick="exportMistakes()">📤 导出错词给X1</button>
+  <div class="mistbox" id="mistBox2"></div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const WORDS = [
-  {en:"classroom",cn:"教室"},{en:"window",cn:"窗户"},{en:"light",cn:"灯"},
-  {en:"picture",cn:"图画"},{en:"door",cn:"门"},{en:"computer",cn:"计算机"},
-  {en:"schoolbag",cn:"书包"},{en:"notebook",cn:"笔记本"},{en:"candy",cn:"糖果"},
-  {en:"toy",cn:"玩具"},{en:"key",cn:"钥匙"},{en:"friend",cn:"朋友"},
-  {en:"strong",cn:"强壮的"},{en:"quiet",cn:"安静的"},{en:"glasses",cn:"眼镜"},
-  {en:"bedroom",cn:"卧室"},{en:"bathroom",cn:"浴室"},{en:"living room",cn:"客厅"},
-  {en:"kitchen",cn:"厨房"},{en:"study",cn:"书房"},{en:"fridge",cn:"冰箱"},
-  {en:"sofa",cn:"沙发"},{en:"beef",cn:"牛肉"},{en:"chicken",cn:"鸡肉"},
-  {en:"noodles",cn:"面条"},{en:"soup",cn:"汤"},{en:"vegetable",cn:"蔬菜"},
-  {en:"chopsticks",cn:"筷子"},{en:"bowl",cn:"碗"},{en:"spoon",cn:"勺子"},
-  {en:"doctor",cn:"医生"},{en:"farmer",cn:"农民"},{en:"driver",cn:"司机"},
-  {en:"nurse",cn:"护士"},{en:"people",cn:"人们"},{en:"baby brother",cn:"婴儿小弟弟"}
+  {en:"classroom",cn:"教室",cat:"学校"},{en:"window",cn:"窗户",cat:"学校"},{en:"light",cn:"灯",cat:"学校"},
+  {en:"picture",cn:"图画",cat:"学校"},{en:"door",cn:"门",cat:"学校"},{en:"computer",cn:"计算机",cat:"学校"},
+  {en:"schoolbag",cn:"书包",cat:"文具"},{en:"notebook",cn:"笔记本",cat:"文具"},{en:"candy",cn:"糖果",cat:"物品"},
+  {en:"toy",cn:"玩具",cat:"物品"},{en:"key",cn:"钥匙",cat:"物品"},{en:"friend",cn:"朋友",cat:"人物"},
+  {en:"strong",cn:"强壮的",cat:"人物"},{en:"quiet",cn:"安静的",cat:"人物"},{en:"glasses",cn:"眼镜",cat:"人物"},
+  {en:"bedroom",cn:"卧室",cat:"家居"},{en:"bathroom",cn:"浴室",cat:"家居"},{en:"living room",cn:"客厅",cat:"家居"},
+  {en:"kitchen",cn:"厨房",cat:"家居"},{en:"study",cn:"书房",cat:"家居"},{en:"fridge",cn:"冰箱",cat:"家居"},
+  {en:"sofa",cn:"沙发",cat:"家居"},{en:"beef",cn:"牛肉",cat:"食物"},{en:"chicken",cn:"鸡肉",cat:"食物"},
+  {en:"noodles",cn:"面条",cat:"食物"},{en:"soup",cn:"汤",cat:"食物"},{en:"vegetable",cn:"蔬菜",cat:"食物"},
+  {en:"chopsticks",cn:"筷子",cat:"食物"},{en:"bowl",cn:"碗",cat:"食物"},{en:"spoon",cn:"勺子",cat:"食物"},
+  {en:"doctor",cn:"医生",cat:"职业"},{en:"farmer",cn:"农民",cat:"职业"},{en:"driver",cn:"司机",cat:"职业"},
+  {en:"nurse",cn:"护士",cat:"职业"},{en:"people",cn:"人们",cat:"职业"},{en:"baby brother",cn:"婴儿小弟弟",cat:"人物"}
 ];
-const HINTS = {classroom:"class + room 教室", schoolbag:"school + bag 书包", notebook:"note + book 笔记本",
-  bedroom:"bed + room 卧室", bathroom:"bath + room 浴室", livingroom:"living room 客厅",
-  chopsticks:"chop + sticks 筷子", vegetable:"ve-ge-ta-ble 蔬菜"};
-let deck, qi, gem, lock, curWord, typed;
-function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+const HINTS={classroom:"class+room",schoolbag:"school+bag",notebook:"note+book",bedroom:"bed+room",
+  bathroom:"bath+room",chopsticks:"chop+sticks",vegetable:"ve-ge-ta-ble"};
+const SKINS=[{name:"小帆船",face:"⛵",need:0},{name:"远洋巨轮",face:"🚢",need:30},{name:"黄金舰队",face:"🛳️",need:80}];
+let deck,qi,gem,lock,curWord,typed,items,doubleArmed,bossTimer,bossLeft;
+let stats=load("x1_stats_danci",{});
+let totalGems=+(localStorage.getItem("x1_total_gems")||0);
+let skinSel=+(localStorage.getItem("x1_skin_danci")||0);
+let mistakes=JSON.parse(localStorage.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
 
-function startGame(){
-  deck = shuffle(WORDS).slice(0,5);           // 5个认识题
-  const spell = shuffle(WORDS.filter(w=>!w.en.includes(" "))).slice(0,5); // 5个拼写题（不带空格的词）
-  deck = shuffle([...deck.map(w=>({w,mode:"pick"})), ...spell.map(w=>({w,mode:"spell"}))]);
-  qi=0; gem=0; lock=false;
+function load(k,d){ try{ return JSON.parse(localStorage.getItem(k))||d; }catch(e){ return d; } }
+function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+function saveStats(){ localStorage.setItem("x1_stats_danci",JSON.stringify(stats)); }
+function saveMistakes(){ localStorage.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
+function toast(t){ const e=document.getElementById('toast'); e.textContent=t; e.classList.remove('show'); void e.offsetWidth; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1800); }
+
+function renderSkins(){
+  const line=document.getElementById('skinLine'); line.innerHTML='';
+  SKINS.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='skin'+(i===skinSel?' sel':'')+(totalGems<s.need?' lock':'');
+    d.innerHTML='<div>'+s.face+'</div><div class="skinname">'+(totalGems<s.need?'🔒'+s.need:'')+'</div>';
+    d.onclick=()=>{ if(totalGems<s.need){ toast("还差 "+(s.need-totalGems)+" 颗宝石解锁 "+s.name); return; }
+      skinSel=i; localStorage.setItem("x1_skin_danci",i); renderSkins(); applySkin(); toast("换上【"+s.name+"】！出发！"); };
+    line.appendChild(d);
+  });
+}
+function applySkin(){
+  document.getElementById('shipFace').textContent=SKINS[skinSel].face;
+  document.getElementById('startFace').textContent=SKINS[skinSel].face+"🫧🦆";
+}
+
+async function fetchCustom(){
+  try{
+    const r=await fetch("data.json?t="+Date.now());
+    if(!r.ok) return [];
+    const d=await r.json();
+    return ((d.game_custom&&d.game_custom.danci)||[]).filter(q=>q&&q.en&&q.cn).map(q=>({...q,cat:q.cat||"特训",custom:true}));
+  }catch(e){ return []; }
+}
+
+async function startGame(){
+  qi=0; gem=0; lock=false; items={shield:1,double:0,hint:1}; doubleArmed=false;
   document.getElementById('startScreen').classList.remove('active');
   document.getElementById('endScreen').classList.remove('active');
   document.getElementById('gameCard').style.display='block';
-  updateHUD();
+  document.getElementById('mistBox').style.display='none';
+  renderItemBar(); updateHUD();
+  const custom=await fetchCustom();
+  const revenge=(mistakes.danci||[]).map(w=>WORDS.find(x=>x.en===w)).filter(Boolean).slice(0,3);
+  const picks=shuffle(WORDS).slice(0,5);
+  const spellPool=WORDS.filter(w=>!w.en.includes(" "));
+  const spells=shuffle(spellPool).slice(0,5);
+  // 前5=认一认(含复仇/特训)，后5=拼一拼(复仇词优先)
+  let pickDeck=[...revenge.filter(w=>true).slice(0,2).map(w=>({...w,mode:"pick",revenge:true})),...custom.map(w=>({...w,mode:"pick"}))];
+  pickDeck=pickDeck.concat(picks.filter(p=>!pickDeck.some(x=>x.en===p.en)).map(w=>({...w,mode:"pick"}))).slice(0,5);
+  let spellDeck=spells.map(w=>({...w,mode:"spell"}));
+  spellDeck=spellDeck.map(s=> revenge.some(r=>r.en===s.en)?{...s,revenge:true}:s);
+  deck=shuffle(pickDeck).concat(spellDeck);
   nextQ();
-  say("嘎！坚忍烁号出发！先认气泡里的单词，再亲手把它拼出来！");
+  say("嘎！远航开始！"+((revenge.length||custom.length)?"注意，今天混进了复仇词和特训气泡！":"盯紧行动，捞起单词气泡！"));
 }
 function updateHUD(){
   document.getElementById('gem').textContent=gem;
   document.getElementById('prog').textContent=qi;
 }
+function statHit(w,ok){
+  const c=w.cat||"其他";
+  if(!stats[c]) stats[c]=[0,0];
+  stats[c][1]++; if(ok) stats[c][0]++;
+  saveStats();
+}
+function missWord(w){
+  mistakes.danci=(mistakes.danci||[]).filter(x=>x!==w.en);
+  mistakes.danci.push(w.en); mistakes.danci=mistakes.danci.slice(-12); saveMistakes();
+}
 function nextQ(){
   if(qi>=10){ endGame(); return; }
-  lock=false;
-  const item = deck[qi];
-  document.getElementById('qTag').textContent = "🫧 打捞任务 "+(qi+1)+" · "+(item.mode==="pick"?"认一认":"拼一拼");
+  lock=false; renderItemBar();
+  const item=deck[qi];
+  const isBoss=(qi===9);
+  const tag=document.getElementById('qTag');
+  tag.className='qtag'+(isBoss?' boss':'');
+  tag.textContent="🫧 打捞任务 "+(qi+1)+" · "+(item.mode==="pick"?"认一认":"拼一拼")+(item.revenge?" · 🔁复仇":"")+(item.custom?" · ⭐特训":"")+(isBoss?" · 👹限时20秒":"");
   if(item.mode==="pick"){
     document.getElementById('pickArea').style.display='block';
     document.getElementById('spellArea').style.display='none';
-    document.getElementById('bigWord').textContent = item.w.en;
-    const wrongs = shuffle(WORDS.filter(w=>w.cn!==item.w.cn)).slice(0,3).map(w=>w.cn);
-    const opts = shuffle([item.w.cn, ...wrongs]);
+    document.getElementById('bigWord').textContent=item.en;
+    const wrongs=shuffle(WORDS.filter(w=>w.cn!==item.cn)).slice(0,3).map(w=>w.cn);
+    const opts=shuffle([item.cn,...wrongs]);
     const box=document.getElementById('opts'); box.innerHTML='';
     opts.forEach(v=>{
       const d=document.createElement('div'); d.className='opt'; d.textContent=v;
-      d.onclick=()=>answerPick(d,v,item.w); box.appendChild(d);
+      d.onclick=()=>answerPick(d,v,item,isBoss); box.appendChild(d);
     });
   } else {
-    curWord = item.w; typed=[];
+    curWord=item; typed=[];
     document.getElementById('pickArea').style.display='none';
     document.getElementById('spellArea').style.display='block';
-    document.getElementById('bigCn').textContent = item.w.cn;
-    buildSpell(item.w.en);
+    document.getElementById('bigCn').textContent=item.cn;
+    document.getElementById('spellSub').textContent="点字母把单词拼出来！"+(isBoss?"限时20秒，答对+3！":"");
+    buildSpell(item.en);
+    clearInterval(bossTimer);
+    if(isBoss){
+      bossLeft=20;
+      bossTimer=setInterval(()=>{
+        bossLeft--;
+        if(bossLeft<=0){ clearInterval(bossTimer); if(!lock){ lock=true; bossFail(); } }
+      },1000);
+    }
   }
   updateHUD();
 }
-function answerPick(el,v,w){
-  if(lock) return; lock=true;
+function answerPick(el,v,w,isBoss){
+  if(lock) return; lock=true; statHit(w,v===w.cn);
   if(v===w.cn){
-    el.classList.add('correct'); gem++; say("咕噜咕噜——气泡捞上来啦！"+w.en+" 就是【"+w.cn+"】！+1气泡");
-    setTimeout(()=>{ qi++; nextQ(); },1200);
+    el.classList.add('correct');
+    let gain=(isBoss?3:1);
+    if(doubleArmed){ gain*=2; doubleArmed=false; }
+    gem+=gain; updateHUD();
+    if((qi+1)%3===0) grantItem();
+    say("咕噜咕噜——气泡捞上来啦！"+w.en+" = 【"+w.cn+"】"+(isBoss?" 章鱼王被击退！":"")+(doubleArmed?" ✖️2已激活！":""));
+    setTimeout(()=>{ qi++; nextQ(); },isBoss?1600:1200);
   } else {
     el.classList.add('wrong');
     document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===w.cn) e.classList.add('correct'); });
-    say("嘎…捞到一只章鱼！"+w.en+" 是【"+w.cn+"】哦，记住它！");
+    if(items.shield>0){ items.shield--; renderItemBar(); toast("🛡️ 护盾生效，本轮不计入复仇！"); }
+    else missWord(w);
+    say("嘎…"+w.en+" 是【"+w.cn+"】哦，记住它！它已进复仇名单～");
     setTimeout(()=>{ qi++; nextQ(); },2000);
   }
-  updateHUD();
 }
 function buildSpell(word){
-  const clean = word.replace(/\s/g,'');
-  // 字母池：单词字母 + 2个干扰字母
-  let letters = clean.split('');
+  const clean=word.replace(/\s/g,'');
+  let letters=clean.split('');
   const extra="abcdefghilmnoprstuw".split('');
-  while(letters.length < clean.length+2){ const c=extra[Math.floor(Math.random()*extra.length)];
-    if(letters.filter(x=>x===c).length < clean.split('').filter(x=>x===c).length+1) letters.push(c); }
-  letters = shuffle(letters);
+  while(letters.length<clean.length+2){
+    const c=extra[Math.floor(Math.random()*extra.length)];
+    if(letters.filter(x=>x===c).length<clean.split('').filter(x=>x===c).length+1) letters.push(c);
+  }
+  letters=shuffle(letters);
   const slots=document.getElementById('slots'), box=document.getElementById('letters');
   slots.innerHTML=''; box.innerHTML='';
-  const target = word.split('');
-  target.forEach((ch,i)=>{
+  word.split('').forEach(ch=>{
     const s=document.createElement('div'); s.className='slot';
     if(ch===' '){ s.style.border='none'; s.innerHTML='&nbsp;'; s.dataset.space='1'; }
     slots.appendChild(s);
   });
-  letters.forEach((c,idx)=>{
+  letters.forEach(c=>{
     const b=document.createElement('button'); b.className='lt'; b.textContent=c;
     b.onclick=()=>tapLetter(b,c); box.appendChild(b);
   });
 }
 function tapLetter(btn,c){
   if(lock) return;
-  // 找到下一个未填槽位（跳过空格槽）
   const slots=[...document.querySelectorAll('.slot')];
-  const s=slots.find(x=>!x.dataset.space && !x.classList.contains('filled'));
+  const s=slots.find(x=>!x.dataset.space&&!x.classList.contains('filled'));
   if(!s) return;
   s.textContent=c; s.classList.add('filled'); s.dataset.char=c;
-  btn.classList.add('used'); btn.dataset.slot=slots.indexOf(s);
+  btn.classList.add('used');
   typed.push({btn,s});
   checkSpell();
 }
@@ -221,9 +322,19 @@ function undoLetter(){
   last.btn.classList.remove('used');
 }
 function revealWord(){
-  if(lock) return; lock=true;
-  document.getElementById('duckSay').textContent="嘎嘎，看好啦："+curWord.en+"（"+curWord.cn+"），跟着我读三遍！";
-  // 自动演示填入
+  if(lock) return; lock=true; clearInterval(bossTimer);
+  statHit(curWord,false); missWord(curWord);
+  document.getElementById('duckSay').textContent="嘎嘎，看好啦："+curWord.en+"（"+curWord.cn+"），跟我读三遍！";
+  const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
+  const letters=[...curWord.en.replace(/\s/g,'')];
+  slots.forEach((s,i)=>{ s.textContent=letters[i]; s.classList.add('filled'); });
+  document.querySelectorAll('.lt').forEach(b=>b.classList.add('used'));
+  setTimeout(()=>{ qi++; nextQ(); },2200);
+}
+function bossFail(){
+  statHit(curWord,false); missWord(curWord);
+  toast("👹 章鱼王逃走了！正确拼写："+curWord.en);
+  document.getElementById('duckSay').textContent="⏰ 超时！"+curWord.en+"（"+curWord.cn+"）已进复仇名单！";
   const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
   const letters=[...curWord.en.replace(/\s/g,'')];
   slots.forEach((s,i)=>{ s.textContent=letters[i]; s.classList.add('filled'); });
@@ -236,33 +347,119 @@ function checkSpell(){
   const got=slots.map(s=>s.dataset.char).join('');
   const want=curWord.en.replace(/\s/g,'');
   if(got.toLowerCase()===want.toLowerCase()){
-    lock=true; gem+=2; updateHUD();
-    say("叮叮叮——拼写完美！【"+curWord.en+"】+2气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:""));
+    lock=true; clearInterval(bossTimer);
+    statHit(curWord,true);
+    let gain=2; if(doubleArmed){ gain*=2; doubleArmed=false; }
+    gem+=gain; updateHUD();
+    say("叮叮叮——拼写完美！【"+curWord.en+"】+"+gain+"气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:""));
     setTimeout(()=>{ qi++; nextQ(); },1600);
   } else {
-    // 错了，闪红清空
     lock=true;
-    slots.forEach(s=>s.style.color='#e05555');
-    setTimeout(()=>{
-      slots.forEach(s=>{ s.textContent=''; s.classList.remove('filled'); s.style.color=''; delete s.dataset.char; });
-      document.querySelectorAll('.lt').forEach(b=>{ b.classList.remove('used'); delete b.dataset.slot; });
-      typed=[];
+    if(items.shield>0){
+      // 护盾：只清掉错误位置的字母
+      items.shield--; renderItemBar();
+      let fixed=0;
+      slots.forEach((s,i)=>{
+        if(s.dataset.char.toLowerCase()!==want[i].toLowerCase()){
+          s.textContent=''; s.classList.remove('filled'); delete s.dataset.char; fixed++;
+        }
+      });
+      // 恢复被清掉字母的按钮
+      const usedBtns=typed.filter(t=>!t.s.dataset.char);
+      const usedLetters=[...document.querySelectorAll('.lt.used')];
+      document.querySelectorAll('.lt.used').forEach(b=>{
+        const ch=b.textContent;
+        const need=want.split('').filter((x,i)=>slots[i]&&!slots[i].dataset.char&&x.toLowerCase()===ch.toLowerCase()).length;
+        const placed=[...document.querySelectorAll('.slot.filled')].filter(s=>s.dataset.char&&s.dataset.char.toLowerCase()===ch.toLowerCase()).length;
+        const inPool=letters=0; // noop
+      });
+      // 简化：全部解锁未匹配按钮
+      document.querySelectorAll('.lt.used').forEach(b=>{
+        const ch=b.textContent.toLowerCase();
+        const stillNeeded=[...slots].filter(s=>!s.dataset.char||!s.classList.contains('filled')).length;
+        const targetIdx=[...slots].findIndex(s=>s.classList.contains('filled')&&s.dataset.char&&s.dataset.char.toLowerCase()===ch);
+        // 若该字母按钮对应的槽被清空则恢复
+      });
+      // 重新同步按钮状态：按槽内容重建
+      typed.forEach(t=>{ if(!t.s.dataset.char){ t.btn.classList.remove('used'); } });
+      typed=typed.filter(t=>t.s.dataset.char);
+      toast("🛡️ 护盾修正了 "+fixed+" 个字母，再试一次！");
+      say("嘎！护盾帮你把错的字母擦掉了，剩下的位置想想 "+curWord.cn+" 的拼写！");
       lock=false;
-    },700);
-    say("嘎…字母顺序不对哦！再看看，"+curWord.cn+"的单词是 "+want.length+" 个字母！");
+    } else {
+      statHit(curWord,false); missWord(curWord);
+      slots.forEach(s=>s.style.color='#e05555');
+      setTimeout(()=>{
+        slots.forEach(s=>{ s.textContent=''; s.classList.remove('filled'); s.style.color=''; delete s.dataset.char; });
+        document.querySelectorAll('.lt').forEach(b=>{ b.classList.remove('used'); });
+        typed=[];
+        lock=false;
+      },700);
+      say("嘎…顺序不对哦！"+curWord.cn+" 的单词是 "+want.length+" 个字母，它进复仇名单啦！");
+    }
+    updateHUD();
   }
-  updateHUD();
+}
+function grantItem(){
+  const it=Math.random()<0.5?"hint":"double";
+  items[it]=(items[it]||0)+1; renderItemBar();
+  toast("🎁 打捞奖励："+(it==="hint"?"首字母提示🔍":"双倍宝石✖️2"));
+}
+function renderItemBar(){
+  const bar=document.getElementById('itemBar'); bar.innerHTML='';
+  const defs=[["shield","🛡️ 护盾×"+(items.shield||0),"出错自动修正"],
+              ["double","✖️2 双倍宝石×"+(items.double||0),"下一题翻倍"],
+              ["hint","🔍 首字母提示×"+(items.hint||0),"点亮第一个字母"]];
+  defs.forEach(([k,label,tip])=>{
+    const d=document.createElement('div');
+    const have=(items[k]||0)>0;
+    d.className='item'+(!have?' none':'')+(doubleArmed&&k==='double'?' ':'');
+    d.textContent=label; d.title=tip;
+    d.onclick=()=>{
+      if(lock) return;
+      if(k==='double'){ if(doubleArmed) return; doubleArmed=true; items.double--; toast("✖️2已激活！"); }
+      if(k==='hint'){
+        if(curWord&&deck[qi]&&deck[qi].mode==='spell'){
+          items.hint--;
+          const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
+          const first=slots.find(s=>!s.classList.contains('filled'));
+          if(first){ first.textContent=curWord.en.replace(/\s/g,'')[0]; first.classList.add('filled','hint'); first.dataset.char=curWord.en.replace(/\s/g,'')[0]; toast("首字母已点亮！"); checkSpell(); }
+        }
+      }
+      renderItemBar();
+    };
+    bar.appendChild(d);
+  });
 }
 function say(t){ document.getElementById('duckSay').textContent=t; }
+
 function endGame(){
+  clearInterval(bossTimer);
   document.getElementById('gameCard').style.display='none';
   const s=document.getElementById('endScreen'); s.classList.add('active');
+  totalGems+=gem; localStorage.setItem("x1_total_gems",totalGems);
   if(gem>=12){ document.getElementById('endFace').textContent="🏆"; document.getElementById('endTitle').textContent="满载而归！"; }
   else if(gem>=7){ document.getElementById('endFace').textContent="🎉"; document.getElementById('endTitle').textContent="收获满满！"; }
   else { document.getElementById('endFace').textContent="💪"; document.getElementById('endTitle').textContent="继续练习！"; }
-  document.getElementById('endDesc').innerHTML="本轮捞到：<b>"+gem+"</b> 个单词气泡 🫧<br>"+
-    (gem>=12?"英语海洋冠军打捞队就是烁烁！":"多打捞几轮，单词就牢牢记住啦！");
+  document.getElementById('endDesc').innerHTML="本轮捞到：<b>"+gem+"</b> 个气泡 🫧 ｜ 累计 "+totalGems+" 宝石";
+  const r=document.getElementById('radar');
+  const rows=Object.entries(stats).filter(([k,v])=>v[1]>0);
+  r.innerHTML='<b style="font-size:13px">📊 打捞图谱（累计）</b>'+(rows.length?rows.map(([n,v])=>{
+    const p=Math.round(v[0]/v[1]*100);
+    return '<div class="row"><span style="width:64px">'+n+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+v[0]+'/'+v[1]+'</span></div>';
+  }).join(""):'');
+  renderSkins(); applySkin();
 }
+function exportMistakes(){
+  const m=mistakes.danci||[];
+  const target=document.getElementById('mistBox2')||document.getElementById('mistBox');
+  if(!m.length){ target.textContent="复仇名单空空如也，全对！嘎嘎佩服！"; target.style.display='block'; return; }
+  const text="【错词复仇名单】\n"+m.join(", ");
+  target.textContent=text+"\n（长按复制或截图发群里给X1）";
+  target.style.display='block';
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>toast("已复制！")).catch(()=>{}); }
+}
+renderSkins(); applySkin();
 </script>
 </body>
 </html>
