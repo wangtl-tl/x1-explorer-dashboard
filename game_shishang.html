@@ -276,8 +276,9 @@ function answer(el,v){
     stats[cat][0]++;
     combo++; maxCombo=Math.max(maxCombo,combo);
     let gain=(isBoss?3:1)+Math.floor(combo/3);
-    if(doubleArmed){ gain*=2; doubleArmed=false; }
+    const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain;
+    if(dbl) toast("✖️2翻倍到账！+"+gain+"宝石");
     if(combo>0&&combo%3===0){ grantItem(); }
     popCombo();
     say(pick(["嘎嘎嘎！斩！","商是"+cur.q+"，一击必中！","宝石+"+gain+"！","连击×"+combo+"，错算怪发抖了！"]));
