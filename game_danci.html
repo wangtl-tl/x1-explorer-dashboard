@@ -295,6 +295,8 @@ function answerPick(el,v,w,isBoss){
     let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
     if(window.XP3)XP3.hit('danci',w.cat,isBoss);
+    // 复仇成功：答对就把这个词移出复仇名单
+    mistakes.danci=(mistakes.danci||[]).filter(x=>x!==w.en); saveMistakes();
     if((qi+1)%3===0) grantItem();
     say("咕噜咕噜——气泡捞上来啦！"+w.en+" = 【"+w.cn+"】"+(isBoss?" 章鱼王被击退！":"")+(dbl?" ✖️2翻倍到账！":""));
     setTimeout(()=>{ qi++; nextQ(); },isBoss?1600:1200);
@@ -372,6 +374,7 @@ function checkSpell(){
     lock=true; clearInterval(bossTimer);
     statHit(curWord,true);
     if(window.XP3)XP3.hit('danci',curWord.cat,qi===9);
+    mistakes.danci=(mistakes.danci||[]).filter(x=>x!==curWord.en); saveMistakes();
     let gain=2; const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
     say("叮叮叮——拼写完美！【"+curWord.en+"】+"+gain+"气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:"")+(dbl?" ✖️2翻倍到账！":""));
