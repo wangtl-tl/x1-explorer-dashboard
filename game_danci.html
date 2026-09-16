@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<html lang="zh-CN" data-page-node-id="6fTMlFrmEeX6EuyOv89ffz">
+<head data-page-node-id="Lti9hJMLj7hyQl24bo3hE4">
+<meta charset="UTF-8" data-page-node-id="rGmp41hrpOTUeNImxv1ywH">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="CFgOLGnmnxupGIK5srxBLS">
 <title>单词打捞队 v2 · 英语海洋寻宝</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -79,67 +79,76 @@
   .toast.show { opacity:1; }
 </style>
 </head>
-<body>
+<body data-page-node-id="QroMcULr82CcnKFeWfVGQR">
 
-<div class="header">
-  <div class="brand"><span class="ship" id="shipFace">⛵</span>单词打捞队<span class="v2">V2</span></div>
-  <div class="stats">
-    <span class="pill">🫧 <b id="gem">0</b></span>
-    <span class="pill">进度 <b id="prog">0</b>/10</span>
+<div class="header" data-page-node-id="3dXUBQaJbQp1Kb799RyWE1">
+  <div class="brand" data-page-node-id="bdec0EYiLE3EzCDYhme7eL"><span class="ship" id="shipFace" data-page-node-id="bANvlEzFzq0jow1VpgcGXt">⛵</span>单词打捞队<span class="v2" data-page-node-id="dFpQsNltQtsAljypTpUz7S">V2</span></div>
+  <div class="stats" data-page-node-id="fowBTgOPLEsXWLKbDpabSM">
+    <span class="pill" data-page-node-id="g9KC9SSfIxX7apToB4pmWM">🫧 <b id="gem" data-page-node-id="Sf3JxfRcABHn9CJoYyQI9j">0</b></span>
+    <span class="pill" data-page-node-id="fdzDhVXxd1IgGkgv8xgC0q">进度 <b id="prog" data-page-node-id="eJ6H9tNWq8ikE5onKMIWEa">0</b>/10</span>
   </div>
 </div>
 
-<div class="screen active" id="startScreen">
-  <div class="bigface" id="startFace">⛵🫧🦆</div>
-  <h1>单词打捞队 <span style="font-size:13px;color:#2b8ac4">V2 远航版</span></h1>
-  <div class="desc">
-    新机制：<b>🎁道具</b> · <b>👹章鱼王限时拦截</b> · <b>🔁错词复仇</b><br>
+<div class="screen active" id="startScreen" data-page-node-id="pcvN3GriYdnllSiNBrFLgG">
+  <div class="bigface" id="startFace" data-page-node-id="AsA3wpSHPSsjRM6zaVMsWE">⛵🫧🦆</div>
+  <h1 data-page-node-id="8Ito069igp4IG3AeTDAV8z">单词打捞队 <span style="font-size:13px;color:#2b8ac4" data-page-node-id="joQVz0VLuQZmtbv6mT0sts">V2 远航版</span></h1>
+  <div class="desc" data-page-node-id="JrWfbebPZUaHvzLnExyuXh">
+    新机制：<b data-page-node-id="DVtAFeHEH48pHKHltAwrTE">🎁道具</b> · <b data-page-node-id="AOal4gRRoCEHgdQZF4D4EV">👹章鱼王限时拦截</b> · <b data-page-node-id="lWgtKqyX1WPEu9pf3QsHNM">🔁错词复仇</b><br data-page-node-id="OCzagaaDowKiYPp0g4TD7d">
     X1 每天还可能投下“特训气泡”，捞起来有惊喜！
   </div>
-  <div class="skinline" id="skinLine"></div>
-  <div class="skinname" id="skinHint">点击换船（累计宝石解锁）</div>
-  <button class="btn" onclick="startGame()" style="margin-top:10px">⛵ 起锚出发</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错词给X1</button>
-  <div class="mistbox" id="mistBox"></div>
-  <div class="radar" id="startRadar"></div>
+  <div class="skinline" id="skinLine" data-page-node-id="76AlZkmSrvZXj0vam7rRWJ"></div>
+  <div class="skinname" id="skinHint" data-page-node-id="V3RXTKFnELGUxvZ8dOCAbb">点击换船（累计宝石解锁）</div>
+  <button class="btn" onclick="startGame()" style="margin-top:10px" data-page-node-id="jrxvtQylwnp07OrHfdYCIa">⛵ 起锚出发</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="r2WDF9LQhiO68FEXDmXuws">📤 导出错词给X1</button>
+  <div class="mistbox" id="mistBox" data-page-node-id="eQ8abbLliwJZPBjYu6V51J"></div>
+  <div class="radar" id="startRadar" data-page-node-id="yNmZ76gKKvebBvlgkRNZqd"></div>
 </div>
 
-<div class="card" id="gameCard" style="display:none">
-  <div class="qtag" id="qTag">🫧 打捞任务 1 · 认一认</div>
-  <div id="pickArea">
-    <div class="bigword" id="bigWord">word</div>
-    <div class="sub">这个单词是什么意思？</div>
-    <div class="options" id="opts"></div>
+<div class="card" id="gameCard" style="display:none" data-page-node-id="ydWASEmGyTyt3s7zFrxLsj">
+  <div class="qtag" id="qTag" data-page-node-id="MIhs6nlZSKlj6gzJrYb6TP">🫧 打捞任务 1 · 认一认</div>
+  <div class="items" id="itemBar"></div>
+  <div id="pickArea" data-page-node-id="iApPFQtn8YeJzbgUaDb1Dk">
+    <div class="bigword" id="bigWord" data-page-node-id="CoP2aSpiyGWgQagga92jqV">word</div>
+    <div class="sub" data-page-node-id="ErlSvXb8pTvJnHxjWV5t5X">这个单词是什么意思？</div>
+    <div class="options" id="opts" data-page-node-id="AH8PDdzOUsulJ284Yv2WPb"></div>
   </div>
-  <div id="spellArea" style="display:none">
-    <div class="bigcn" id="bigCn">中文</div>
-    <div class="sub" id="spellSub">点字母把单词拼出来！</div>
-    <div class="slots" id="slots"></div>
-    <div class="letters" id="letters"></div>
-    <div class="ctrl">
-      <button class="mini undo" onclick="undoLetter()">↩️ 撤销</button>
-      <button class="mini giveup" onclick="revealWord()">🙋 求助嘎嘎（0宝石）</button>
+  <div id="spellArea" style="display:none" data-page-node-id="Q4essGxfYnLL2TPe62wFfJ">
+    <div class="bigcn" id="bigCn" data-page-node-id="vZv9docV5JZj8BdGHNJDXz">中文</div>
+    <div class="sub" id="spellSub" data-page-node-id="C4OZeD2mEH8rjWw2ZeGc8w">点字母把单词拼出来！</div>
+    <div class="slots" id="slots" data-page-node-id="V5NU8HReRSclyLj267swlr"></div>
+    <div class="letters" id="letters" data-page-node-id="BipxJTVrdAwn1NwT9EUXoD"></div>
+    <div class="ctrl" data-page-node-id="1sBlJqBfLj1nDCzurQtu3x">
+      <button class="mini undo" onclick="undoLetter()" data-page-node-id="lnbQogZvA5gffjOCa6YznI">↩️ 撤销</button>
+      <button class="mini giveup" onclick="revealWord()" data-page-node-id="E5V2IeA33aeGu34T8FRTk3">🙋 求助嘎嘎（0宝石）</button>
     </div>
   </div>
-  <div class="duckmsg">
-    <span class="face" id="duckFace">🦆</span>
-    <div class="bubble" id="duckSay">嘎！起锚！盯紧水里的气泡！</div>
+  <div class="duckmsg" data-page-node-id="KHfYpRoVdysXWCINFhO3aM">
+    <span class="face" id="duckFace" data-page-node-id="P13EuA7AQ5QIpP9UQSWICZ">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="99uzG1aCQFsP29QBGtJ9gz">🛠️V2.1 嘎！起锚！盯紧水里的气泡！</div>
   </div>
 </div>
 
-<div class="screen" id="endScreen">
-  <div class="bigface" id="endFace">🏆</div>
-  <h1 id="endTitle">满载而归！</h1>
-  <div class="desc" id="endDesc"></div>
-  <div class="radar" id="radar"></div>
-  <button class="btn" onclick="startGame()">再捞一轮</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错词给X1</button>
-  <div class="mistbox" id="mistBox2"></div>
+<div class="screen" id="endScreen" data-page-node-id="iBXhxEBnAl2L1QFyYB2Yo3">
+  <div class="bigface" id="endFace" data-page-node-id="XYsvQ7qFPJJfGpoT16ZqAT">🏆</div>
+  <h1 id="endTitle" data-page-node-id="Jsz3eSfqOuqLD1tgI3GFtD">满载而归！</h1>
+  <div class="desc" id="endDesc" data-page-node-id="c2OM0GISI5MvZ7C1SeEc5s"></div>
+  <div class="radar" id="radar" data-page-node-id="Eyv2ZfqHnf2dcGjtAWBvTR"></div>
+  <button class="btn" onclick="startGame()" data-page-node-id="BTThMPnG9G4d72GIo1W6SY">再捞一轮</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="2P3OKM5HQRrQiT8HnIajym">📤 导出错词给X1</button>
+  <div class="mistbox" id="mistBox2" data-page-node-id="GEafyr4i2cnO7U5zZjj54G"></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-page-node-id="Lw4SRt76igelwLjMsJAlpw"></div>
 
 <script>
+// 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
+window.onerror=function(msg,src,line,col){
+  try{
+    var t="⚠️ 出错了："+msg+"（第"+line+"行）";
+    var d=document.getElementById('duckSay'); if(d) d.textContent=t;
+    var g=document.getElementById('gem'); if(g) g.parentNode.innerHTML=t;
+  }catch(e){}
+};
 // 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
 const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const WORDS = [
