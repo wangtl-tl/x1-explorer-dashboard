@@ -129,6 +129,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
+const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const BANK = [
   {w:"卧室", bad:["屋室","卧市","卧式"], tip:"「卧」是睡的意思，别写成屋顶的「屋」！", cat:"课文字"},
   {w:"痕迹", bad:["狠迹","痕记","恨迹"], tip:"痕迹跟「狠心」「悔恨」都没关系，是病字旁的「痕」！", cat:"课文字"},
@@ -155,14 +157,14 @@ const MONSTERS=[{name:"错字怪 · 爪爪",face:"👾"},{name:"错字怪 · 涂
 const SKINS=[{name:"木弓",face:"🏹",need:0},{name:"猎星弩",face:"🎯",need:30},{name:"雷霆之弓",face:"⚡",need:80}];
 let deck,qi,gem,hp,lock,items,doubleArmed,bossTimer,bossLeft;
 let stats=load("x1_stats_cuozi",{});
-let totalGems=+(localStorage.getItem("x1_total_gems")||0);
-let skinSel=+(localStorage.getItem("x1_skin_cuozi")||0);
-let mistakes=JSON.parse(localStorage.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
+let totalGems=+(LS.getItem("x1_total_gems")||0);
+let skinSel=+(LS.getItem("x1_skin_cuozi")||0);
+let mistakes=JSON.parse(LS.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
 
-function load(k,d){ try{ return JSON.parse(localStorage.getItem(k))||d; }catch(e){ return d; } }
+function load(k,d){ try{ return JSON.parse(LS.getItem(k))||d; }catch(e){ return d; } }
 function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
-function saveStats(){ localStorage.setItem("x1_stats_cuozi",JSON.stringify(stats)); }
-function saveMistakes(){ localStorage.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
+function saveStats(){ LS.setItem("x1_stats_cuozi",JSON.stringify(stats)); }
+function saveMistakes(){ LS.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
 function toast(t){ const e=document.getElementById('toast'); e.textContent=t; e.classList.remove('show'); void e.offsetWidth; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1800); }
 
 function renderSkins(){
@@ -172,7 +174,7 @@ function renderSkins(){
     d.className='skin'+(i===skinSel?' sel':'')+(totalGems<s.need?' lock':'');
     d.innerHTML='<div>'+s.face+'</div><div class="skinname">'+(totalGems<s.need?'🔒'+s.need:'')+'</div>';
     d.onclick=()=>{ if(totalGems<s.need){ toast("还差 "+(s.need-totalGems)+" 颗宝石解锁 "+s.name); return; }
-      skinSel=i; localStorage.setItem("x1_skin_cuozi",i); renderSkins(); applySkin(); toast("装备【"+s.name+"】！狩猎去吧！"); };
+      skinSel=i; LS.setItem("x1_skin_cuozi",i); renderSkins(); applySkin(); toast("装备【"+s.name+"】！狩猎去吧！"); };
     line.appendChild(d);
   });
 }
@@ -187,7 +189,7 @@ async function fetchCustom(){
   }catch(e){ return []; }
 }
 
-async function startGame(){
+function startGame(){
   qi=0; gem=0; lock=false; items={shield:1,double:0,skip:0}; doubleArmed=false;
   hp=10; renderItemBar();
   document.getElementById('startScreen').classList.remove('active');
@@ -197,16 +199,25 @@ async function startGame(){
   document.getElementById('mistBox').style.display='none';
   document.getElementById('gem').textContent=0;
   renderHP(); setMonster();
-  const custom=await fetchCustom();
   const revengeWords=(mistakes.cuozi||[]).map(w=>BANK.find(b=>b.w===w)).filter(Boolean).slice(0,3);
-  // 复仇字优先 + 特训字 + 随机补满10
-  deck=[...revengeWords,...custom];
+  // 复仇字优先 + 随机补满10——先开局，特训字后台异步混入
+  deck=[...revengeWords];
   const used=new Set(deck.map(q=>q.w));
   deck=deck.concat(shuffle(BANK.filter(b=>!used.has(b.w))).slice(0,10-deck.length));
   deck=deck.slice(0,10);
-  deck.sort((a,b)=>(b.revenge?1:0)-(a.revenge?1:0)); // 复仇题排前面
   nextQ();
-  say(deck.some(q=>q.revenge)?"嘎！上次逃掉的错字怪回来复仇了，这次一个不留！":"嘎！狩猎开始，看清每个字！");
+  say(revengeWords.length?"嘎！上次逃掉的错字怪回来复仇了，这次一个不留！":"嘎！狩猎开始，看清每个字！");
+  // X1特训字：不阻塞开局，加载到后插入尚未作答的普通题位
+  fetchCustom().then(cs=>{
+    if(!cs.length) return;
+    let j=qi+1, added=0;
+    for(const c of cs){
+      while(j<deck.length&&(deck[j].revenge||deck[j].custom)) j++;
+      if(j>=deck.length) break;
+      deck[j]={...c,custom:true}; j++; added++;
+    }
+    if(added) say("⭐ X1特训字混进来了"+added+"个，提高警惕！");
+  }).catch(()=>{});
 }
 function setMonster(){
   const m=MONSTERS[Math.min(Math.floor((10-hp)/4),2)];
@@ -234,6 +245,7 @@ function nextQ(){
   clearInterval(bossTimer);
   if(isBoss){
     bossLeft=20;
+    const oldFill=document.getElementById('bossFillBox'); if(oldFill) oldFill.remove();
     const fill=document.createElement('div'); fill.className='bosstimer'; fill.id='bossFillBox';
     fill.innerHTML='<i id="bossFill"></i>';
     document.getElementById('mName').after(fill);
@@ -316,7 +328,7 @@ function endGame(){
   document.getElementById('gameZone').style.display='none';
   document.getElementById('gameCard').style.display='none';
   const s=document.getElementById('endScreen'); s.classList.add('active');
-  totalGems+=gem; localStorage.setItem("x1_total_gems",totalGems);
+  totalGems+=gem; LS.setItem("x1_total_gems",totalGems);
   const face=document.getElementById('endFace'), title=document.getElementById('endTitle');
   if(hp<=0){ face.textContent="🏆"; title.textContent="错字怪被消灭啦！"; }
   else { face.textContent="💪"; title.textContent="错字怪逃跑了…"; }
