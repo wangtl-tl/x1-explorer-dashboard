@@ -136,20 +136,22 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
+const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const LV_NAMES=["试商热身","整十邻近","四舍试商","五入试商","错算怪BOSS"];
 const TOTAL_Q=10;
 const SKINS=[{name:"经典坚忍烁号",face:"🦆",need:0},{name:"黄金嘎嘎号",face:"🐤",need:30},{name:"钢铁巨舰",face:"🦾",need:80}];
 let qi,gem,combo,maxCombo,items,doubleArmed,cur,lock,bossTimer,bossLeft,curCat,adaptiveShift;
 let stats=load("x1_stats_shishang",{sish:[0,0],wu:[0,0],near:[0,0]});   // [对,总]
-let totalGems=+(localStorage.getItem("x1_total_gems")||0);
-let skinSel=+(localStorage.getItem("x1_skin_shishang")||0);
-let mistakes=JSON.parse(localStorage.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
+let totalGems=+(LS.getItem("x1_total_gems")||0);
+let skinSel=+(LS.getItem("x1_skin_shishang")||0);
+let mistakes=JSON.parse(LS.getItem("x1_game_mistakes")||'{"shishang":[],"cuozi":[],"danci":[]}');
 
-function load(k,d){ try{ return JSON.parse(localStorage.getItem(k))||d; }catch(e){ return d; } }
+function load(k,d){ try{ return JSON.parse(LS.getItem(k))||d; }catch(e){ return d; } }
 function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-function saveStats(){ localStorage.setItem("x1_stats_shishang",JSON.stringify(stats)); }
-function saveMistakes(){ localStorage.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
+function saveStats(){ LS.setItem("x1_stats_shishang",JSON.stringify(stats)); }
+function saveMistakes(){ LS.setItem("x1_game_mistakes",JSON.stringify(mistakes)); }
 function toast(t){ const e=document.getElementById('toast'); e.textContent=t; e.classList.remove('show'); void e.offsetWidth; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1800); }
 
 /* ---------- 皮肤 ---------- */
@@ -160,7 +162,7 @@ function renderSkins(){
     d.className='skin'+(i===skinSel?' sel':'')+(totalGems<s.need?' lock':'');
     d.innerHTML='<div>'+s.face+'</div><div class="skinname">'+(totalGems<s.need?'🔒'+s.need:'')+'</div>';
     d.onclick=()=>{ if(totalGems<s.need){ toast("还差 "+(s.need-totalGems)+" 颗宝石解锁 "+s.name); return; }
-      skinSel=i; localStorage.setItem("x1_skin_shishang",i); renderSkins(); applySkin(); toast("已换上【"+s.name+"】！"); };
+      skinSel=i; LS.setItem("x1_skin_shishang",i); renderSkins(); applySkin(); toast("已换上【"+s.name+"】！"); };
     line.appendChild(d);
   });
 }
@@ -210,19 +212,25 @@ function makeQ(level,diffShift){
 }
 
 /* ---------- 流程 ---------- */
-async function startGame(){
+function startGame(){
   qi=0; gem=0; combo=0; maxCombo=0; items={shield:1,double:0,skip:0}; doubleArmed=false; lock=false; adaptiveShift=0;
   renderSkins(); applySkin(); updateHUD(); renderItemBar();
   document.getElementById('startScreen').classList.remove('active');
   document.getElementById('endScreen').classList.remove('active');
   document.getElementById('gameScreen').style.display='block';
   document.getElementById('mistBox').style.display='none';
-  const custom=await fetchCustom();
   const revenge=getRevenge();
-  // 队列：复仇题最多2道 + 特训题最多3道 + 随机题补满10
-  window.queue=[...revenge.slice(0,2),...custom.slice(0,3)];
-  say(queue.length?"嘎！本轮混入了 "+(revenge.slice(0,2).length?"复仇题 ":"")+(custom.length?"特训题 ":"")+"，船长小心！":"嘎！远征开始，稳住阵型！");
+  // 队列：复仇题最多2道先行，随机题在nextQ里补——先开局，特训题后台异步混入
+  window.queue=[...revenge.slice(0,2)];
+  say(revenge.length?"嘎！复仇题混进来了，船长小心！":"嘎！远征开始，稳住阵型！");
   nextQ();
+  // X1特训题：不阻塞开局，加载到后替换尚未作答的队列槽位
+  fetchCustom().then(cs=>{
+    if(!cs.length) return;
+    let j=qi+1, added=0;
+    for(const c of cs){ if(j>=TOTAL_Q) break; window.queue[j]=c; j++; added++; }
+    if(added) say("⭐ X1特训题混入本轮"+added+"道，打起精神！");
+  }).catch(()=>{});
 }
 function nextQ(){
   if(qi>=TOTAL_Q){ endGame(); return; }
@@ -349,7 +357,7 @@ function updateHUD(){ document.getElementById('gem').textContent=gem; document.g
 function endGame(){
   document.getElementById('gameScreen').style.display='none';
   const s=document.getElementById('endScreen'); s.classList.add('active');
-  totalGems+=gem; localStorage.setItem("x1_total_gems",totalGems);
+  totalGems+=gem; LS.setItem("x1_total_gems",totalGems);
   let face,title;
   if(gem>=13){ face="🏆"; title="远征大捷！"; } else if(gem>=8){ face="🎉"; title="远征成功！"; } else { face="💪"; title="休整再战！"; }
   document.getElementById('endFace').textContent=face;
