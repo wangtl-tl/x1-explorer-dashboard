@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="YRzyV6Sxfnq7JqYvgjR9Vd">
+<head data-page-node-id="HLa1jVOGtGhNJNBL5hfCRe">
+<meta charset="UTF-8" data-page-node-id="BH21fNDScaBFJeuZn7x1Ta">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="90ik7J8C6t5jS1EKFjDrXQ">
+<title>单词打捞队 · 英语海洋寻宝</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(180deg,#cdeeff 0%,#9fd8f5 40%,#4aa8d8 100%);
+    min-height:100vh; color:#123a52; display:flex; flex-direction:column; align-items:center; }
+  .header { width:100%; max-width:520px; padding:14px 16px 4px; display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; }
+  .stats { display:flex; gap:8px; }
+  .pill { background:#fff; border-radius:14px; padding:4px 10px; font-size:13px; font-weight:700; box-shadow:0 2px 6px rgba(20,80,120,.18); }
+  .pill b { color:#2b8ac4; }
+  .ship { font-size:30px; text-align:center; margin-top:2px; }
+  .card { width:100%; max-width:520px; background:rgba(255,255,255,.95); border-radius:22px; padding:20px 18px;
+    box-shadow:0 8px 24px rgba(20,80,120,.22); margin:8px 14px; text-align:center; }
+  .qtag { font-size:13px; font-weight:800; color:#2b8ac4; background:#e2f4ff; border-radius:999px;
+    display:inline-block; padding:4px 14px; margin-bottom:12px; }
+  .bigword { font-size:32px; font-weight:900; letter-spacing:1px; color:#155a86; font-family:"Segoe UI",sans-serif; }
+  .bigcn { font-size:26px; font-weight:900; color:#155a86; }
+  .sub { font-size:13px; color:#6b93a8; margin:6px 0 14px; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .opt { background:#eff9ff; border:2px solid #cfe9f7; border-radius:16px; padding:15px 6px;
+    font-size:20px; font-weight:800; color:#1b6e9e; cursor:pointer; transition:transform .12s; }
+  .opt:active { transform:scale(.95); }
+  .opt.correct { background:#d8f5e3; border-color:#4fc47f; }
+  .opt.wrong { background:#ffe3e0; border-color:#f0716b; animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .slots { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; min-height:46px; margin-bottom:12px; }
+  .slot { width:38px; height:44px; border-bottom:3px solid #9ccfe8; display:flex; align-items:center;
+    justify-content:center; font-size:22px; font-weight:900; color:#155a86; }
+  .slot.filled { border-color:#2b8ac4; }
+  .letters { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .lt { background:linear-gradient(180deg,#fff,#e8f6ff); border:2px solid #bfe4f5; border-radius:12px;
+    width:44px; height:48px; font-size:22px; font-weight:900; color:#1b6e9e; cursor:pointer; box-shadow:0 3px 0 #a8d4e8; }
+  .lt:active { transform:translateY(2px); box-shadow:0 1px 0 #a8d4e8; }
+  .lt.used { opacity:.25; pointer-events:none; }
+  .ctrl { margin-top:14px; display:flex; gap:10px; justify-content:center; }
+  .mini { border:none; border-radius:999px; padding:9px 22px; font-weight:800; font-size:14px; cursor:pointer; }
+  .undo { background:#fff3cd; color:#8a6d1f; }
+  .giveup { background:#ffe3e0; color:#c0392b; }
+  .duckmsg { display:flex; align-items:flex-start; gap:8px; margin-top:14px; text-align:left; min-height:46px; }
+  .duckmsg .face { font-size:26px; }
+  .bubble { background:#e9f7ff; border-radius:4px 14px 14px 14px; padding:8px 12px; font-size:14px; color:#1b6e9e; line-height:1.6; flex:1; }
+  .screen { display:none; width:100%; max-width:520px; padding:30px 20px; text-align:center; }
+  .screen.active { display:block; }
+  .bigface { font-size:64px; }
+  h1 { font-size:22px; margin:10px 0 6px; }
+  .desc { font-size:14px; color:#1b6e9e; line-height:1.8; margin-bottom:20px; }
+  .btn { display:inline-block; background:linear-gradient(90deg,#59c1ef,#2b8ac4); color:#fff; font-weight:900;
+    font-size:17px; border:none; border-radius:999px; padding:13px 40px; cursor:pointer; box-shadow:0 5px 0 #1c6793; }
+  .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #1c6793; }
+</style>
+</head>
+<body data-page-node-id="YM4XV8JwzmncEqcwqdcLNG">
+
+<div class="header" data-page-node-id="s3U5Q7W76wauFXApbBEHvB">
+  <div class="brand" data-page-node-id="ODUlDFF8l3HkawRybCbREy">🫧 单词打捞队</div>
+  <div class="stats" data-page-node-id="jqmMWWTpN9KfuzXmVJmExo">
+    <span class="pill" data-page-node-id="cp3La03brG7vul5MQ05GT7">🫧 <b id="gem" data-page-node-id="MAdjKn4OaXGFGNqnwFVjuB">0</b></span>
+    <span class="pill" data-page-node-id="yNuV0UQ8vw0W6UzWL9JNL5">进度 <b id="prog" data-page-node-id="qGFBJKUDc2l4pfdenzpAWw">0</b>/10</span>
+  </div>
+</div>
+
+<div class="screen active" id="startScreen" data-page-node-id="zSABm9ddM66ptrJrWRH5D7">
+  <div class="bigface" data-page-node-id="lgj4BDn1JIHdnPv5aGX57p">⛵🫧🦆</div>
+  <h1 data-page-node-id="qLBpAKj3sJTh3qTj7RTM5P">单词打捞队</h1>
+  <div class="desc" data-page-node-id="atOTnwfif7yd5qP60o7cPZ">
+    英语海洋里漂着好多<b data-page-node-id="bVYF4AtrSDzXeITULVHCeL">单词气泡</b>！<br data-page-node-id="k9ZHpPcb8UAmrhBYu730SI">
+    坚忍烁号出海打捞：先<b data-page-node-id="KAtv7DukoY1avXGsbTv7Qk">看英文选中文</b>，<br data-page-node-id="kkSNHN3yaW7HquRgKY2nfd">
+    再<b data-page-node-id="CGnK1mvTtGlawW70Zx7yHG">点字母拼出单词</b>，捞满 10 个就满载而归！<br data-page-node-id="ZCq0lAMItmHMw2FXvPDZk0">
+    全是四年级上册课本里的单词哦～
+  </div>
+  <button class="btn" onclick="startGame()" data-page-node-id="f2NhhGscRsp4TcFeMFpvGX">⛵ 起锚出发</button>
+</div>
+
+<div class="card" id="gameCard" style="display:none" data-page-node-id="HdYPSfSUzv7XZWwSHS31vu">
+  <div class="qtag" id="qTag" data-page-node-id="KNadDQf4OobFwyQYE18tpR">🫧 打捞任务 1 · 认一认</div>
+  <div id="pickArea" data-page-node-id="ENGGMy5LqqVVmPwch4D5mF">
+    <div class="bigword" id="bigWord" data-page-node-id="0lB1jNxpZ89kcD7StscIZB">word</div>
+    <div class="sub" data-page-node-id="35UXkYjZGG48jOF67oX9Bv">这个单词是什么意思？</div>
+    <div class="options" id="opts" data-page-node-id="7qyOUJqSTuWGR6aSTrsp66"></div>
+  </div>
+  <div id="spellArea" style="display:none" data-page-node-id="YBT6WfJ1yxqAJdH04F4Cr9">
+    <div class="bigcn" id="bigCn" data-page-node-id="98ZaFP2KnJI2ZwM6XJ6Hlu">中文</div>
+    <div class="sub" data-page-node-id="SnlLjd9hQPOvvPNstvhcDo">点字母把单词拼出来！</div>
+    <div class="slots" id="slots" data-page-node-id="SRnc5Zp2gyffKuo0pOsDue"></div>
+    <div class="letters" id="letters" data-page-node-id="v1ACosn9HCdOAfA3jbVTnx"></div>
+    <div class="ctrl" data-page-node-id="EV2B8zX0ClCmXHB43cKuij">
+      <button class="mini undo" onclick="undoLetter()" data-page-node-id="yF87fmhcuDXNJvwZBlx6vZ">↩️ 撤销</button>
+      <button class="mini giveup" onclick="revealWord()" data-page-node-id="LZgVBhxFndPww8D4cmvOdT">🙋 求助嘎嘎（0宝石）</button>
+    </div>
+  </div>
+  <div class="duckmsg" data-page-node-id="8YiOvWXe7oE3G26AHpDWGd">
+    <span class="face" data-page-node-id="jM8oU2NER8ycL5UqITEyfu">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="17F2KQJc0hi3HNqEYg0TFl">嘎！起锚！盯紧水里的气泡，单词就藏在里面！</div>
+  </div>
+</div>
+
+<div class="screen" id="endScreen" data-page-node-id="toXrfxW7xpbJbJLjmWUuq1">
+  <div class="bigface" id="endFace" data-page-node-id="tm5753GLY38OjbUuToHjmd">🏆</div>
+  <h1 id="endTitle" data-page-node-id="nXtCuHOi14HbCjqQUfHLSJ">满载而归！</h1>
+  <div class="desc" id="endDesc" data-page-node-id="5NxXp7LiTMMqtqZ70GwC4g"></div>
+  <button class="btn" onclick="startGame()" data-page-node-id="9hVyygyYjMWFHuXCEB66zL">再捞一轮</button>
+  <div class="desc" style="margin-top:14px" data-page-node-id="CEBn9HIBrC9lsuvoGepNNO">📸 截图发群里，X1 给你登记奖励！</div>
+</div>
+
+<script>
+const WORDS = [
+  {en:"classroom",cn:"教室"},{en:"window",cn:"窗户"},{en:"light",cn:"灯"},
+  {en:"picture",cn:"图画"},{en:"door",cn:"门"},{en:"computer",cn:"计算机"},
+  {en:"schoolbag",cn:"书包"},{en:"notebook",cn:"笔记本"},{en:"candy",cn:"糖果"},
+  {en:"toy",cn:"玩具"},{en:"key",cn:"钥匙"},{en:"friend",cn:"朋友"},
+  {en:"strong",cn:"强壮的"},{en:"quiet",cn:"安静的"},{en:"glasses",cn:"眼镜"},
+  {en:"bedroom",cn:"卧室"},{en:"bathroom",cn:"浴室"},{en:"living room",cn:"客厅"},
+  {en:"kitchen",cn:"厨房"},{en:"study",cn:"书房"},{en:"fridge",cn:"冰箱"},
+  {en:"sofa",cn:"沙发"},{en:"beef",cn:"牛肉"},{en:"chicken",cn:"鸡肉"},
+  {en:"noodles",cn:"面条"},{en:"soup",cn:"汤"},{en:"vegetable",cn:"蔬菜"},
+  {en:"chopsticks",cn:"筷子"},{en:"bowl",cn:"碗"},{en:"spoon",cn:"勺子"},
+  {en:"doctor",cn:"医生"},{en:"farmer",cn:"农民"},{en:"driver",cn:"司机"},
+  {en:"nurse",cn:"护士"},{en:"people",cn:"人们"},{en:"baby brother",cn:"婴儿小弟弟"}
+];
+const HINTS = {classroom:"class + room 教室", schoolbag:"school + bag 书包", notebook:"note + book 笔记本",
+  bedroom:"bed + room 卧室", bathroom:"bath + room 浴室", livingroom:"living room 客厅",
+  chopsticks:"chop + sticks 筷子", vegetable:"ve-ge-ta-ble 蔬菜"};
+let deck, qi, gem, lock, curWord, typed;
+function shuffle(a){ return a.slice().sort(()=>Math.random()-0.5); }
+
+function startGame(){
+  deck = shuffle(WORDS).slice(0,5);           // 5个认识题
+  const spell = shuffle(WORDS.filter(w=>!w.en.includes(" "))).slice(0,5); // 5个拼写题（不带空格的词）
+  deck = shuffle([...deck.map(w=>({w,mode:"pick"})), ...spell.map(w=>({w,mode:"spell"}))]);
+  qi=0; gem=0; lock=false;
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('endScreen').classList.remove('active');
+  document.getElementById('gameCard').style.display='block';
+  updateHUD();
+  nextQ();
+  say("嘎！坚忍烁号出发！先认气泡里的单词，再亲手把它拼出来！");
+}
+function updateHUD(){
+  document.getElementById('gem').textContent=gem;
+  document.getElementById('prog').textContent=qi;
+}
+function nextQ(){
+  if(qi>=10){ endGame(); return; }
+  lock=false;
+  const item = deck[qi];
+  document.getElementById('qTag').textContent = "🫧 打捞任务 "+(qi+1)+" · "+(item.mode==="pick"?"认一认":"拼一拼");
+  if(item.mode==="pick"){
+    document.getElementById('pickArea').style.display='block';
+    document.getElementById('spellArea').style.display='none';
+    document.getElementById('bigWord').textContent = item.w.en;
+    const wrongs = shuffle(WORDS.filter(w=>w.cn!==item.w.cn)).slice(0,3).map(w=>w.cn);
+    const opts = shuffle([item.w.cn, ...wrongs]);
+    const box=document.getElementById('opts'); box.innerHTML='';
+    opts.forEach(v=>{
+      const d=document.createElement('div'); d.className='opt'; d.textContent=v;
+      d.onclick=()=>answerPick(d,v,item.w); box.appendChild(d);
+    });
+  } else {
+    curWord = item.w; typed=[];
+    document.getElementById('pickArea').style.display='none';
+    document.getElementById('spellArea').style.display='block';
+    document.getElementById('bigCn').textContent = item.w.cn;
+    buildSpell(item.w.en);
+  }
+  updateHUD();
+}
+function answerPick(el,v,w){
+  if(lock) return; lock=true;
+  if(v===w.cn){
+    el.classList.add('correct'); gem++; say("咕噜咕噜——气泡捞上来啦！"+w.en+" 就是【"+w.cn+"】！+1气泡");
+    setTimeout(()=>{ qi++; nextQ(); },1200);
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===w.cn) e.classList.add('correct'); });
+    say("嘎…捞到一只章鱼！"+w.en+" 是【"+w.cn+"】哦，记住它！");
+    setTimeout(()=>{ qi++; nextQ(); },2000);
+  }
+  updateHUD();
+}
+function buildSpell(word){
+  const clean = word.replace(/\s/g,'');
+  // 字母池：单词字母 + 2个干扰字母
+  let letters = clean.split('');
+  const extra="abcdefghilmnoprstuw".split('');
+  while(letters.length < clean.length+2){ const c=extra[Math.floor(Math.random()*extra.length)];
+    if(letters.filter(x=>x===c).length < clean.split('').filter(x=>x===c).length+1) letters.push(c); }
+  letters = shuffle(letters);
+  const slots=document.getElementById('slots'), box=document.getElementById('letters');
+  slots.innerHTML=''; box.innerHTML='';
+  const target = word.split('');
+  target.forEach((ch,i)=>{
+    const s=document.createElement('div'); s.className='slot';
+    if(ch===' '){ s.style.border='none'; s.innerHTML='&nbsp;'; s.dataset.space='1'; }
+    slots.appendChild(s);
+  });
+  letters.forEach((c,idx)=>{
+    const b=document.createElement('button'); b.className='lt'; b.textContent=c;
+    b.onclick=()=>tapLetter(b,c); box.appendChild(b);
+  });
+}
+function tapLetter(btn,c){
+  if(lock) return;
+  // 找到下一个未填槽位（跳过空格槽）
+  const slots=[...document.querySelectorAll('.slot')];
+  const s=slots.find(x=>!x.dataset.space && !x.classList.contains('filled'));
+  if(!s) return;
+  s.textContent=c; s.classList.add('filled'); s.dataset.char=c;
+  btn.classList.add('used'); btn.dataset.slot=slots.indexOf(s);
+  typed.push({btn,s});
+  checkSpell();
+}
+function undoLetter(){
+  const last=typed.pop(); if(!last) return;
+  last.s.textContent=''; last.s.classList.remove('filled'); delete last.s.dataset.char;
+  last.btn.classList.remove('used');
+}
+function revealWord(){
+  if(lock) return; lock=true;
+  document.getElementById('duckSay').textContent="嘎嘎，看好啦："+curWord.en+"（"+curWord.cn+"），跟着我读三遍！";
+  // 自动演示填入
+  const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
+  const letters=[...curWord.en.replace(/\s/g,'')];
+  slots.forEach((s,i)=>{ s.textContent=letters[i]; s.classList.add('filled'); });
+  document.querySelectorAll('.lt').forEach(b=>b.classList.add('used'));
+  setTimeout(()=>{ qi++; nextQ(); },2200);
+}
+function checkSpell(){
+  const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
+  if(slots.some(s=>!s.classList.contains('filled'))) return;
+  const got=slots.map(s=>s.dataset.char).join('');
+  const want=curWord.en.replace(/\s/g,'');
+  if(got.toLowerCase()===want.toLowerCase()){
+    lock=true; gem+=2; updateHUD();
+    say("叮叮叮——拼写完美！【"+curWord.en+"】+2气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:""));
+    setTimeout(()=>{ qi++; nextQ(); },1600);
+  } else {
+    // 错了，闪红清空
+    lock=true;
+    slots.forEach(s=>s.style.color='#e05555');
+    setTimeout(()=>{
+      slots.forEach(s=>{ s.textContent=''; s.classList.remove('filled'); s.style.color=''; delete s.dataset.char; });
+      document.querySelectorAll('.lt').forEach(b=>{ b.classList.remove('used'); delete b.dataset.slot; });
+      typed=[];
+      lock=false;
+    },700);
+    say("嘎…字母顺序不对哦！再看看，"+curWord.cn+"的单词是 "+want.length+" 个字母！");
+  }
+  updateHUD();
+}
+function say(t){ document.getElementById('duckSay').textContent=t; }
+function endGame(){
+  document.getElementById('gameCard').style.display='none';
+  const s=document.getElementById('endScreen'); s.classList.add('active');
+  if(gem>=12){ document.getElementById('endFace').textContent="🏆"; document.getElementById('endTitle').textContent="满载而归！"; }
+  else if(gem>=7){ document.getElementById('endFace').textContent="🎉"; document.getElementById('endTitle').textContent="收获满满！"; }
+  else { document.getElementById('endFace').textContent="💪"; document.getElementById('endTitle').textContent="继续练习！"; }
+  document.getElementById('endDesc').innerHTML="本轮捞到：<b>"+gem+"</b> 个单词气泡 🫧<br>"+
+    (gem>=12?"英语海洋冠军打捞队就是烁烁！":"多打捞几轮，单词就牢牢记住啦！");
+}
+</script>
+</body>
+</html>
