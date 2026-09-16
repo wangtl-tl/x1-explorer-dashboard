@@ -140,6 +140,7 @@
 
 <div class="toast" id="toast" data-page-node-id="Lw4SRt76igelwLjMsJAlpw"></div>
 
+<script src="x3_common.js?v=3"></script>
 <script>
 // 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
 window.onerror=function(msg,src,line,col){
@@ -293,6 +294,7 @@ function answerPick(el,v,w,isBoss){
     el.classList.add('correct');
     let gain=(isBoss?3:1); const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
+    if(window.XP3)XP3.hit('danci',w.cat,isBoss);
     if((qi+1)%3===0) grantItem();
     say("咕噜咕噜——气泡捞上来啦！"+w.en+" = 【"+w.cn+"】"+(isBoss?" 章鱼王被击退！":"")+(dbl?" ✖️2翻倍到账！":""));
     setTimeout(()=>{ qi++; nextQ(); },isBoss?1600:1200);
@@ -300,7 +302,7 @@ function answerPick(el,v,w,isBoss){
     el.classList.add('wrong');
     document.querySelectorAll('.opt').forEach(e=>{ if(e.textContent===w.cn) e.classList.add('correct'); });
     if(items.shield>0){ items.shield--; renderItemBar(); toast("🛡️ 护盾生效，本轮不计入复仇！"); }
-    else missWord(w);
+    else { if(window.XP3)XP3.miss('danci',w.cat); missWord(w); }
     say("嘎…"+w.en+" 是【"+w.cn+"】哦，记住它！它已进复仇名单～");
     setTimeout(()=>{ qi++; nextQ(); },2000);
   }
@@ -343,7 +345,7 @@ function undoLetter(){
 }
 function revealWord(){
   if(lock) return; lock=true; clearInterval(bossTimer);
-  statHit(curWord,false); missWord(curWord);
+  statHit(curWord,false); if(window.XP3)XP3.miss('danci',curWord.cat); missWord(curWord);
   document.getElementById('duckSay').textContent="嘎嘎，看好啦："+curWord.en+"（"+curWord.cn+"），跟我读三遍！";
   const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
   const letters=[...curWord.en.replace(/\s/g,'')];
@@ -352,7 +354,7 @@ function revealWord(){
   setTimeout(()=>{ qi++; nextQ(); },2200);
 }
 function bossFail(){
-  statHit(curWord,false); missWord(curWord);
+  statHit(curWord,false); if(window.XP3)XP3.miss('danci',curWord.cat); missWord(curWord);
   toast("👹 章鱼王逃走了！正确拼写："+curWord.en);
   document.getElementById('duckSay').textContent="⏰ 超时！"+curWord.en+"（"+curWord.cn+"）已进复仇名单！";
   const slots=[...document.querySelectorAll('.slot')].filter(x=>!x.dataset.space);
@@ -369,6 +371,7 @@ function checkSpell(){
   if(got.toLowerCase()===want.toLowerCase()){
     lock=true; clearInterval(bossTimer);
     statHit(curWord,true);
+    if(window.XP3)XP3.hit('danci',curWord.cat,qi===9);
     let gain=2; const dbl=doubleArmed; if(doubleArmed){ gain*=2; doubleArmed=false; }
     gem+=gain; updateHUD();
     say("叮叮叮——拼写完美！【"+curWord.en+"】+"+gain+"气泡！"+(HINTS[curWord.en.replace(/\s/g,'')]?"小窍门："+HINTS[curWord.en.replace(/\s/g,'')]:"")+(dbl?" ✖️2翻倍到账！":""));
@@ -376,7 +379,7 @@ function checkSpell(){
   } else {
     lock=true; clearInterval(bossTimer);
     const usedShield = items.shield>0;
-    if(usedShield){ items.shield--; } else { statHit(curWord,false); missWord(curWord); }
+    if(usedShield){ items.shield--; } else { statHit(curWord,false); if(window.XP3)XP3.miss('danci',curWord.cat); missWord(curWord); }
     renderItemBar();
     slots.forEach(s=>{ s.style.color = usedShield ? '#e8a020' : '#e05555'; });
     setTimeout(()=>{
@@ -444,6 +447,7 @@ function endGame(){
     return '<div class="row"><span style="width:64px">'+n+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+v[0]+'/'+v[1]+'</span></div>';
   }).join(""):'');
   renderSkins(); applySkin();
+  if(window.XP3)XP3.settle({game:'danci',name:'单词打捞队',gems:gem});
 }
 function exportMistakes(){
   const m=mistakes.danci||[];
