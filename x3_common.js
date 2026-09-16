@@ -13,7 +13,11 @@
 var mem={};
 function lsGet(k,d){ try{ var v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return (k in mem)?mem[k]:d; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
-function jget(k,d){ try{ return JSON.parse(lsGet(k,d)); }catch(e){ return JSON.parse(d); } }
+function jget(k,d){
+  var v=lsGet(k,null);
+  if(v===null||v===undefined) return (typeof d==='string')?(function(){try{return JSON.parse(d);}catch(e){return d;}})():d;
+  try{ return JSON.parse(v); }catch(e){ return (typeof d==='string')?(function(){try{return JSON.parse(d);}catch(e){return d;}})():d; }
+}
 function jset(k,v){ lsSet(k,JSON.stringify(v)); }
 
 /* ---------- 样式注入 ---------- */
