@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<html lang="zh-CN" data-page-node-id="xijpNGvxZcI8cfJf1CB1mx">
+<head data-page-node-id="BPCV8bpuhqROTrR0U1jFg1">
+<meta charset="UTF-8" data-page-node-id="AZhnQLmjNKQ22ehoki4MSr">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="ITAg8nZ29bzABYpbHIzRgv">
 <title>试商大冒险 v2 · 商的密林远征</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -tap-highlight:transparent; -webkit-tap-highlight-color:transparent; }
@@ -76,66 +76,73 @@
   .toast.show { opacity:1; }
 </style>
 </head>
-<body>
+<body data-page-node-id="61t8bug3HApQMxPVwVLzlc">
 
-<div class="header">
-  <div class="brand"><span class="duck" id="duckFace">🦆</span>试商大冒险<span class="v2">V2</span></div>
-  <div class="stats">
-    <span class="pill">💎 <b id="gem">0</b></span>
-    <span class="pill">🔥 <b id="combo">0</b></span>
+<div class="header" data-page-node-id="B3sughJi12LXX0ggdPWqro">
+  <div class="brand" data-page-node-id="mdiXH6M4f4r3PJm4BSe5uo"><span class="duck" id="duckFace" data-page-node-id="E2WjdHFFTIzuDYxhEjSbON">🦆</span>试商大冒险<span class="v2" data-page-node-id="d8dG65cTDE93wwy77LsZ73">V2</span></div>
+  <div class="stats" data-page-node-id="ftT1I05hYLCOKAtBghdaD8">
+    <span class="pill" data-page-node-id="4AG0yfKpT2aPlIL1bnxWNW">💎 <b id="gem" data-page-node-id="AILjI821ERmAfPZfikUX8n">0</b></span>
+    <span class="pill" data-page-node-id="kYbxzfrlc8tGgfEi8pa9GR">🔥 <b id="combo" data-page-node-id="4VU8KRtBPdC2EZ7UEQapG9">0</b></span>
   </div>
 </div>
 
 <!-- 开始页 -->
-<div class="screen active" id="startScreen">
-  <div class="bigduck" id="startFace">⚓🦆</div>
-  <h1>试商大冒险 <span style="font-size:13px;color:#e8a020">V2 远征版</span></h1>
-  <div class="desc">
-    5关新机制：<b>🎁道具</b> · <b>👹BOSS限时战</b> · <b>🔁复仇题</b><br>
+<div class="screen active" id="startScreen" data-page-node-id="lQGbaZdK0Tq2TOaliREZL8">
+  <div class="bigduck" id="startFace" data-page-node-id="lKbOQ9S39RlDp5qCTCxVPH">⚓🦆</div>
+  <h1 data-page-node-id="gnSYC2SvN1CSWnlVfvwQoZ">试商大冒险 <span style="font-size:13px;color:#e8a020" data-page-node-id="F5TZEf0lWGCVXuPnyDktxM">V2 远征版</span></h1>
+  <div class="desc" data-page-node-id="EK13GL000SWHvko7vPO9DN">
+    5关新机制：<b data-page-node-id="ZcTluU9qV4hSeISOg9Tlse">🎁道具</b> · <b data-page-node-id="Xy6MHpG6ufN87ZvEJPmsqq">👹BOSS限时战</b> · <b data-page-node-id="6FU8Bn0no6sNt9yHja7smF">🔁复仇题</b><br data-page-node-id="k802QXqRWFveVUCqJ2EpD2">
     嘎嘎还会每天带来神秘“特训题”，打败过的错算怪会回来复仇！
   </div>
-  <div class="skinline" id="skinLine"></div>
-  <div class="skinname" id="skinHint">点击换船体皮肤（累计宝石解锁）</div>
-  <button class="btn" onclick="startGame()" style="margin-top:10px">🚀 出发远征</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错题给X1</button>
-  <div class="mistbox" id="mistBox"></div>
-  <div class="radar" id="startRadar"></div>
+  <div class="skinline" id="skinLine" data-page-node-id="227Z19R8xyefvWV5bhKlmp"></div>
+  <div class="skinname" id="skinHint" data-page-node-id="XTABukOULlCCirxNoOPuZn">点击换船体皮肤（累计宝石解锁）</div>
+  <button class="btn" onclick="startGame()" style="margin-top:10px" data-page-node-id="dfcDd4aSiBIE5wVA8QH5iE">🚀 出发远征</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="mTkHUa4VFkV4HHp60uj1rW">📤 导出错题给X1</button>
+  <div class="mistbox" id="mistBox" data-page-node-id="4BPALi0pg7wEWtpsnVwmTn"></div>
+  <div class="radar" id="startRadar" data-page-node-id="IV8jAEB3BeVaOlHmpWTIO7"></div>
 </div>
 
 <!-- 游戏页 -->
-<div class="card" id="gameScreen" style="display:none">
-  <div class="lvtag" id="lvTag">第 1 关 · 试商热身</div>
-  <div class="levelbar"><i id="lvFill" style="width:5%"></i></div>
-  <div class="bossbanner" id="bossBanner">👹 错算怪BOSS出现！20秒内斩杀！<div class="bosstimer"><i id="bossFill"></i></div></div>
-  <div class="question" id="qText">000 ÷ 00</div>
-  <div class="sub" id="qSub">商是多少？点下面的选项！</div>
-  <div class="items" id="itemBar"></div>
-  <div class="options" id="opts"></div>
-  <button class="hintbtn" onclick="showHint()">🦆 试商锦囊（本题宝石-1）</button>
-  <div class="hint" id="hintBox"></div>
-  <div class="duckmsg">
-    <span class="face" id="duckFace2">🦆</span>
-    <div class="bubble" id="duckSay">嘎！远征开始！</div>
+<div class="card" id="gameScreen" style="display:none" data-page-node-id="TSZncArmxuIddsjYCGcu1y">
+  <div class="lvtag" id="lvTag" data-page-node-id="OpVhLhFuBmMHOI4IxIXL26">第 1 关 · 试商热身</div>
+  <div class="levelbar" data-page-node-id="hxJnA9UqeIqk0LYUc2dNVL"><i id="lvFill" style="width:5%" data-page-node-id="8rqNVVCz5WKSr2dea0jqJn"></i></div>
+  <div class="bossbanner" id="bossBanner" data-page-node-id="Pb9kdl4VVIrrViLA4hnAv3">👹 错算怪BOSS出现！20秒内斩杀！<div class="bosstimer" data-page-node-id="6aeTpFBgppZHJi8HuFnroa"><i id="bossFill" data-page-node-id="CQx6kFCfffCQtCTmCfDsXn"></i></div></div>
+  <div class="question" id="qText" data-page-node-id="04j9Dvx6iqOA1Uf7hIttFH">000 ÷ 00</div>
+  <div class="sub" id="qSub" data-page-node-id="X1AWFB75CIedQq1pd9j6Wp">商是多少？点下面的选项！</div>
+  <div class="items" id="itemBar" data-page-node-id="kQXfxT1q0AFqCIRz39ptAd"></div>
+  <div class="options" id="opts" data-page-node-id="rFO51Dho0GgKncj9G8bIQJ"></div>
+  <button class="hintbtn" onclick="showHint()" data-page-node-id="HAPUW3XSZGnYPVN2LBsHFF">🦆 试商锦囊（本题宝石-1）</button>
+  <div class="hint" id="hintBox" data-page-node-id="Y8gv5kQO6KQy4kGypA2fIv"></div>
+  <div class="duckmsg" data-page-node-id="UjnXqGernFuvKXPMiJD4Y5">
+    <span class="face" id="duckFace2" data-page-node-id="FCQERui5Z86pRJKNRNxDsH">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="YIVPtDRHIV4jRY3kOnAA7b">🛠️V2.1 嘎！远征开始！</div>
   </div>
 </div>
 
 <!-- 结束页 -->
-<div class="screen" id="endScreen">
-  <div class="bigduck" id="endFace">🎉</div>
-  <h1 id="endTitle">远征成功！</h1>
-  <div class="result-gem" id="endGem"></div>
-  <div class="desc" id="endDesc"></div>
-  <div class="radar" id="radar"></div>
-  <button class="btn" onclick="startGame()">再来一轮</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错题给X1</button>
-  <div class="mistbox" id="mistBox2"></div>
-  <div class="desc" style="margin-top:10px">错题会自动记进复仇名单，下一轮杀回来！</div>
+<div class="screen" id="endScreen" data-page-node-id="PC76tCBwHWCTI4Igvm4bpz">
+  <div class="bigduck" id="endFace" data-page-node-id="KCToUNzOXL4Ir50oVmZ8Qt">🎉</div>
+  <h1 id="endTitle" data-page-node-id="ZUPRjM2YpLm75i7t6QO12U">远征成功！</h1>
+  <div class="result-gem" id="endGem" data-page-node-id="DTZmNHQ6iohz6HddM7wQ20"></div>
+  <div class="desc" id="endDesc" data-page-node-id="xkv8g9dnCcEbt09Lq8FD00"></div>
+  <div class="radar" id="radar" data-page-node-id="PU5DjhMKz0QYAd10AHDLA4"></div>
+  <button class="btn" onclick="startGame()" data-page-node-id="ykjr8ALD1K5xwPU2cpbgB4">再来一轮</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="lt6hZOCI7qSGYWPFZXvpQG">📤 导出错题给X1</button>
+  <div class="mistbox" id="mistBox2" data-page-node-id="NNAnw3Ax3kkk0fzYxzQ34q"></div>
+  <div class="desc" style="margin-top:10px" data-page-node-id="9LMGO3twHuHxf0cD2De00H">错题会自动记进复仇名单，下一轮杀回来！</div>
 </div>
 
-<div class="combo" id="comboPop"></div>
-<div class="toast" id="toast"></div>
+<div class="combo" id="comboPop" data-page-node-id="axbPkpoiYBuuatLeSHvPZ5"></div>
+<div class="toast" id="toast" data-page-node-id="cwgKxDVJYV3DWEsBAynSmK"></div>
 
 <script>
+// 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
+window.onerror=function(msg,src,line,col){
+  try{
+    var t="⚠️ 出错了："+msg+"（第"+line+"行）";
+    var d=document.getElementById('duckSay'); if(d) d.textContent=t;
+  }catch(e){}
+};
 // 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
 const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const LV_NAMES=["试商热身","整十邻近","四舍试商","五入试商","错算怪BOSS"];
