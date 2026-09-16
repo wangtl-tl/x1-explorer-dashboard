@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<html lang="zh-CN" data-page-node-id="VotbJQHR7EpAj6oMWQVm5A">
+<head data-page-node-id="2NpHKsDU5aFJeifL6hJ7qc">
+<meta charset="UTF-8" data-page-node-id="VrQ1sLtMiCCQePuyhkAiTk">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" data-page-node-id="HUp00YmYChz9QgEyurkBKO">
 <title>错字怪猎人 v2 · 语文保卫战</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -71,64 +71,71 @@
   .toast.show { opacity:1; }
 </style>
 </head>
-<body>
+<body data-page-node-id="KydSURfnnaSrZWxB8AdDMR">
 
-<div class="header">
-  <div class="brand">🏹 错字怪猎人<span class="v2">V2</span></div>
-  <div class="stats">
-    <span class="pill">💎 <b id="gem">0</b></span>
-    <span class="pill">🏹 <b id="shots">10</b>/10</span>
+<div class="header" data-page-node-id="WKJsKYbX61kyMzULVEsnfV">
+  <div class="brand" data-page-node-id="V6MRDw5jUzFmPpWXyOchny">🏹 错字怪猎人<span class="v2" data-page-node-id="cq27XOOOth3UmHMLXac6Wh">V2</span></div>
+  <div class="stats" data-page-node-id="veA34MOH49udlmu8JWtz6B">
+    <span class="pill" data-page-node-id="Ha9hB975tsFztJAaqbZZ0h">💎 <b id="gem" data-page-node-id="MDJZxGd3byABytxCornCQa">0</b></span>
+    <span class="pill" data-page-node-id="KvPMlN8bJaQiYk7e91Sds9">🏹 <b id="shots" data-page-node-id="Cl1LYFgKFT8H2Yukipm9Vj">10</b>/10</span>
   </div>
 </div>
 
-<div class="screen active" id="startScreen">
-  <div class="bigface" id="startFace">👾🏹🦆</div>
-  <h1>错字怪猎人 <span style="font-size:13px;color:#c98cff">V2 狩猎季</span></h1>
-  <div class="desc">
-    新机制：<b>🎁道具</b> · <b>👹BOSS限时狩猎</b> · <b>🔁错字复仇</b><br>
-    被打跑的错字怪会带着你写错的字杀回来！<br>
+<div class="screen active" id="startScreen" data-page-node-id="xj4qO4G08ieDlJ7avHGWMk">
+  <div class="bigface" id="startFace" data-page-node-id="lOmiqI7NgoST5aQ86qIH4q">👾🏹🦆</div>
+  <h1 data-page-node-id="S4W9lWdkXPQKH0OIcRruah">错字怪猎人 <span style="font-size:13px;color:#c98cff" data-page-node-id="52B1UWqrLvOMafIY37aogy">V2 狩猎季</span></h1>
+  <div class="desc" data-page-node-id="jZiNgET0RUfPq9kvB0i7PC">
+    新机制：<b data-page-node-id="n6FCbR7ApcL1KyfMT5tZDD">🎁道具</b> · <b data-page-node-id="EjNFXm2CHBqcMEpGB5s3Nz">👹BOSS限时狩猎</b> · <b data-page-node-id="IEMkyh5jSkBmP8vjU5zHx6">🔁错字复仇</b><br data-page-node-id="WtO1h1JFflXYfEhJUWbLVe">
+    被打跑的错字怪会带着你写错的字杀回来！<br data-page-node-id="13zPloBOdJsLXYEr0Nkd42">
     猎人等级越高，皮肤越帅～
   </div>
-  <div class="skinline" id="skinLine"></div>
-  <div class="skinname" id="skinHint">点击换武器皮肤（累计宝石解锁）</div>
-  <button class="btn" onclick="startGame()" style="margin-top:10px">⚔️ 开始狩猎</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错字给X1</button>
-  <div class="mistbox" id="mistBox"></div>
-  <div class="radar" id="startRadar"></div>
+  <div class="skinline" id="skinLine" data-page-node-id="dX1Mw4bzjIPZiBA4LrzqZ9"></div>
+  <div class="skinname" id="skinHint" data-page-node-id="7rCI6sipoGtqWIUnTNQSVC">点击换武器皮肤（累计宝石解锁）</div>
+  <button class="btn" onclick="startGame()" style="margin-top:10px" data-page-node-id="Eh9t2vGRIzQFUG3slDxgFZ">⚔️ 开始狩猎</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="GNVyYZnugL1JhnHJV8lopp">📤 导出错字给X1</button>
+  <div class="mistbox" id="mistBox" data-page-node-id="6OlXOIalYgAi1N9t4kPjwr"></div>
+  <div class="radar" id="startRadar" data-page-node-id="PTDoBQW2hBJCjq9IH5XcUg"></div>
 </div>
 
-<div class="monster-zone" id="gameZone" style="display:none">
-  <div class="mface" id="mFace">👾</div>
-  <div class="hpbar"><i id="hpFill" style="width:100%"></i></div>
-  <div class="hpnum" id="hpNum">HP 10/10</div>
-  <div class="mname" id="mName">错字怪 · 爪爪</div>
+<div class="monster-zone" id="gameZone" style="display:none" data-page-node-id="OJBCQ1gkprP0FaGSGqUpLw">
+  <div class="mface" id="mFace" data-page-node-id="VPu2Jc4P2wJwVpx39Jenac">👾</div>
+  <div class="hpbar" data-page-node-id="FhBba6Tq1FuDOHdvGHmWL2"><i id="hpFill" style="width:100%" data-page-node-id="ueULYrMotNhc479b8x7jUA"></i></div>
+  <div class="hpnum" id="hpNum" data-page-node-id="ouawCGITy9gvtvD2YJrIVJ">HP 10/10</div>
+  <div class="mname" id="mName" data-page-node-id="6FbXQsUnKS43Jd6gS1j1fy">错字怪 · 爪爪</div>
 </div>
 
-<div class="card" id="gameCard" style="display:none">
-  <div class="prog" id="prog">第 1 箭</div>
-  <div class="qtag" id="qTag">普通狩猎</div>
-  <div class="qtip" id="qTip">哪个写法是<b>正确</b>的？</div>
-  <div class="items" id="itemBar"></div>
-  <div class="options" id="opts"></div>
-  <div class="duckmsg">
-    <span class="face" id="duckFace">🦆</span>
-    <div class="bubble" id="duckSay">嘎！张弓搭箭，看清楚每个字哦！</div>
+<div class="card" id="gameCard" style="display:none" data-page-node-id="mJS5QrdBhF6mcxZfUq8x2B">
+  <div class="prog" id="prog" data-page-node-id="L8B1Gx8iIVRvc5k9WCOuR3">第 1 箭</div>
+  <div class="qtag" id="qTag" data-page-node-id="IMbW8vH2FIX4pNBopINl3F">普通狩猎</div>
+  <div class="qtip" id="qTip" data-page-node-id="TQtWCqjmHXFgYCA4xlHH3k">哪个写法是<b data-page-node-id="zEllPiBbFEjR0gOa5VHGRU">正确</b>的？</div>
+  <div class="items" id="itemBar" data-page-node-id="K6U9J9DatS8HDgWmgDuT2L"></div>
+  <div class="options" id="opts" data-page-node-id="1apbNhgz46GPN8DEgngk4E"></div>
+  <div class="duckmsg" data-page-node-id="CrwF2ZjKIDNPlAclfeFGjF">
+    <span class="face" id="duckFace" data-page-node-id="AZfiNgF4d5MZlMhW91JQzA">🦆</span>
+    <div class="bubble" id="duckSay" data-page-node-id="TxbrW1xMbYSpn3FfOwUNrf">🛠️V2.1 嘎！张弓搭箭，看清楚每个字哦！</div>
   </div>
 </div>
 
-<div class="screen" id="endScreen">
-  <div class="bigface" id="endFace">🏆</div>
-  <h1 id="endTitle">狩猎成功！</h1>
-  <div class="desc" id="endDesc"></div>
-  <div class="radar" id="radar"></div>
-  <button class="btn" onclick="startGame()">再战一轮</button>
-  <button class="btn2" onclick="exportMistakes()">📤 导出错字给X1</button>
-  <div class="mistbox" id="mistBox2"></div>
+<div class="screen" id="endScreen" data-page-node-id="LFnTtuOPuOsLhVIRi3PhOd">
+  <div class="bigface" id="endFace" data-page-node-id="IF2ZKV8FgckqhOKfnU2gw1">🏆</div>
+  <h1 id="endTitle" data-page-node-id="YyiUdWsm5tx2ZSvm0ELRjR">狩猎成功！</h1>
+  <div class="desc" id="endDesc" data-page-node-id="MI01vEI21sbq34v7vwVJJr"></div>
+  <div class="radar" id="radar" data-page-node-id="EajqmMGUZjAiPEwRIuwxvw"></div>
+  <button class="btn" onclick="startGame()" data-page-node-id="3HypyDfRVP0kkUNpQD1W78">再战一轮</button>
+  <button class="btn2" onclick="exportMistakes()" data-page-node-id="on23VquGnGBAZiDqxy02jE">📤 导出错字给X1</button>
+  <div class="mistbox" id="mistBox2" data-page-node-id="933fDPaXFcGfOo2NH0pICG"></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-page-node-id="FaitzF7CCcDMQorOB5FFtz"></div>
 
 <script>
+// 错误自曝器：任何崩溃直接显示在嘎嘎对话框，方便截图报修
+window.onerror=function(msg,src,line,col){
+  try{
+    var t="⚠️ 出错了："+msg+"（第"+line+"行）";
+    var d=document.getElementById('duckSay'); if(d) d.textContent=t;
+  }catch(e){}
+};
 // 安全存储：预览窗口/隐私模式下localStorage被禁也不崩
 const LS=(()=>{try{window.localStorage.setItem("__t","1");window.localStorage.removeItem("__t");return window.localStorage;}catch(e){const m={};return{getItem:k=>(k in m?m[k]:null),setItem:(k,v)=>{m[k]=String(v);},removeItem:k=>{delete m[k];}};}})();
 const BANK = [
